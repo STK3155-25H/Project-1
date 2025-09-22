@@ -13,5 +13,6 @@ from .ml_core import (
     OLS_parameters,
     Ridge_parameters,
     Gradient_descent_advanced,
+    MSE_Bias_Variance,
     seed
 )

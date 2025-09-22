@@ -475,3 +475,31 @@ def Gradient_descent_advanced(X, y, Type=0, lam=0.01, lr=0.01, n_iter=1000, tol=
         return theta
     else:
         return np.array(history)
+
+
+def MSE_Bias_Variance(targets, predictions):
+    """
+    Compute the Mean Squared Error (MSE), bias^2, and variance of a set of predictions 
+    compared to the true target values using the bias-variance decomposition.
+
+    Parameters
+    ----------
+    target : ndarray of shape (n_samples,) or (n_bootstraps, n_samples)
+        True target values. If multiple bootstrap targets are provided, only the first row is used for bias calculation.
+    prediction : ndarray of shape (n_bootstraps, n_samples)
+        Predicted values from multiple bootstrap models. Each row corresponds to predictions from one bootstrap.
+        
+    Returns
+    -------
+    mse : float
+        Mean squared error between predictions and target values.
+    bias2 : float
+        Squared bias term, i.e., squared difference between the true target and the mean prediction across bootstraps.
+    variance : float
+        Variance term, i.e., variance of predictions across bootstraps.
+    """
+    mse = np.mean((targets - predictions)**2)
+    bias2 = np.mean((targets - np.mean(predictions, axis=0))**2)
+    variance = np.mean((predictions - np.mean(predictions, axis=0))**2)
+
+    return mse, bias2, variance
