@@ -24,6 +24,7 @@ help:
 	@echo "  c            Run Part C (Closed-form vs GD)"
 	@echo "  d            Run Part D (optimizers)"
 	@echo "  e            Run Part E (OLS/Ridge/LASSO via GD)"
+	@echo "  f            Run Part E (sgd)"
 	@echo "  g            Run Part G (Bias-Variance)"
 	@echo "  h            Run Part H (Cross-Validation)"
 	@echo "  all          Run all parts A…H"
@@ -58,6 +59,10 @@ e: dirs
 	@STAMP=`date +%Y%m%d-%H%M%S`; \
 	$(PY) $(EXP)/exp_e_lasso.py 2>&1 | tee "$(LOGS)/part_e_$$STAMP.log"
 
+f: dirs
+	@STAMP=`date +%Y%m%d-%H%M%S`; \
+	$(PY) $(EXP)/exp_f_sgd.py 2>&1 | tee "$(LOGS)/part_f_$$STAMP.log"
+
 g: dirs
 	@STAMP=`date +%Y%m%d-%H%M%S`; \
 	$(PY) $(EXP)/exp_g_bias_variance.py 2>&1 | tee "$(LOGS)/part_g_$$STAMP.log"
@@ -67,7 +72,7 @@ h: dirs
 	$(PY) $(EXP)/exp_h_crossval.py 2>&1 | tee "$(LOGS)/part_h_$$STAMP.log"
 
 # ---------- Meta ----------
-all: a b c d e g h
+all: a b c d e f g h
 
 figures:
 	@echo "Figures:"; \
