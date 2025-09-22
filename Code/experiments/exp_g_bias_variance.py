@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.utils import resample
-from Code.src.ml_core import (
+from src import (
     runge_function, split_scale, polynomial_features_scaled,
     OLS_parameters, MSE_Bias_Variance
 )

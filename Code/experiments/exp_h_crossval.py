@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 from sklearn.model_selection import KFold
-from Code.src.ml_core import (
+from src import (
     runge_function, split_scale, polynomial_features_scaled,
     OLS_parameters, Ridge_parameters, Gradient_descent_advanced, MSE, seed
 )

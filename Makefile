@@ -1,8 +1,9 @@
 # ---------- Config ----------
-PY?=python
+PY?=python3
 CODE=Code
 EXP=$(CODE)/experiments
-OUT=$(CODE)/outputs
+OUT=outputs
+# OUT=$(CODE)/outputs
 FIGS=$(OUT)/figures
 TABLES=$(OUT)/tables
 LOGS=$(OUT)/logs

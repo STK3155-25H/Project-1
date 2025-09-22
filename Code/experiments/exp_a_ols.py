@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
-from Code.src.ml_core import (
+from src import (
     runge_function, split_scale, polynomial_features_scaled,
     OLS_parameters, MSE, R2_score
 )
