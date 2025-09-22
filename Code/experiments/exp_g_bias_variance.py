@@ -26,7 +26,7 @@ bias2_list   = np.zeros((max_degree, len(n_points_list)))
 variance_list= np.zeros((max_degree, len(n_points_list)))
 
 # Output dirs
-OUT = Path("Code/outputs"); FIG = OUT / "figures"; TAB = OUT / "tables"
+OUT = Path("outputs"); FIG = OUT / "figures"; TAB = OUT / "tables"
 FIG.mkdir(parents=True, exist_ok=True); TAB.mkdir(parents=True, exist_ok=True)
 
 # -----------------------------

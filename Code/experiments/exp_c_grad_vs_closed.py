@@ -28,7 +28,7 @@ mse_gd_ols   = {eta: np.zeros((max_degree, len(n_points))) for eta in learning_r
 mse_gd_ridge = {eta: np.zeros((max_degree, len(n_points))) for eta in learning_rates}
 
 # Output dirs
-OUT = Path("Code/outputs"); FIG = OUT / "figures"; TAB = OUT / "tables"
+OUT = Path("outputs"); FIG = OUT / "figures"; TAB = OUT / "tables"
 FIG.mkdir(parents=True, exist_ok=True); TAB.mkdir(parents=True, exist_ok=True)
 
 # -----------------------------

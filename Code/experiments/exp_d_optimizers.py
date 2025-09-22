@@ -29,7 +29,7 @@ mse_gd_ols   = {method: np.zeros((max_degree, len(n_points))) for method in meth
 mse_gd_ridge = {method: np.zeros((max_degree, len(n_points))) for method in methods}
 
 # Output dirs
-OUT = Path("Code/outputs"); FIG = OUT / "figures"; TAB = OUT / "tables"
+OUT = Path("outputs"); FIG = OUT / "figures"; TAB = OUT / "tables"
 FIG.mkdir(parents=True, exist_ok=True); TAB.mkdir(parents=True, exist_ok=True)
 
 # -----------------------------

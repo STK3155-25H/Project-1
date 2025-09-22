@@ -27,7 +27,7 @@ R2_test_list   = np.zeros((max_degree, len(n_points)))
 theta_list     = [[None for _ in range(len(n_points))] for _ in range(max_degree)]
 
 # Make output dirs
-OUT = Path("Code/outputs")
+OUT = Path("outputs")
 FIG = OUT / "figures"
 TAB = OUT / "tables"
 FIG.mkdir(parents=True, exist_ok=True)

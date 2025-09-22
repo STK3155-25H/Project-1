@@ -21,7 +21,7 @@ lam_ridge = 0.01
 lam_lasso = 0.01
 
 # Output dirs
-OUT = Path("Code/outputs"); FIG = OUT / "figures"; TAB = OUT / "tables"
+OUT = Path("outputs"); FIG = OUT / "figures"; TAB = OUT / "tables"
 FIG.mkdir(parents=True, exist_ok=True); TAB.mkdir(parents=True, exist_ok=True)
 
 # Generate Runge data
