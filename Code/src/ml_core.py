@@ -8,10 +8,17 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.utils import resample
 import time
+import os
 
-seed = 314
+seed = os.environ.get("SEED")
+
+if seed is not None:
+    seed = int(seed) 
+    print("Seed from env:", seed)
+else:
+    seed = 314
+    print("Seed from hard-coded value in ml_core.py :", seed)
 np.random.seed(seed)
-
 # -----------------------------------------------------------------------------------------
 # Runge function
 def runge_function(x, noise=False):
