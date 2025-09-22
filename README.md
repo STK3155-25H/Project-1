@@ -25,4 +25,14 @@ And this ones to run each experiment
 ```bash
 python Code/exp_letter_description.py
 ```
+To set the SEED you can either modifiy the hard-coded value in ml_core.py or add set the environment variable SEED
+**On Linux**
+```bash
+    export SEED=...
+```
+**On Windows**
+```bash
+   $env:SEED = "42"
+```
+
 
