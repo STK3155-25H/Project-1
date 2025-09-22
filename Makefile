@@ -32,7 +32,7 @@ help:
 	@echo "  clean        Remove generated outputs"
 
 setup:
-	$(PY) -m pip install -r $(CODE)/requirements.txt
+	$(PY) -m pip install -r requirements.txt
 
 dirs:
 	mkdir -p $(FIGS) $(TABLES) $(LOGS)
