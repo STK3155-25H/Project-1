@@ -17,7 +17,8 @@ if seed is not None:
     print("Seed from env:", seed)
 else:
     seed = 314
-    print("Seed from hard-coded value in ml_core.py :", seed)
+    print("Seed from hard-coded value in file ml_core.py :", seed)
+    print("If you want a specific seed set the SEED environment variable")
 np.random.seed(seed)
 # -----------------------------------------------------------------------------------------
 # Runge function
