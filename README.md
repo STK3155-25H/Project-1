@@ -22,6 +22,8 @@ If non of the previous options were optimal for you and you were not able to ins
     pip install -r requirements.txt
 ```
 And this ones to run each experiment
+
+laksnflsa
 ```bash
 python Code/exp_letter_description.py
 ```
