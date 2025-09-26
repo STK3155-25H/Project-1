@@ -29,7 +29,6 @@ The goal is to produce reproducible figures and metrics tables (MSE, R²) for a 
 ---
 
 ## Repository structure
-
 ```bash
 ├── .gitignore
 ├── Code
@@ -58,7 +57,6 @@ The goal is to produce reproducible figures and metrics tables (MSE, R²) for a 
 │   └── main.tex
 └── requirements.txt
 
-5 directories, 21 files
 ```
 
 > **Import note**: `Code/` is a Python package. Run experiments as **modules** from the repo root (see below) to avoid import issues.
