@@ -22,6 +22,8 @@ If non of the previous options were optimal for you and you were not able to ins
     pip install -r requirements.txt
 ```
 And this ones to run each experiment
+
+
 ```bash
 python Code/exp_letter_description.py
 ```
@@ -34,5 +36,5 @@ To set the SEED you can either modifiy the hard-coded value in ml_core.py or add
 ```bash
    $env:SEED = "42"
 ```
-
+hvhvh
 
