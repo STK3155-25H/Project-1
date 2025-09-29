@@ -13,6 +13,10 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage{pgfplots}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+
 \pgfplotsset{compat=1.18}
 
 \begin{document}
@@ -119,7 +123,7 @@ In contrast, Ridge regression never eliminates variables: it only shrinks the co
 Typically, Lasso Regression is preferred when the goal is to simplify the model and improve interpretability, especially when there are a lot of features. On the other hand, Ridge regression is better for handling multicollinearity among features. 
 
 
-\subsection{Gradient descent and its variants}
+\subsection{Gradient descent}
 
 Although OLS and Ridge regression have analytical solutions, such solutions are not always available in general, so a numerical approach is often needed to optimize the same cost function.\\
 
@@ -139,15 +143,53 @@ Neglecting the second-order term (or assuming it is costly to compute), a first-
 where $\eta > 0$ is a learning rate controlling the step size.  
 
 This iterative procedure moves the parameters towards the minimum of $C(\boldsymbol{\theta})$. For convex functions such as the mean squared error in linear regression, convergence is guaranteed if $\eta$ is chosen appropriately.
+
 \subsubsection{Implementation}
 The iteration start from an initial guess $\boldsymbol{\theta}^{(0)}$, the parameters are updated iteratively according to the rule:
 \[
 \boldsymbol{\theta}^{(n+1)} = \boldsymbol{\theta}^{(n)} - \eta \, \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}^{(n)}),
 \]
-where $\eta > 0$ is the learning rate and $\nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}^{(t)})$ is the gradient of the cost function with respect to $\boldsymbol{\theta}$ at iteration $t$.
+where $\eta > 0$ is the learning rate and $\nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}^{(n)})$ is the gradient of the cost function with respect to $\boldsymbol{\theta}$ at iteration $t$.
+After each update, the algorithm recomputes the cost function and its gradient until a convergence criterion is met.\\
 
+\begin{algorithm}[H]
+\caption{Gradient Descent}
+\begin{algorithmic}[1]
+\State Initialize $\boldsymbol{\theta}^{(0)}$
+\For{$n = 0, 1, 2, \dots$ until convergence}
+    \State Compute gradient $\nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}^{(n)})$
+    \State Update parameters: 
+    $\boldsymbol{\theta}^{(n+1)} = \boldsymbol{\theta}^{(n)} - \eta \, \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}^{(n)})$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
-A limitation of this method is the fixed learning rate ${\eta}$: 
+(AAA: I don't know if we want something like this)
+
+\subsection{Stochastic Gradient Descent (SGD)}
+Gradient descent can be computationally expensive when applied to large datasets. Stochastic Gradient Descent (SGD) addresses this by updating the model parameters using a single (or small batch of) data point(s) per iteration, rather than the full dataset. This introduces noise in the updates but significantly reduces computation time. The update rule is as follows:  
+$$
+\boldsymbol{\theta}_{n+1} = \boldsymbol{\theta}_n - {\eta \boldsymbol{\nabla}} l_{i_n} (\boldsymbol{\theta_t}),
+$$  
+where \(i_t\) is a randomly selected data point and \(\eta\) is the learning rate. (AAA: cite lecture)\\
+
+While Stochastic Gradient Descent is faster and more memory-efficient than full-batch gradient descent, it introduces noise in the parameter updates, which can make convergence less stable and less precise. However, this stochasticity can be beneficial, as it can help escape poor local minima and explore the optimization landscape more effectively, making it well suited for large datasets.
+
+\subsubsection{Implementation}
+\begin{algorithm}[H]
+\caption{Stochastic Gradient Descent}
+\begin{algorithmic}[1]
+\State Initialize $\boldsymbol{\theta}^{(0)}$
+\For{$n = 0, 1, 2, \dots$ until convergence}
+    \State Randomly select a data point (or mini-batch) $i_t$
+    \State Compute stochastic gradient: $\nabla_{\boldsymbol{\theta}} \ell_{i_n}(\boldsymbol{\theta}^{(n)})$
+    \State Update: $\boldsymbol{\theta}^{(n+1)} \gets \boldsymbol{\theta}^{(n)} - \eta \, \nabla_{\boldsymbol{\theta}} \ell_{i_n}(\boldsymbol{\theta}^{(n)})$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Momentum}
+The learning rate $\eta$ plays a crucial role in the convergence and a limitation of these methods is the fixed learning rate ${\eta}$: 
 \begin{itemize}
     \item if $\eta$ is too large, the updates can overshoot the minimum, causing oscillations or divergence
     \item if $\eta$ is too small, convergence is very slow
@@ -166,7 +208,144 @@ $$
 $$
 where $\gamma \in [0,1)$ is the momentum coefficient, which controls how much of the past gradients are remembered in the current update. A value close to 1 means the optimizer will have more inertia while a value closer to 0 means less reliance on past gradients. This mechanism enables the algorithm to suppress oscillations along steep directions while simultaneously accelerating progress across flatter regions of the cost surface. The result is a convergence process that is both faster and more stable than standard gradient descent.\\
 This leads to more advanced optimization methods which use an adaptive learning rate for each parameter that depends on the history of gradients.\\
-First of all, Adagrad:
+
+
+\subsection{Adagrad}
+Adagrad adapts the learning rate for each parameter based on the historical squared gradients, giving smaller updates to frequently updated parameters and larger updates to infrequent ones. This is particularly useful for sparse data.  
+\[
+\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{G_t} + \epsilon} \, \nabla l_{i_t}(\theta_t),
+\]
+
+where \(G_t\) is the sum of squared gradients up to time \(t\) and \(\epsilon\) prevents division by zero.  \\
+
+The accumulation of squared gradients can lead to excessively small learning rates over time, slowing down convergence.
+
+\subsubsection{Implementation}
+(AAA)
+
+\subsection{RMSprop}
+RMSprop tackles Adagrad's excessive shrinkage of the learning rate by using an exponentially decaying average of past squared gradients instead of a simple sum. This prevents the learning rate from shrinking too much and slowing down.  
+If the running average is
+\[
+v_t = \rho v_{t-1} + (1 - \rho)\left( \nabla C(\theta_t) \right)^2,
+\]
+with decay rate \(\rho\) 0.9 or 0.99,
+
+the new parameter update is
+\[\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{v_t + \epsilon}} \nabla C(\theta_t).
+\]
+(AAA cite lecture notes)
+On the other hand, RMSprop requires tuning of the decay rate \(\rho\) and the base learning rate \(\eta\).
+
+\subsubsection{Implementation}
+(AAA)
+
+\subsection{Adam}
+Adam (Adaptive Moment Estimation) combines momentum and RMSprop, maintaining both an exponentially decaying average of past gradients (first moment) and squared gradients (second moment), with bias correction. It adapts the learning rate per parameter, providing stability, while incorporating momentum, accelerating the convergence.
+So, combining the moving averages of momentum
+\[
+m_t = \beta_1 m_{t-1} + (1-\beta_1) \nabla_\theta C(\theta_t)
+\]  
+and of the squared gradients
+\[
+v_t = \beta_2 v_{t-1} + (1-\beta_2) (\nabla_\theta C(\theta_t))^2,
+\]  
+and correcting bias
+\[
+\hat{m}_t = \frac{m_t}{1-\beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1-\beta_2^t},
+\]  
+the update rule in Adam becomes
+\[
+\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\hat{v}_t}+\epsilon} \hat{m}_t,
+\]  
+where \(\epsilon\) prevents division by zero.
+
+Adam can sometimes converge to slightly worse minima than SGD in certain tasks, and hyperparameter tuning is still required.
+\subsubsection{Implementation}
+(AAA)
+
+\subsection{Gradient descents comparison}
+Stochastic Gradient Descent (SGD) is appreciated for its simplicity and memory efficiency, particularly when tackling large datasets. However, it sometimes oscillates and may converge slowly. 
+
+Momentum builds upon SGD by accelerating convergence in directions of consistent descent, although it can occasionally bypass the lowest point in regions where the cost function curves steeply. 
+
+Adagrad's strength lies in its adaptability to sparse data, but it tends to reduce the learning rate over time, which can stall progress. 
+
+RMSprop was introduced to counter Adagrad's diminishing learning rate, making it effective for online and non-stationary tasks where data characteristics frequently change. 
+
+Adam is more often the preferred method because it merges the advantages of momentum and adaptive learning rates, generally performing robustly in most deep learning scenarios, though it may require careful parameter tuning to reach optimal performance.
+
+(AAA in our case)
+
+\subsection{Bias-variance trade-off and resampling techniques}
+Start with the mean squared error: 
+$$C(\boldsymbol{X},\boldsymbol{\beta}) =\frac{1}{n}\sum_{i=0}^{n-1}(y_i-\tilde{y}_i)^2=\mathbb{E}\left[(\boldsymbol{y}-\boldsymbol{\tilde{y}})^2\right] $$
+
+where $y = f(x) + \varepsilon$, with $\mathbb{E}[\varepsilon] = 0$ and $\mathrm{Var}(\varepsilon) = \sigma^2$.  
+
+Expanding the square:
+
+$$
+\mathbb{E}[(y - \tilde y)^2\big] = \mathbb{E}[(y)^2]-2\mathbb{E}[y \tilde y]+\mathbb{E}[(\tilde y)^2] 
+$$
+Based on the definition of variance:
+$$\mathbb{E}[(\tilde y)^2] = \mathrm{Var}[\tilde y] + (\mathbb{E}[\tilde y])^2$$
+
+We have also:
+$$\mathbb{E}[(y)^2] = \mathbb{E}[(f+\boldsymbol{\varepsilon})^2]=\mathbb{E}[(f)^2] + 2\mathbb{E}[f\boldsymbol{\varepsilon}] + \mathbb{E}[\boldsymbol{\varepsilon^2}]
+$$
+
+where $ \mathbb{E}[\boldsymbol{\varepsilon^2}]=\sigma^2$
+Expanding the expectation value of f: 
+$$\mathbb{E}[f(x)]= \int f(x) \, P_y(y) \, dy 
+= f(x) \int P_y(y) \, dy 
+= f(x)
+$$
+That because the probability is normalized to one.
+This is called unbias expectation value because the expected value of the function is equal to the function itself.
+Then we have:
+
+$$\mathbb{E}[f\boldsymbol{\varepsilon}]= f \int \boldsymbol{\varepsilon} \, P_{\boldsymbol{\varepsilon}}(\boldsymbol{\varepsilon}) \, \boldsymbol{\varepsilon}
+= f \mathbb{E}[\boldsymbol{\varepsilon}]=0 $$ 
+
+That because $\mathbb{E}[\boldsymbol{\varepsilon}] = 0$
+So that means that:
+$$\mathbb{E}[(y)^2] = f^2 + \sigma^2$$
+Now we compute $\mathbb{E}[y \tilde y]$:
+$$
+\mathbb{E}[y \tilde y]=\mathbb{E}[(f+\boldsymbol{\varepsilon}) \tilde y]  
+= \mathbb{E}[f \tilde y]+\mathbb{E}[\boldsymbol{\varepsilon} \tilde y]$$
+
+If we now assume that there is a probability distribution behind the model that does not act in the space of f(x), we can pull f outiside as a constant:
+
+$$\mathbb{E}[f \tilde y]= f \mathbb{E}[\tilde y]$$
+
+Then for the second term we assume that $\boldsymbol{\varepsilon}$ and $\tilde y$ are independent variables, so we can use the product rule and this term becomes: 
+
+$$ \mathbb{E}[\boldsymbol{\varepsilon} \tilde y] =\mathbb{E}[\boldsymbol{\varepsilon}]\mathbb{E}[\tilde y] = 0 $$
+In the end we obtain: 
+$$
+\mathbb{E}[(y - \tilde y)^2\big] = f^2 -2f\mathbb{E}[\tilde y]+(\mathbb{E}[(\tilde y)^2])^2 +\sigma^2+\mathrm{Var}[\tilde y]$$
+
+but $$f^2 -2f\mathbb{E}[\tilde y]+(\mathbb{E}[(\tilde y)^2])^2 = \mathbb{E}[(f+\mathbb{E}[\tilde y])^2] = \mathrm{Bias}[\tilde y] $$
+
+This implies: $$\mathbb{E}[(y - \tilde y)^2\big] =\mathrm{Var}[\tilde y]+\sigma^2+\mathrm{Bias}[\tilde y]$$
+
+ 1. Bias:
+ 
+  $\mathrm{Bias}[\tilde y]= \mathbb{E}[(f-\mathbb{E}[\tilde y])^2]$
+
+It's the squared difference between the true function f(x) and the average prediction $\mathbb{E}[\tilde y]$ of the model over different training sets.  
+
+  - Measures systematic error introduced by the model.  
+  - High bias → model is too simple and cannot capture the true relationship (underfitting).  
+  - Low bias → model is flexible enough to capture the underlying pattern.
+
+ 2. Variance:
+ 
+ $\mathrm{Var}[\tilde y]$
+
+
 
 \section{Results}
 Insert figures, tables, and discussions.
