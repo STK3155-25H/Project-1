@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from src import (
     runge_function, split_scale, polynomial_features_scaled,
-    OLS_parameters, Ridge_parameters, Gradient_descent_advanced, MSE
+    OLS_parameters, Ridge_parameters, Gradient_descent_advanced, MSE, save_vector_with_degree
 )
 
 # -----------------------------
@@ -98,8 +98,13 @@ plt.savefig(FIG / "part_d_optimizers.png", dpi=150)
 
 # Save tables per method (OLS & Ridge) at lr=learning_rates[1]
 for method in methods:
-    np.savetxt(TAB / f"part_d_ols_mse_{method}_lr={learning_rates[1]}.csv",   mse_gd_ols[method][:,0],   delimiter=",")
-    np.savetxt(TAB / f"part_d_ridge_mse_{method}_lr={learning_rates[1]}.csv", mse_gd_ridge[method][:,0], delimiter=",")
-np.savetxt(TAB / "part_d_analytical_ols.csv",   mse_analytical_ols[:,0],   delimiter=",")
-np.savetxt(TAB / "part_d_analytical_ridge.csv", mse_analytical_ridge[:,0], delimiter=",")
+    save_vector_with_degree(TAB / f"part_d_ols_mse_{method}_lr={learning_rates[1]}.csv",
+                            mse_gd_ols[method][:,0], f"MSE_GD_OLS_{method}")
+    save_vector_with_degree(TAB / f"part_d_ridge_mse_{method}_lr={learning_rates[1]}.csv",
+                            mse_gd_ridge[method][:,0], f"MSE_GD_Ridge_{method}")
+
+save_vector_with_degree(TAB / "part_d_analytical_ols.csv",
+                        mse_analytical_ols[:,0], "MSE_analytical_OLS")
+save_vector_with_degree(TAB / "part_d_analytical_ridge.csv",
+                        mse_analytical_ridge[:,0], "MSE_analytical_Ridge")
 print("Part D done.")

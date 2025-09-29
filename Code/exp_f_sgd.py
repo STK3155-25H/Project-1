@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from src import (
     runge_function, split_scale, polynomial_features_scaled,
-    Gradient_descent_advanced, MSE
+    Gradient_descent_advanced, MSE, save_vector_with_degree
 )
 
 # -----------------------------
@@ -124,10 +124,9 @@ plt.savefig(FIG / "part_f_ols_ridge_lasso_sgd.png", dpi=150)
 for model in ["OLS", "Ridge", "LASSO"]:
     for method in methods:
         for lr in learning_rates:
-            np.savetxt(
+            save_vector_with_degree(
                 TAB / f"part_f_{model.lower()}_mse_{method}_lr={lr}_sgd.csv",
                 mse_sgd_results[model][method][lr][:, 0],
-                delimiter=","
+                f"MSE_{model}_{method}_lr={lr}_sgd"
             )
-
 print("Part F done.")

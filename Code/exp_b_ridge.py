@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from src import (
     runge_function, split_scale, polynomial_features_scaled,
-    Ridge_parameters, MSE, R2_score
+    Ridge_parameters, MSE, R2_score, save_matrix_with_degree_cols
 )
 
 # -----------------------------
@@ -97,7 +97,9 @@ for k, lam in enumerate(lam_list):
     plt.savefig(FIG / f"part_b_thetas_lambda={lam}.png", dpi=150)
 
     # Save tables per lambda (test metrics)
-    np.savetxt(TAB / f"part_b_mse_test_lambda={lam}.csv", mse_test_list[:, :, k], delimiter=",")
-    np.savetxt(TAB / f"part_b_r2_test_lambda={lam}.csv",  R2_test_list[:,  :, k], delimiter=",")
-
+col_names = [f"n={n}" for n in n_points]
+save_matrix_with_degree_cols(TAB / f"part_b_mse_test_lambda={lam}.csv",
+                             mse_test_list[:, :, k], col_names)
+save_matrix_with_degree_cols(TAB / f"part_b_r2_test_lambda={lam}.csv",
+                             R2_test_list[:,  :, k], col_names)
 print("Part B done.")

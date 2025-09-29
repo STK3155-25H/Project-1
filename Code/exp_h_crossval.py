@@ -7,7 +7,7 @@ from pathlib import Path
 from sklearn.model_selection import KFold
 from src import (
     runge_function, split_scale, polynomial_features_scaled,
-    OLS_parameters, Ridge_parameters, Gradient_descent_advanced, MSE, seed
+    OLS_parameters, Ridge_parameters, Gradient_descent_advanced, MSE, seed, save_vector_with_degree
 )
 
 # -----------------------------
@@ -97,9 +97,11 @@ np.savetxt(TAB / "part_h_cv_mse_ridge.csv", mse_cv_Ridge, delimiter=",")
 np.savetxt(TAB / "part_h_cv_mse_lasso.csv", mse_cv_Lasso, delimiter=",")
 
 # Combined (with a header row written manually)
-with open(TAB / "part_h_cv_mse.csv", "w") as f:
-    f.write("degree,OLS,Ridge(lam=0.01),LASSO(lam=0.01)\n")
-    for d in range(1, max_degree+1):
-        f.write(f"{d},{mse_cv_OLS[d-1]},{mse_cv_Ridge[d-1]},{mse_cv_Lasso[d-1]}\n")
+save_vector_with_degree(TAB / "part_h_cv_mse_ols.csv",
+                        mse_cv_OLS,   "CV_MSE_OLS")
+save_vector_with_degree(TAB / "part_h_cv_mse_ridge.csv",
+                        mse_cv_Ridge, "CV_MSE_Ridge(lam=0.01)")
+save_vector_with_degree(TAB / "part_h_cv_mse_lasso.csv",
+                        mse_cv_Lasso, "CV_MSE_LASSO(lam=0.01)")
 
 print("Part H done.")

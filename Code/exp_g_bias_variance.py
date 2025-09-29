@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from sklearn.utils import resample
 from src import (
     runge_function, split_scale, polynomial_features_scaled,
-    OLS_parameters, MSE_Bias_Variance
+    OLS_parameters, MSE_Bias_Variance, save_vector_with_degree
 )
 
 # -----------------------------
@@ -84,7 +84,10 @@ for j, n_points in enumerate(n_points_list):
 
 # Save per-n tables
 for idx, n in enumerate(n_points_list):
-    np.savetxt(TAB / f"part_g_mse_n={n}.csv",     mse_list[:, idx],     delimiter=",")
-    np.savetxt(TAB / f"part_g_bias2_n={n}.csv",   bias2_list[:, idx],   delimiter=",")
-    np.savetxt(TAB / f"part_g_variance_n={n}.csv",variance_list[:, idx],delimiter=",")
+    save_vector_with_degree(TAB / f"part_g_mse_n={n}.csv",
+                            mse_list[:, idx],      f"MSE_n={n}")
+    save_vector_with_degree(TAB / f"part_g_bias2_n={n}.csv",
+                            bias2_list[:, idx],    f"Bias2_n={n}")
+    save_vector_with_degree(TAB / f"part_g_variance_n={n}.csv",
+                            variance_list[:, idx], f"Variance_n={n}")
 print("Part G done.")

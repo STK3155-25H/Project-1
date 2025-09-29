@@ -511,3 +511,27 @@ def MSE_Bias_Variance(targets, predictions):
     variance = np.mean((predictions - np.mean(predictions, axis=0))**2)
 
     return mse, bias2, variance
+
+def save_vector_with_degree(path, vec, value_name="value", degree_name="degree"):
+    """
+    Salva un vettore 1D come due colonne: degree, value.
+    """
+    vec = np.asarray(vec).reshape(-1)
+    deg = np.arange(1, vec.shape[0] + 1)
+    arr = np.column_stack([deg, vec])
+    header = f"{degree_name},{value_name}"
+    np.savetxt(path, arr, delimiter=",", header=header, comments='')
+
+def save_matrix_with_degree_cols(path, data, col_names, degree_name="degree"):
+    """
+    Salva una matrice 2D (rows=degree, cols=col_names) con colonna degree davanti.
+    """
+    data = np.asarray(data)
+    if data.ndim != 2:
+        raise ValueError("data must be 2D (rows=degree, cols=series)")
+    if data.shape[1] != len(col_names):
+        raise ValueError("len(col_names) must match data.shape[1]")
+    deg = np.arange(1, data.shape[0] + 1)
+    arr = np.column_stack([deg, data])
+    header = ",".join([degree_name] + list(col_names))
+    np.savetxt(path, arr, delimiter=",", header=header, comments='')

@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from src import (
     runge_function, split_scale, polynomial_features_scaled,
-    OLS_parameters, MSE, R2_score
+    OLS_parameters, MSE, R2_score, save_matrix_with_degree_cols
 )
 
 # -----------------------------
@@ -97,6 +97,8 @@ plt.tight_layout()
 plt.savefig(FIG / "part_a_thetas.png", dpi=150)
 
 # Save tables
-np.savetxt(TAB / "part_a_mse_test.csv", mse_test_list, delimiter=",")
-np.savetxt(TAB / "part_a_r2_test.csv",  R2_test_list,  delimiter=",")
+col_names = [f"n={n}" for n in n_points]
+save_matrix_with_degree_cols(TAB / "part_a_mse_test.csv", mse_test_list, col_names)
+save_matrix_with_degree_cols(TAB / "part_a_r2_test.csv",  R2_test_list,  col_names)
+
 print("Part A done.")

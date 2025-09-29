@@ -14,5 +14,7 @@ from .ml_core import (
     Ridge_parameters,
     Gradient_descent_advanced,
     MSE_Bias_Variance,
+    save_vector_with_degree,
+    save_matrix_with_degree_cols,
     seed
 )
