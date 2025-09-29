@@ -82,7 +82,8 @@ $$
 OLS provides a simple solution, suitable when the features are few and not highly correlated.
 
 \subsubsection{Implementation}
-The inputs of the function are a feature matrix $X$ and a vector of targets $y$. The output is the vector of the parameters $\boldsymbol{\theta}$:
+The inputs of the OLS function are a feature matrix $\mathbf{X} \in \mathbb{R}^{n \times p}$ and a vector of targets $\mathbf{y} \in \mathbb{R}^n$. The output is the vector of the parameters $\boldsymbol{\theta} \in \mathbb{R}^{p}$, whose fomula is given above.\\
+The function is implemented in Python, using the NumPy library for efficient numerical computations. The function \texttt{np.linalg.pinv} is used to compute the pseudoinverse of the matrix $\mathbf{X}^\top \mathbf{X}$, which is particularly useful when $\mathbf{X}^\top \mathbf{X}$ is not invertible. This ensures numerical stability.
 
 \subsection{Ridge regression}
 A regularization parameter $\lambda$ can be introduced by defining a new cost function to be optimized, that is:
@@ -97,7 +98,8 @@ $$ \boldsymbol{\hat\theta_{Ridge}}=(\mathbf{X}^\top \mathbf{X} + \boldsymbol{\la
 with $\mathbf{I}$ being a $p\times p$ identity matrix.
 
 \subsubsection{Implementation}
-
+The inputs of the Ridge function are a feature matrix $\mathbf{X} \in \mathbb{R}^{n \times p}$, a vector of targets $\mathbf{y} \in \mathbb{R}^n$, the regularization parameter $\lambda$ and the intercept. The output is the vector of the parameters $\boldsymbol{\theta} \in \mathbb{R}^{p}$, whose fomula is given above.\\
+The function uses the same function \texttt{np.linalg.pinv} to compute the pseudoinverse of the matrix $\mathbf{X}^\top \mathbf{X} + \boldsymbol{\lambda}\mathbf{I}$, ensuring numerical stability.
 
 \subsection{Lasso regression}
 Here the regularization term is based on the $L_1$ norm of the parameters. The cost function is defined as
@@ -109,13 +111,13 @@ $$
 where $\|\boldsymbol{\theta}\|_1 = \sum_{j}|\theta_j|$.  
 This formulation leads to the Lasso minimization problem where it is required that $\|\boldsymbol{\theta}\|_1 \leq t$, with $t$ being a finite positive number. 
 
-Unlike Ridge regression, taking the derivatives with respect to $\boldsymbol{\theta}$ does not lead to an analytical solution. The equation can however be solved by using standard convex optimization algorithms.\\ 
+Unlike Ridge regression, taking the derivatives with respect to $\boldsymbol{\theta}$ does not lead to an analytical solution. 
+The optimization problem can however be solved by using iterative gradient descent methods.\\ \\
 The key feature of Lasso lies in its ability to shrink some estimated coefficients $\hat{\theta}_j$ exactly to zero. 
 When this happens, the corresponding predictor is completely removed from the model.  
 In contrast, Ridge regression never eliminates variables: it only shrinks the coefficients $\hat{\theta}_j$ towards zero but keeps all predictors in the model.
 Typically, Lasso Regression is preferred when the goal is to simplify the model and improve interpretability, especially when there are a lot of features. On the other hand, Ridge regression is better for handling multicollinearity among features. 
 
-\subsubsection{Implementation}
 
 \subsection{Gradient descent and its variants}
 
