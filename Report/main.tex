@@ -322,13 +322,12 @@ $$
 \mathbb{E}\left[(\boldsymbol{y}-\boldsymbol{\tilde{y}})^2\right]=\mathbb{E}\left[(\boldsymbol{y}-\mathbb{E}\left[\boldsymbol{\tilde{y}}\right])^2\right]+\mathrm{Var}\left[\boldsymbol{\tilde{y}}\right]+\sigma^2,
 $$
 
-that is the rewriting in terms of the bias, the variance of the model $\boldsymbol{\tilde{y}}$ and the variance of $\boldsymbol{\epsilon}$.
-
+that is the rewriting in terms of the bias, the variance of the model $\boldsymbol{\tilde{y}}$ and the variance of $\boldsymbol{\epsilon}$. \cite{misc} *I'm not able to cite because the .bib is deleting what I'm writing* \\\\ 
 This decomposition underlies the bias-variance trade-off: reducing bias typically increases variance and vice versa. The goal is to find a balance, achieving a model that is complex enough to capture the underlying patterns but simple enough to generalize well to new data.
 
 \section{Results and Discussion}
 The performance of the regression models are evaluated using both the MSE and the score $R^2$. The definitions of these are the following:
-$$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^{n} \left( y_i - \tilde{y}_i \right)^2$$\\
+$$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^{n} \left( y_i - \tilde{y}_i \right)^2$$
 $$R^2 = 1 - \frac{\sum_{i=1}^{n} \left( y_i - \tilde{y}_i \right)^2}{\sum_{i=1}^{n} \left( y_i - \bar{y} \right)^2}$$
 where $n$ is the number of data points, $y_i$ are the true values, $\tilde{y}_i$ are the predicted values, and $\bar{y}$ denotes the mean of the true values.
 
@@ -339,14 +338,24 @@ As one can see, generally the mse goes down as the polynomial degree increases. 
 This happens because of overfitting. When the polynomial degree increases the model tries to fit the data too perfectly and will fit the underlying random noise as well and the model will then perform poorly of unseen data. For a high number of data points this is barely noticeable but for a lower amount of data points the effect will become more pronounced.\\\\
 $R^2$ ?\\\\
 When plotting the parameters $\theta$ as a function of polynomial degree, it can be observed that for low-degree polynomials the coefficients remain relatively stable, whereas for higher-degree polynomials they increase rapidly in magnitude and exhibit pronounced oscillations.
+This behavior reflects overfitting: at high degrees, the model captures both the true signal and the noise, causing the coefficients to become unstable. Using more data points reduces this effect and stabilizes the parameter estimates
     
 \input{Graphs/OLS_MSE.tex}
 
 
 \subsection{Ridge results}
-\textbf{We will have 2 figures here, one for ridge with different lambda values and one for the comparison to the ols graph. We can at first talk about how the diffferent lamba values and what happens and stuf, then we will choose a certain lambda value and compare it to the ols resulsts. We can also put the theta values graph in and show that the ridge method lowers the extreme high theta values for high degrees.}
-\input{Graphs/RIDGE_MSE_data.tex}
+\textbf{We will have 2 figures here, one for ridge with different lambda values and one for the comparison to the ols graph. We can at first talk about how the diffferent lamba values and what happens and stuf, then we will choose a certain lambda value and compare it to the ols resulsts. We can also put the theta values graph in and show that the ridge method lowers the extreme high theta values for high degrees.}\\\\
+Now, Ridge regression is applied to the same dataset, exploring the impact of different regularization parameters $\lambda$. First, the effect of the regularization parameter $\lambda $ on the MSE as a function of polynomial degree was analyzed for a fixed number of data points n=?: the results are shown in Figure \ref{fig:RIDGE_MSE_lambda}.
+Small values of $\lambda$ (e.g., 0.001, 0.01) behave similarly to OLS, with the MSE decreasing as polynomial degree increases. However, as $\lambda$ increases (e.g., 1, 10, 100), the MSE curve flattens and even increases for high polynomial degrees, indicating that strong regularization prevents overfitting but may lead to underfitting if too large.
+Among the tested values, $\lambda$ =0.01 produces the lowest MSE for most polynomial degrees, suggesting an optimal trade-off between bias and variance.
+
 \input{Graphs/RIDGE_MSE_Lambda.tex}
+
+Next, $\lambda = 0.01$ is selected to plot the MSE as a function of polynomial degree for different numbers of data points, allowing a direct comparison with the standard OLS regression, as shown in Figure \ref{fig:RIDGE_MSE_data}. 
+The comparison reveals that while both methods achieve low MSE at moderate polynomial degrees, OLS exhibits a sharp increase in MSE at high degrees due to overfitting. In contrast, Ridge regression maintains a lower and more stable MSE across all degrees, demonstrating its effectiveness in controlling model complexity through regularization. This highlights Ridge's advantage in scenarios where overfitting is a concern, particularly with high-degree polynomials.
+As one can see, the mse decreases as the polynomial degree increases, similar to OLS.
+\input{Graphs/RIDGE_MSE_data.tex}
+
 
 \subsection{gradient descent methods}
 \textbf{Have figures for the different learning rates to update for ols and ridge. Have figures for the advanced methods for a fixed learning rate for the gradient descent methods.}
@@ -359,13 +368,15 @@ When plotting the parameters $\theta$ as a function of polynomial degree, it can
 
 \input{Graphs/OLS_MSE.tex}
 
-\input{Graphs/RIDGE_MSE_Lambda.tex}
+
 
 
 \section{Discussion and Conclusion}
 Summarize findings, bias-variance trade-off, comparisons.
 
 \bibliographystyle{apsrev4-2}
-\bibliography{references} % Your .bib file
+\bibliography{mainNotes} % Your .bib file
+
+
 
 \end{document}
