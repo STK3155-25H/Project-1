@@ -6,9 +6,13 @@
     height=6cm,
     xlabel={Polynomial degree},
     ylabel={MSE (Test)},
-    title={Test MSE vs Polynomial degree},
+    title={RIDGE MSE vs Polynomial degree},
     legend pos=north east,
-    grid=both
+    grid=both,
+    y tick label style={
+        /pgf/number format/fixed,
+        /pgf/number format/precision=2
+    }
     ]
     \addplot [red, mark=none] table [x=degree, y={lambda=0}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
     \addlegendentry{$\lambda=0$}
@@ -32,4 +36,6 @@
     \addlegendentry{$\lambda=100$}
 \end{axis}
 \end{tikzpicture}
+\caption{\textbf{caption here}}
+\label{fig:RIDGE_MSE_lambda}
 \end{figure}

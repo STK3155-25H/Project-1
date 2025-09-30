@@ -15,7 +15,7 @@ from src import (
 n_points = [100]   # fix one dataset size (simpler comparison)
 max_degree = 15
 noise = True
-lam = 0.1          # Ridge regularization parameter
+lam = 0.01          # Ridge regularization parameter
 learning_rates = [0.0001, 0.001, 0.01]  # try several η values
 n_iter = 2000
 
