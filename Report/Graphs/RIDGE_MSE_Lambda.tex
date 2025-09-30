@@ -14,25 +14,25 @@
         /pgf/number format/precision=2
     }
     ]
-    \addplot [red, mark=none] table [x=degree, y={lambda=0}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
+    \addplot [blue, mark=none] table [x=degree, y={lambda=0}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
     \addlegendentry{$\lambda=0$}
 
-    \addplot [blue, mark=none] table [x=degree, y={lambda=0.001}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
+    \addplot [orange, mark=none] table [x=degree, y={lambda=0.001}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
     \addlegendentry{$\lambda=0.001$}
 
     \addplot [green!70!black, mark=none] table [x=degree, y={lambda=0.01}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
     \addlegendentry{$\lambda=0.01$}
 
-    \addplot [orange, mark=none] table [x=degree, y={lambda=0.1}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
+    \addplot [red, mark=none] table [x=degree, y={lambda=0.1}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
     \addlegendentry{$\lambda=0.1$}
 
     \addplot [purple, mark=none] table [x=degree, y={lambda=1}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
     \addlegendentry{$\lambda=1$}
 
-    \addplot [pink, mark=none] table [x=degree, y={lambda=10}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
+    \addplot [brown, mark=none] table [x=degree, y={lambda=10}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
     \addlegendentry{$\lambda=10$}
 
-    \addplot [yellow, mark=none] table [x=degree, y={lambda=100}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
+    \addplot [magenta, mark=none] table [x=degree, y={lambda=100}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
     \addlegendentry{$\lambda=100$}
 \end{axis}
 \end{tikzpicture}

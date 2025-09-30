@@ -14,16 +14,16 @@
         /pgf/number format/precision=2
     }
     ]
-    \addplot [red, mark=none] table [x=degree, y={n=40}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};
+    \addplot [blue, mark=none] table [x=degree, y={n=40}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};
     \addlegendentry{$n=40$}
 
-    \addplot [blue, mark=none] table [x=degree, y={n=50}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};
+    \addplot [orange, mark=none] table [x=degree, y={n=50}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};
     \addlegendentry{$n=50$}
 
     \addplot [green!70!black, mark=none] table [x=degree, y={n=100}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};
     \addlegendentry{$n=100$}
 
-    \addplot [orange, mark=none] table [x=degree, y={n=500}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};
+    \addplot [red, mark=none] table [x=degree, y={n=500}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};
     \addlegendentry{$n=500$}
 
     \addplot [purple, mark=none] table [x=degree, y={n=1000}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};

@@ -10,16 +10,16 @@
     legend pos=north east,
     grid=both
     ]
-    \addplot [red, mark=none] table [x=degree, y={n=40}, col sep=comma] {../outputs/tables/part_a_mse_test.csv};
+    \addplot [blue, mark=none] table [x=degree, y={n=40}, col sep=comma] {../outputs/tables/part_a_mse_test.csv};
     \addlegendentry{$n=40$}
 
-    \addplot [blue, mark=none] table [x=degree, y={n=50}, col sep=comma] {../outputs/tables/part_a_mse_test.csv};
+    \addplot [orange, mark=none] table [x=degree, y={n=50}, col sep=comma] {../outputs/tables/part_a_mse_test.csv};
     \addlegendentry{$n=50$}
 
     \addplot [green!70!black, mark=none] table [x=degree, y={n=100}, col sep=comma] {../outputs/tables/part_a_mse_test.csv};
     \addlegendentry{$n=100$}
 
-    \addplot [orange, mark=none] table [x=degree, y={n=500}, col sep=comma] {../outputs/tables/part_a_mse_test.csv};
+    \addplot [red, mark=none] table [x=degree, y={n=500}, col sep=comma] {../outputs/tables/part_a_mse_test.csv};
     \addlegendentry{$n=500$}
 
     \addplot [purple, mark=none] table [x=degree, y={n=1000}, col sep=comma] {../outputs/tables/part_a_mse_test.csv};

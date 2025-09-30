@@ -17,13 +17,13 @@
     \addplot [black, mark=none, dotted] table [x=degree, col sep=comma] {../outputs/tables/part_c_mse_analytical_ols.csv};
     \addlegendentry{$analytical$}
 
-    \addplot [green!70!black, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_c_mse_gd_ols_lr=0.01.csv};
+    \addplot [blue, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_c_mse_gd_ols_lr=0.01.csv};
     \addlegendentry{$lr=0.01$}
 
     \addplot [orange, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_c_mse_gd_ols_lr=0.001.csv};
     \addlegendentry{$lr=0.001$}
 
-    \addplot [purple, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_c_mse_gd_ols_lr=0.0001.csv};
+    \addplot [green!70!black, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_c_mse_gd_ols_lr=0.0001.csv};
     \addlegendentry{$lr=0.0001$}
 \end{axis}
 \end{tikzpicture}

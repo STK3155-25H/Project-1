@@ -15,9 +15,9 @@ from src import (
 n_points = [100]        # fixed dataset size
 max_degree = 15
 noise = True
-lam_ridge = 0.1         # Ridge regularization
+lam_ridge = 0.01         # Ridge regularization
 lam_lasso = 0.01        # LASSO regularization
-learning_rates = [0.001, 0.01]  # learning rates
+learning_rates = [0.01]  # learning rates
 n_iter = 5000           # iterations
 batch_size = 10         # mini-batch size
 methods = ['vanilla', 'momentum', 'adagrad', 'rmsprop', 'adam']

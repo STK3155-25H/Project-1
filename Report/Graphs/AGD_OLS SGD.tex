@@ -1,0 +1,35 @@
+% File: ols_mse.tex
+\begin{figure}[H]
+\begin{tikzpicture}
+\begin{axis}[
+    width=8cm,
+    height=6cm,
+    xlabel={Polynomial degree},
+    ylabel={MSE (Test)},
+    title={OLS MSE vs Polynomial degree(lr=0.01)},
+    legend pos=north east,
+    grid=both,
+    y tick label style={
+        /pgf/number format/fixed,
+        /pgf/number format/precision=2
+    }
+    ]
+    \addplot [blue, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_ols_mse_vanilla_lr=0.01_sgd.csv};
+    \addlegendentry{$vanilla$}
+
+    \addplot [orange, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_ols_mse_momentum_lr=0.01_sgd.csv};
+    \addlegendentry{$momentum$}
+
+    \addplot [green!70!black, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_ols_mse_adagrad_lr=0.01_sgd.csv};
+    \addlegendentry{$adagrad$}
+
+    \addplot [red, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_ols_mse_rmsprop_lr=0.01_sgd.csv};
+    \addlegendentry{$rmsprop$}
+
+    \addplot [purple, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_ols_mse_adam_lr=0.01_sgd.csv};
+    \addlegendentry{$adam$}
+\end{axis}
+\end{tikzpicture}
+\caption{\textbf{caption here}}
+\label{fig:AGD_OLS_SGD}
+\end{figure}
