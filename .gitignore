@@ -538,3 +538,6 @@ TSWLatexianTemp*
 *.bib
 dirs.txt
 codebase.txt
+# Export codebase artifacts
+codeexport.config.psd1
+exported_cb/
