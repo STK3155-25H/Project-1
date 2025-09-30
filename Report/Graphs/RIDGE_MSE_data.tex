@@ -6,24 +6,30 @@
     height=6cm,
     xlabel={Polynomial degree},
     ylabel={MSE (Test)},
-    title={Test MSE vs Polynomial degree},
+    title={RIDGE MSE vs Polynomial degree},
     legend pos=north east,
-    grid=both
+    grid=both,
+    y tick label style={
+        /pgf/number format/fixed,
+        /pgf/number format/precision=2
+    }
     ]
-    \addplot [red, mark=none] table [x=degree, y={n=40}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
-    \addlegendentry{$\lambda=0$}
+    \addplot [red, mark=none] table [x=degree, y={n=40}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};
+    \addlegendentry{$n=40$}
 
-    \addplot [blue, mark=none] table [x=degree, y={lambda=0.001}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
-    \addlegendentry{$\lambda=0.001$}
+    \addplot [blue, mark=none] table [x=degree, y={n=50}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};
+    \addlegendentry{$n=50$}
 
-    \addplot [green!70!black, mark=none] table [x=degree, y={lambda=0.01}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
-    \addlegendentry{$\lambda=0.01$}
+    \addplot [green!70!black, mark=none] table [x=degree, y={n=100}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};
+    \addlegendentry{$n=100$}
 
-    \addplot [orange, mark=none] table [x=degree, y={lambda=0.1}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
-    \addlegendentry{$\lambda=0.1$}
+    \addplot [orange, mark=none] table [x=degree, y={n=500}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};
+    \addlegendentry{$n=500$}
 
-    \addplot [purple, mark=none] table [x=degree, y={lambda=1}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
-    \addlegendentry{$\lambda=1$}
+    \addplot [purple, mark=none] table [x=degree, y={n=1000}, col sep=comma] {../outputs/tables/part_b_mse_test_lambda=0.01.csv};
+    \addlegendentry{$n=1000$}
 \end{axis}
 \end{tikzpicture}
+\caption{\textbf{caption here}}
+\label{fig:RIDGE_MSE_data}
 \end{figure}
