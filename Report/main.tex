@@ -342,10 +342,9 @@ This behavior reflects overfitting: at high degrees, the model captures both the
     
 \input{Graphs/OLS_MSE.tex}
 
-
 \subsection{Ridge results}
-\textbf{We will have 2 figures here, one for ridge with different lambda values and one for the comparison to the ols graph. We can at first talk about how the diffferent lamba values and what happens and stuf, then we will choose a certain lambda value and compare it to the ols resulsts. We can also put the theta values graph in and show that the ridge method lowers the extreme high theta values for high degrees.}\\\\
-Now, Ridge regression is applied to the same dataset, exploring the impact of different regularization parameters $\lambda$. First, the effect of the regularization parameter $\lambda $ on the MSE as a function of polynomial degree was analyzed for a fixed number of data points n=?: the results are shown in Figure \ref{fig:RIDGE_MSE_lambda}.
+\textbf{We can also put the theta values graph in and show that the ridge method lowers the extreme high theta values for high degrees.}\\\\
+Now, Ridge regression is applied to the same dataset, exploring the impact of different regularization parameters $\lambda$. First, the effect of the regularization parameter $\lambda $ on the MSE as a function of polynomial degree was analyzed for a fixed number of data points n=100: the results are shown in Figure \ref{fig:RIDGE_MSE_Lambda}.
 Small values of $\lambda$ (e.g., 0.001, 0.01) behave similarly to OLS, with the MSE decreasing as polynomial degree increases. However, as $\lambda$ increases (e.g., 1, 10, 100), the MSE curve flattens and even increases for high polynomial degrees, indicating that strong regularization prevents overfitting but may lead to underfitting if too large.
 Among the tested values, $\lambda$ =0.01 produces the lowest MSE for most polynomial degrees, suggesting an optimal trade-off between bias and variance.
 
@@ -356,6 +355,9 @@ The comparison reveals that while both methods achieve low MSE at moderate polyn
 As one can see, the mse decreases as the polynomial degree increases, similar to OLS.
 \input{Graphs/RIDGE_MSE_data.tex}
 
+The parameters $\theta$ as a function of polynomial degree for Ridge regression are plotted. Compared to OLS, the coefficients remain more stable even at high polynomial degrees. 
+This stability indicates that Ridge's $L_2$ regularization effectively constrains the magnitude of the coefficients, preventing them from becoming excessively large and reducing overfitting.
+The result is a more robust model that generalizes better to unseen data.
 
 \subsection{gradient descent methods}
 \textbf{Have figures for the different learning rates to update for ols and ridge. Have figures for the advanced methods for a fixed learning rate for the gradient descent methods.}
