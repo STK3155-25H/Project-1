@@ -7,6 +7,10 @@ OUT=outputs
 FIGS=$(OUT)/figures
 TABLES=$(OUT)/tables
 LOGS=$(OUT)/logs
+TESTS=$(OUT)/tests
+PYTEST?=pytest
+PYTEST_FLAGS?=-q
+SEED?=123
 
 # Common knobs (override like: make a MAX_DEGREE=12)
 MAX_DEGREE?=15
@@ -31,12 +35,13 @@ help:
 	@echo "  figures      List saved figures"
 	@echo "  tables       List saved tables"
 	@echo "  clean        Remove generated outputs"
+	@echo "  tests        Run unit tests (pytest) su Code/tests"
 
 setup:
 	$(PY) -m pip install -r requirements.txt
 
 dirs:
-	mkdir -p $(FIGS) $(TABLES) $(LOGS)
+	mkdir -p $(FIGS) $(TABLES) $(LOGS) $(TESTS)
 
 # ---------- Individual parts ----------
 a: dirs
@@ -79,7 +84,7 @@ tests:
 	PYTHONPATH=$(CODE) SEED=$(SEED) \
 	$(PYTEST) $(PYTEST_FLAGS) \
 	-o python_files="tests.py test_*.py" \
-	-o testpaths="$(CODE)/tests" 2>&1 | tee "$(LOGS)/tests_$${STAMP}.log"
+	-o testpaths="$(CODE)/tests" 2>&1 | tee "$(TESTS)/tests_$${STAMP}.log"
 
 
 figures:
