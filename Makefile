@@ -74,6 +74,14 @@ h: dirs
 # ---------- Meta ----------
 all: a b c d e f g h
 
+tests:
+	@STAMP=`date +%Y%m%d-%H%M%S`; \
+	PYTHONPATH=$(CODE) SEED=$(SEED) \
+	$(PYTEST) $(PYTEST_FLAGS) \
+	-o python_files="tests.py test_*.py" \
+	-o testpaths="$(CODE)/tests" 2>&1 | tee "$(LOGS)/tests_$${STAMP}.log"
+
+
 figures:
 	@echo "Figures:"; \
 	if [ -d "$(FIGS)" ]; then find "$(FIGS)" -type f; else echo "(none yet)"; fi
