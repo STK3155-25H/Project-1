@@ -1,4 +1,5 @@
 % File: ols_mse.tex
+\begin{figure}[H]
 \begin{tikzpicture}
 \begin{axis}[
     width=8cm,
@@ -25,3 +26,7 @@
     \addlegendentry{$n=1000$}
 \end{axis}
 \end{tikzpicture}
+\caption{Test mean squared error (MSE) as a function of polynomial degree for different numbers of data points $n$. 
+For small $n$ (40 and 50), the MSE increases at high polynomial degrees due to overfitting, while for larger $n$ (100, 500, 1000) the MSE decreases and stabilizes, illustrating improved generalization with more data.}
+\label{fig:OLS_graph}
+\end{figure}

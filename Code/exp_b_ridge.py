@@ -97,9 +97,18 @@ for k, lam in enumerate(lam_list):
     plt.savefig(FIG / f"part_b_thetas_lambda={lam}.png", dpi=150)
 
     # Save tables per lambda (test metrics)
-col_names = [f"n={n}" for n in n_points]
-save_matrix_with_degree_cols(TAB / f"part_b_mse_test_lambda={lam}.csv",
+    col_names = [f"n={n}" for n in n_points]
+    save_matrix_with_degree_cols(TAB / f"part_b_mse_test_lambda={lam}.csv",
                              mse_test_list[:, :, k], col_names)
-save_matrix_with_degree_cols(TAB / f"part_b_r2_test_lambda={lam}.csv",
+    save_matrix_with_degree_cols(TAB / f"part_b_r2_test_lambda={lam}.csv",
                              R2_test_list[:,  :, k], col_names)
+
+# -----------------------------
+# Save MSE table for n=100 vs all lambdas (same style)
+# -----------------------------
+col_names = [f"lambda={lam}" for lam in lam_list]  # columns are lambdas
+save_matrix_with_degree_cols(TAB / "part_b_mse_n100_all_lambdas.csv",
+                            mse_test_list[:, n_points.index(100), :],
+                            col_names)
+
 print("Part B done.")
