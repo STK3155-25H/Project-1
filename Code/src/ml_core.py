@@ -38,7 +38,7 @@ def runge_function(x, noise=False):
     y : ndarray
         Output values of the Runge function (with optional noise).
     """
-    np.random.seed(seed)
+    # np.random.seed(seed)
     y = 1 / (1 + 25 * x**2)
     if noise:
         y += np.random.normal(0, 0.3, size=len(x), )
@@ -476,7 +476,7 @@ def Gradient_descent_advanced(X, y, Type=0, lam=0.01, lr=0.01, n_iter=1000, tol=
             
         # Convergence check
         if np.linalg.norm(theta - theta_old) < tol:
-            print(f"Converged after {epoch+1} iterations, with {method}")
+            # print(f"Converged after {epoch+1} iterations, with {method}")
             break
     
     if theta_history == False:
@@ -512,19 +512,30 @@ def MSE_Bias_Variance(targets, predictions):
 
     return mse, bias2, variance
 
-def save_vector_with_degree(path, vec, value_name="value", degree_name="degree"):
+def save_vector_with_degree(path, vec, value_name="value", degree_name="degree", std=None):
     """
-    Salva un vettore 1D come due colonne: degree, value.
+    Saves a 1D vector:
+      - degree, value                       (if std=None)
+      - degree, value, value_std            (if std is passed)
     """
     vec = np.asarray(vec).reshape(-1)
     deg = np.arange(1, vec.shape[0] + 1)
-    arr = np.column_stack([deg, vec])
-    header = f"{degree_name},{value_name}"
+
+    if std is None:
+        arr = np.column_stack([deg, vec])
+        header = f"{degree_name},{value_name}"
+    else:
+        std = np.asarray(std).reshape(-1)
+        if std.shape != vec.shape:
+            raise ValueError("std must have the same shape as vec")
+        arr = np.column_stack([deg, vec, std])
+        header = f"{degree_name},{value_name},{value_name}_std"
+
     np.savetxt(path, arr, delimiter=",", header=header, comments='')
 
 def save_matrix_with_degree_cols(path, data, col_names, degree_name="degree"):
     """
-    Salva una matrice 2D (rows=degree, cols=col_names) con colonna degree davanti.
+    Saves a 2d matrix (rows=degree, cols=col_names) with degree column first.
     """
     data = np.asarray(data)
     if data.ndim != 2:

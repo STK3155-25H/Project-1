@@ -6,8 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from src import (
     runge_function, split_scale, polynomial_features_scaled,
-    OLS_parameters, Ridge_parameters, Gradient_descent_advanced, MSE, save_vector_with_degree
+    OLS_parameters, Ridge_parameters, Gradient_descent_advanced, MSE, save_vector_with_degree,save_matrix_with_degree_cols
 )
+from tqdm import tqdm
+
 
 # -----------------------------
 # Settings
@@ -15,96 +17,110 @@ from src import (
 n_points = [100]   # fix one dataset size
 max_degree = 15
 noise = True
-lam = 0.01          # Ridge regularization
-learning_rates = [0.01]  # reasonable η for advanced methods
+lam = 0.01
+learning_rates = [0.01]      # usare sempre l'indice 0
 methods = ['vanilla', 'momentum', 'adagrad', 'rmsprop', 'adam']
-n_iter = 2000
+n_iter = 1000
+N_RUNS = 20                  
 
 # -----------------------------
-# Storage
+# Storage per-run (run x degree)
 # -----------------------------
-mse_analytical_ols   = np.zeros((max_degree, len(n_points)))
-mse_analytical_ridge = np.zeros((max_degree, len(n_points)))
-mse_gd_ols   = {method: np.zeros((max_degree, len(n_points))) for method in methods}
-mse_gd_ridge = {method: np.zeros((max_degree, len(n_points))) for method in methods}
+mse_analytical_ols_runs   = np.zeros((N_RUNS, max_degree))
+mse_analytical_ridge_runs = np.zeros((N_RUNS, max_degree))
+mse_gd_ols_runs   = {method: np.zeros((N_RUNS, max_degree)) for method in methods}
+mse_gd_ridge_runs = {method: np.zeros((N_RUNS, max_degree)) for method in methods}
 
 # Output dirs
 OUT = Path("outputs"); FIG = OUT / "figures"; TAB = OUT / "tables"
 FIG.mkdir(parents=True, exist_ok=True); TAB.mkdir(parents=True, exist_ok=True)
 
 # -----------------------------
-# Experiment
+# Experiment con N_RUNS
 # -----------------------------
-for j, n in enumerate(n_points):
-    # Generate Runge data
-    x = np.linspace(-1, 1, n)
-    y = runge_function(x, noise=noise)
+print("Progress on point D")
+for run_idx in tqdm(range(N_RUNS)):
+    for j, n in enumerate(n_points):
+        # Generate Runge data (rumore diverso a ogni run)
+        x = np.linspace(-1, 1, n)
+        y = runge_function(x, noise=noise)
 
-    # Split & scale
-    x_train, x_test, y_train, y_test = split_scale(x, y)
+        # Split & scale
+        x_train, x_test, y_train, y_test = split_scale(x, y)
 
-    for degree in range(1, max_degree+1):
-        # Polynomial features
-        X_train, col_means, col_stds = polynomial_features_scaled(x_train.flatten(), degree, return_stats=True)
-        X_test = polynomial_features_scaled(x_test.flatten(), degree, col_means=col_means, col_stds=col_stds)
-
-        # ----- Analytical OLS -----
-        theta_ols = OLS_parameters(X_train, y_train)
-        y_test_pred = X_test @ theta_ols
-        mse_analytical_ols[degree-1, j] = MSE(y_test, y_test_pred)
-
-        # ----- Analytical Ridge -----
-        theta_ridge = Ridge_parameters(X_train, y_train, lam=lam, intercept=True)
-        y_test_pred = X_test @ theta_ridge
-        mse_analytical_ridge[degree-1, j] = MSE(y_test, y_test_pred)
-
-        # ----- Gradient Descent OLS (all methods) -----
-        for method in methods:
-            theta_gd = Gradient_descent_advanced(
-                X_train, y_train, Type=0, lr=learning_rates[1], n_iter=n_iter,
-                method=method, lam=0.0, theta_history=False
+        for degree in range(1, max_degree+1):
+            # Polynomial features
+            X_train, col_means, col_stds = polynomial_features_scaled(
+                x_train.flatten(), degree, return_stats=True
             )
-            y_test_pred_gd = X_test @ theta_gd
-            mse_gd_ols[method][degree-1, j] = MSE(y_test, y_test_pred_gd)
-
-        # ----- Gradient Descent Ridge (all methods) -----
-        for method in methods:
-            theta_gd = Gradient_descent_advanced(
-                X_train, y_train, Type=1, lam=lam, lr=learning_rates[1], n_iter=n_iter,
-                method=method, theta_history=False
+            X_test = polynomial_features_scaled(
+                x_test.flatten(), degree, col_means=col_means, col_stds=col_stds
             )
-            y_test_pred_gd = X_test @ theta_gd
-            mse_gd_ridge[method][degree-1, j] = MSE(y_test, y_test_pred_gd)
+
+            # ----- Analytical OLS -----
+            theta_ols = OLS_parameters(X_train, y_train)
+            y_test_pred = X_test @ theta_ols
+            mse_analytical_ols_runs[run_idx, degree-1] = MSE(y_test, y_test_pred)
+
+            # ----- Analytical Ridge -----
+            theta_ridge = Ridge_parameters(X_train, y_train, lam=lam, intercept=True)
+            y_test_pred = X_test @ theta_ridge
+            mse_analytical_ridge_runs[run_idx, degree-1] = MSE(y_test, y_test_pred)
+
+            # ----- Gradient Descent OLS (all methods) -----
+            for method in methods:
+                theta_gd = Gradient_descent_advanced(
+                    X_train, y_train, Type=0, lr=learning_rates[0], n_iter=n_iter,
+                    method=method, lam=0.0, theta_history=False
+                )
+                y_test_pred_gd = X_test @ theta_gd
+                mse_gd_ols_runs[method][run_idx, degree-1] = MSE(y_test, y_test_pred_gd)
+
+            # ----- Gradient Descent Ridge (all methods) -----
+            for method in methods:
+                theta_gd = Gradient_descent_advanced(
+                    X_train, y_train, Type=1, lam=lam, lr=learning_rates[0], n_iter=n_iter,
+                    method=method, theta_history=False
+                )
+                y_test_pred_gd = X_test @ theta_gd
+                mse_gd_ridge_runs[method][run_idx, degree-1] = MSE(y_test, y_test_pred_gd)
+
 
 # -----------------------------
-# Plot results
+# Aggregazione: mean + std su N_RUNS per degree
 # -----------------------------
-plt.figure(figsize=(14,6))
-plt.subplot(1,2,1)
-plt.plot(range(1, max_degree+1), mse_analytical_ols[:,0], 'k--', label="Analytical OLS")
-for method in methods:
-    plt.plot(range(1, max_degree+1), mse_gd_ols[method][:,0], label=f"GD OLS ({method})")
-plt.xlabel("Polynomial degree"); plt.ylabel("Test MSE")
-plt.title("OLS: Analytical vs Gradient Descent"); plt.legend()
+m_ols   = mse_analytical_ols_runs.mean(axis=0)
+s_ols   = mse_analytical_ols_runs.std(axis=0, ddof=1)
+m_ridge = mse_analytical_ridge_runs.mean(axis=0)
+s_ridge = mse_analytical_ridge_runs.std(axis=0, ddof=1)
 
-plt.subplot(1,2,2)
-plt.plot(range(1, max_degree+1), mse_analytical_ridge[:,0], 'k--', label=f"Analytical Ridge (λ={lam})")
-for method in methods:
-    plt.plot(range(1, max_degree+1), mse_gd_ridge[method][:,0], label=f"GD Ridge ({method})")
-plt.xlabel("Polynomial degree"); plt.ylabel("Test MSE")
-plt.title(f"Ridge: Analytical vs Gradient Descent (λ={lam})"); plt.legend()
-plt.tight_layout()
-plt.savefig(FIG / "part_d_optimizers.png", dpi=150)
+# Salvataggi: stessa colonna per la media (nome invariato) + nuova colonna *_std
+save_matrix_with_degree_cols(
+    TAB / "part_d_analytical_ols.csv",
+    np.column_stack([m_ols, s_ols]),
+    col_names=("MSE_analytical_OLS", "MSE_analytical_OLS_std")
+)
+save_matrix_with_degree_cols(
+    TAB / "part_d_analytical_ridge.csv",
+    np.column_stack([m_ridge, s_ridge]),
+    col_names=("MSE_analytical_Ridge", "MSE_analytical_Ridge_std")
+)
 
-# Save tables per method (OLS & Ridge) at lr=learning_rates[1]
 for method in methods:
-    save_vector_with_degree(TAB / f"part_d_ols_mse_{method}_lr={learning_rates[1]}.csv",
-                            mse_gd_ols[method][:,0], f"MSE_GD_OLS_{method}")
-    save_vector_with_degree(TAB / f"part_d_ridge_mse_{method}_lr={learning_rates[1]}.csv",
-                            mse_gd_ridge[method][:,0], f"MSE_GD_Ridge_{method}")
+    m_gd_ols   = mse_gd_ols_runs[method].mean(axis=0)
+    s_gd_ols   = mse_gd_ols_runs[method].std(axis=0, ddof=1)
+    m_gd_ridge = mse_gd_ridge_runs[method].mean(axis=0)
+    s_gd_ridge = mse_gd_ridge_runs[method].std(axis=0, ddof=1)
 
-save_vector_with_degree(TAB / "part_d_analytical_ols.csv",
-                        mse_analytical_ols[:,0], "MSE_analytical_OLS")
-save_vector_with_degree(TAB / "part_d_analytical_ridge.csv",
-                        mse_analytical_ridge[:,0], "MSE_analytical_Ridge")
-print("Part D done.")
+    save_matrix_with_degree_cols(
+        TAB / f"part_d_ols_mse_{method}_lr={learning_rates[0]}.csv",
+        np.column_stack([m_gd_ols, s_gd_ols]),
+        col_names=(f"MSE_GD_OLS_{method}", f"MSE_GD_OLS_{method}_std")
+    )
+    save_matrix_with_degree_cols(
+        TAB / f"part_d_ridge_mse_{method}_lr={learning_rates[0]}.csv",
+        np.column_stack([m_gd_ridge, s_gd_ridge]),
+        col_names=(f"MSE_GD_Ridge_{method}", f"MSE_GD_Ridge_{method}_std")
+    )
+
+print(f"Part D done. Aggregated over {N_RUNS} runs.")
