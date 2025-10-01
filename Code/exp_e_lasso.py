@@ -20,6 +20,9 @@ lam_lasso = 0.01        # LASSO regularization
 learning_rates = [0.0001, 0.001, 0.01]  # learning rates for gradient descent
 n_iter = 5000           # more iterations for convergence
 methods = ['vanilla', 'momentum', 'adagrad', 'rmsprop', 'adam']
+# 1 run with vanilla method with lr = [0.0001, 0.001, 0.01]
+# 1 run with lr = 0.01 and methods = ['vanilla', 'momentum', 'adagrad', 'rmsprop', 'adam']
+
 
 # -----------------------------
 # Storage
