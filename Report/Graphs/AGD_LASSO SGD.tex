@@ -5,8 +5,8 @@
     width=8cm,
     height=6cm,
     xlabel={Polynomial degree},
-    ylabel={MSE (Test)},
-    title={LASSO MSE vs Polynomial degree(lr=0.01, lambda=0.01)},
+    ylabel={MSE},
+    title={LASSO Regression With Stochastic Gradient Descent},
     legend pos=north east,
     grid=both,
     y tick label style={
@@ -27,6 +27,6 @@
     \addlegendentry{$adam$}
 \end{axis}
 \end{tikzpicture}
-\caption{\textbf{caption here}}
+\caption{The MSE is plotted as a function of polynomial degree, for different gradient descents methods using stochastic gradient descent.}
 \label{fig:AGD_LASSO_SGD}
 \end{figure}
