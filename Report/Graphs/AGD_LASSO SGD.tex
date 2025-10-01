@@ -14,16 +14,16 @@
         /pgf/number format/precision=2
     },
     ]
-    \addplot [orange, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_lasso_mse_momentum_lr=0.01_sgd.csv};
+    \addplot [blue, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_lasso_mse_momentum_lr=0.01_sgd.csv};
     \addlegendentry{$momentum$}
 
-    \addplot [green!60!black, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_lasso_mse_adagrad_lr=0.01_sgd.csv};
+    \addplot [orange, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_lasso_mse_adagrad_lr=0.01_sgd.csv};
     \addlegendentry{$adagrad$}
 
-    \addplot [red, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_lasso_mse_rmsprop_lr=0.01_sgd.csv};
+    \addplot [green!60!black, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_lasso_mse_rmsprop_lr=0.01_sgd.csv};
     \addlegendentry{$rmsprop$}
 
-    \addplot [purple, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_lasso_mse_adam_lr=0.01_sgd.csv};
+    \addplot [red, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_f_lasso_mse_adam_lr=0.01_sgd.csv};
     \addlegendentry{$adam$}
 \end{axis}
 \end{tikzpicture}
