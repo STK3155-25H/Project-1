@@ -6,7 +6,7 @@
     height=6cm,
     xlabel={Polynomial degree},
     ylabel={MSE},
-    title={LASSO Regression With Stochastic Gradient Descent},
+    title={LASSO Regression With Advanced SGD Methods},
     legend pos=north east,
     grid=both,
     y tick label style={
@@ -27,6 +27,6 @@
     \addlegendentry{$adam$}
 \end{axis}
 \end{tikzpicture}
-\caption{The MSE is plotted as a function of polynomial degree, for different gradient descents methods using stochastic gradient descent.}
+\caption{Mean squared error (MSE) as a function of polynomial degree for Lasso regression using different stochastic gradient descent methods, with learning rate $0.01$ and regularization parameter $\lambda=0.01$. The plot compares the performance of momentum, Adagrad, RMSprop, and Adam optimizers, highlighting differences in convergence and stability across polynomial degrees.}
 \label{fig:AGD_LASSO_SGD}
 \end{figure}

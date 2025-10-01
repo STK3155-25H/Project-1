@@ -5,8 +5,8 @@
     width=8cm,
     height=6cm,
     xlabel={Polynomial degree},
-    ylabel={MSE (Test)},
-    title={RIDGE MSE vs Polynomial degree(lambda = 0.01)},
+    ylabel={MSE},
+    title={RIDGE Regression Using GD With Different Learning Rates},
     legend pos=north east,
     grid=both,
     y tick label style={
@@ -27,6 +27,6 @@
     \addlegendentry{$lr=0.0001$}
 \end{axis}
 \end{tikzpicture}
-\caption{\textbf{caption here}}
+\caption{Comparison of Ridge regression test MSE across polynomial degrees for different learning rates. The figure contrasts the analytical solution with gradient descent results using step sizes $0.01$, $0.001$, and $0.0001$, showing how the choice of learning rate affects convergence toward the exact solution.}
 \label{fig:GD_RIDGE_LR}
 \end{figure}
