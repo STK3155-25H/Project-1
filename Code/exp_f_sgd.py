@@ -6,8 +6,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from src import (
     runge_function, split_scale, polynomial_features_scaled,
-    Gradient_descent_advanced, MSE, save_vector_with_degree
+    Gradient_descent_advanced, MSE, save_vector_with_degree,seed
 )
+from tqdm import trange
 
 # -----------------------------
 # Settings
@@ -18,18 +19,23 @@ noise = True
 lam_ridge = 0.01         # Ridge regularization
 lam_lasso = 0.01        # LASSO regularization
 learning_rates = [0.01]  # learning rates
-n_iter = 5000           # iterations
+n_iter = 1000           # iterations
 batch_size = 10         # mini-batch size
 methods = ['vanilla', 'momentum', 'adagrad', 'rmsprop', 'adam']
+N_RUNS = 30
 
 # -----------------------------
 # Storage
 # -----------------------------
-mse_sgd_results = {
-    "OLS":   {method: {lr: np.zeros((max_degree, len(n_points))) for lr in learning_rates} for method in methods},
-    "Ridge": {method: {lr: np.zeros((max_degree, len(n_points))) for lr in learning_rates} for method in methods},
-    "LASSO": {method: {lr: np.zeros((max_degree, len(n_points))) for lr in learning_rates} for method in methods}
+models = {
+    "OLS":   {"Type": 0, "lam": 0.0},
+    "Ridge": {"Type": 1, "lam": lam_ridge},
+    "LASSO": {"Type": 2, "lam": lam_lasso},
 }
+combos = {(model, method, float(lr)) for model in models for method in methods for lr in learning_rates}
+# Each entry: (degree, n_points, runs)
+results_runs = {cmb: np.zeros((max_degree, len(n_points), N_RUNS)) for cmb in combos}
+
 
 # Output dirs (root-level 'outputs' to match your tree)
 OUT = Path("outputs")
@@ -40,93 +46,61 @@ FIG.mkdir(parents=True, exist_ok=True)
 TAB.mkdir(parents=True, exist_ok=True)
 LOG.mkdir(parents=True, exist_ok=True)
 
+
+print(f">>> Starting Part F: SGD (OLS / Ridge / LASSO) | runs={N_RUNS} | "
+      f"n_points={n_points} | max_degree={max_degree} | noise={noise} | batch_size={batch_size}")
+# print(">>> Seed policy: per run r we set np.random.seed(seed+r) and use random_state=seed+r in the split;")
+# print(">>> for SGD fairness we also reset a per-degree sgd_seed before each optimizer call so minibatch sequences match.")
+
+
 # -----------------------------
 # Experiment
 # -----------------------------
-for j, n in enumerate(n_points):
-    # Generate Runge data
-    x = np.linspace(-1, 1, n)
-    y = runge_function(x, noise=noise)
-
-    # Split & scale
-    x_train, x_test, y_train, y_test = split_scale(x, y)
-
-    for degree in range(1, max_degree + 1):
-        # Generate polynomial features and scale
-        X_train, col_means, col_stds = polynomial_features_scaled(x_train.flatten(), degree, return_stats=True)
-        X_test = polynomial_features_scaled(x_test.flatten(), degree, col_means=col_means, col_stds=col_stds)
-
-        for method in methods:
-            for lr in learning_rates:
-                # ----- OLS SGD -----
-                theta_ols = Gradient_descent_advanced(
-                    X_train, y_train, Type=0, lr=lr, n_iter=n_iter, method=method, theta_history=False,
-                    use_sgd=True, batch_size=batch_size
-                )
-                y_test_pred = X_test @ theta_ols
-                mse_sgd_results["OLS"][method][lr][degree-1, j] = MSE(y_test, y_test_pred)
-
-                # ----- Ridge SGD -----
-                theta_ridge = Gradient_descent_advanced(
-                    X_train, y_train, Type=1, lam=lam_ridge, lr=lr, n_iter=n_iter, method=method,
-                    theta_history=False, use_sgd=True, batch_size=batch_size
-                )
-                y_test_pred = X_test @ theta_ridge
-                mse_sgd_results["Ridge"][method][lr][degree-1, j] = MSE(y_test, y_test_pred)
-
-                # ----- LASSO SGD -----
-                theta_lasso = Gradient_descent_advanced(
-                    X_train, y_train, Type=2, lam=lam_lasso, lr=lr, n_iter=n_iter, method=method,
-                    theta_history=False, use_sgd=True, batch_size=batch_size
-                )
-                y_test_pred = X_test @ theta_lasso
-                mse_sgd_results["LASSO"][method][lr][degree-1, j] = MSE(y_test, y_test_pred)
-
-# -----------------------------
-# Plot results
-# -----------------------------
-plt.figure(figsize=(18, 6))
-
-# --- OLS ---
-plt.subplot(1, 3, 1)
-for method in methods:
-    for lr in learning_rates:
-        plt.plot(range(1, max_degree + 1), mse_sgd_results["OLS"][method][lr][:, 0], label=f"{method} lr={lr}")
-plt.xlabel("Polynomial degree")
-plt.ylabel("Test MSE")
-plt.title("OLS: SGD Methods")
-plt.legend()
-
-# --- Ridge ---
-plt.subplot(1, 3, 2)
-for method in methods:
-    for lr in learning_rates:
-        plt.plot(range(1, max_degree + 1), mse_sgd_results["Ridge"][method][lr][:, 0], label=f"{method} lr={lr}")
-plt.xlabel("Polynomial degree")
-plt.ylabel("Test MSE")
-plt.title(f"Ridge: SGD Methods (λ={lam_ridge})")
-plt.legend()
-
-# --- LASSO ---
-plt.subplot(1, 3, 3)
-for method in methods:
-    for lr in learning_rates:
-        plt.plot(range(1, max_degree + 1), mse_sgd_results["LASSO"][method][lr][:, 0], label=f"{method} lr={lr}")
-plt.xlabel("Polynomial degree")
-plt.ylabel("Test MSE")
-plt.title(f"LASSO: SGD Methods (λ={lam_lasso})")
-plt.legend()
-
-plt.tight_layout()
-plt.savefig(FIG / "part_f_ols_ridge_lasso_sgd.png", dpi=150)
-
-# Save tables (one CSV per (model, method, lr))
-for model in ["OLS", "Ridge", "LASSO"]:
-    for method in methods:
-        for lr in learning_rates:
-            save_vector_with_degree(
-                TAB / f"part_f_{model.lower()}_mse_{method}_lr={lr}_sgd.csv",
-                mse_sgd_results[model][method][lr][:, 0],
-                f"MSE_{model}_{method}_lr={lr}_sgd"
+for r in trange(N_RUNS, desc="Runs", unit="run"):
+    # Same noise and same split for all combos in this run
+    np.random.seed(seed + r)
+    for j, n in enumerate(n_points):
+        x = np.linspace(-1, 1, n)
+        y = runge_function(x, noise=noise)
+        x_train, x_test, y_train, y_test = split_scale(x, y, random_state=seed + r)
+        for degree in range(1, max_degree + 1):
+            # Feature scaling fitted on train and reused for test
+            X_train, col_means, col_stds = polynomial_features_scaled(
+                x_train.flatten(), degree, return_stats=True
             )
-print("Part F done.")
+            X_test = polynomial_features_scaled(
+                x_test.flatten(), degree, col_means=col_means, col_stds=col_stds
+            )
+            di = degree - 1
+            # Fix minibatch RNG per degree to ensure identical SGD batches across models/methods/lrs
+            sgd_seed_base = (seed + r) * 1_000_000 + j * 1_000 + degree
+            for (model, method, lr) in combos:
+                np.random.seed(sgd_seed_base)  # identical minibatch sequence for every combo
+                cfg = models[model]
+                theta = Gradient_descent_advanced(
+                    X_train, y_train,
+                    Type=cfg["Type"],
+                    lam=cfg["lam"],
+                    lr=lr,
+                    n_iter=n_iter,
+                    method=method,
+                    theta_history=False,
+                    use_sgd=True,
+                    batch_size=batch_size
+                )
+                y_test_pred = X_test @ theta
+                results_runs[(model, method, lr)][di, j, r] = MSE(y_test, y_test_pred)
+
+
+# Save tables 
+idx0 = 0  # since n_points = [100]
+for (model, method, lr), arr in results_runs.items():
+    mean_vec = arr.mean(axis=2)[:, idx0]
+    std_vec  = arr.std(axis=2, ddof=1)[:, idx0]
+    save_vector_with_degree(
+        TAB / f"part_f_{model.lower()}_mse_{method}_lr={lr}_sgd.csv",
+        mean_vec,
+        f"MSE_{model}_{method}_lr={lr}_sgd",
+        std=std_vec
+    )
+print(f"Part F done. Aggregated over {N_RUNS} runs.")

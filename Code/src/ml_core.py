@@ -9,6 +9,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.utils import resample
 import time
 import os
+from numba import njit
 
 seed = os.environ.get("SEED")
 
@@ -38,7 +39,7 @@ def runge_function(x, noise=False):
     y : ndarray
         Output values of the Runge function (with optional noise).
     """
-    np.random.seed(seed)
+    # np.random.seed(seed)
     y = 1 / (1 + 25 * x**2)
     if noise:
         y += np.random.normal(0, 0.3, size=len(x), )
@@ -181,7 +182,7 @@ def polynomial_features_scaled(x, degree, intercept=True, col_means=None, col_st
 
 # -----------------------------------------------------------------------------------------
 # Splitting and scaling function for the data
-def split_scale(x, y):
+def split_scale(x, y, random_state=None):
     """
     Split dataset into train/test sets and scale features.
 
@@ -203,8 +204,10 @@ def split_scale(x, y):
     y_test_centered : ndarray of shape (n_test,)
         Centered test targets.
     """
+    rs = seed if random_state is None else random_state
+
     # split the data
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=seed)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=rs)
     # reshape the x datas to make them a 2d matrix
     X_train = x_train.reshape(-1, 1)
     X_test = x_test.reshape(-1, 1)
@@ -476,7 +479,7 @@ def Gradient_descent_advanced(X, y, Type=0, lam=0.01, lr=0.01, n_iter=1000, tol=
             
         # Convergence check
         if np.linalg.norm(theta - theta_old) < tol:
-            print(f"Converged after {epoch+1} iterations, with {method}")
+            # print(f"Converged after {epoch+1} iterations, with {method}")
             break
     
     if theta_history == False:
@@ -512,26 +515,42 @@ def MSE_Bias_Variance(targets, predictions):
 
     return mse, bias2, variance
 
-def save_vector_with_degree(path, vec, value_name="value", degree_name="degree"):
+def save_vector_with_degree(path, vec, value_name="value", degree_name="degree", std=None):
     """
-    Salva un vettore 1D come due colonne: degree, value.
+    Saves a 1D vector:
+      - degree, value                       (if std=None)
+      - degree, value, value_std            (if std is passed)
     """
     vec = np.asarray(vec).reshape(-1)
     deg = np.arange(1, vec.shape[0] + 1)
-    arr = np.column_stack([deg, vec])
-    header = f"{degree_name},{value_name}"
+
+    if std is None:
+        arr = np.column_stack([deg, vec])
+        header = f"{degree_name},{value_name}"
+    else:
+        std = np.asarray(std).reshape(-1)
+        if std.shape != vec.shape:
+            raise ValueError("std must have the same shape as vec")
+        arr = np.column_stack([deg, vec, std])
+        header = f"{degree_name},{value_name},{value_name}_std"
+
     np.savetxt(path, arr, delimiter=",", header=header, comments='')
 
-def save_matrix_with_degree_cols(path, data, col_names, degree_name="degree"):
-    """
-    Salva una matrice 2D (rows=degree, cols=col_names) con colonna degree davanti.
-    """
-    data = np.asarray(data)
-    if data.ndim != 2:
-        raise ValueError("data must be 2D (rows=degree, cols=series)")
-    if data.shape[1] != len(col_names):
-        raise ValueError("len(col_names) must match data.shape[1]")
-    deg = np.arange(1, data.shape[0] + 1)
-    arr = np.column_stack([deg, data])
-    header = ",".join([degree_name] + list(col_names))
-    np.savetxt(path, arr, delimiter=",", header=header, comments='')
+def save_matrix_with_degree_cols_plus_std(path, mean_data, std_data, col_names, degree_name="degree", std_suffix="_std"):
+     """
+     Salva le colonne mean mantenendo i nomi originali e APPENDE, nello stesso CSV,
+     le corrispondenti colonne di std come <colname><std_suffix>. La prima colonna resta 'degree'.
+     """
+     mean_data = np.asarray(mean_data)
+     std_data = np.asarray(std_data)
+     if mean_data.shape != std_data.shape:
+         raise ValueError("mean_data e std_data devono avere la stessa shape")
+     if mean_data.ndim != 2:
+         raise ValueError("data deve essere 2D (rows=degree, cols=serie)")
+     if mean_data.shape[1] != len(col_names):
+         raise ValueError("len(col_names) deve coincidere con data.shape[1]")
+     deg = np.arange(1, mean_data.shape[0] + 1).reshape(-1, 1)
+     blocks = [mean_data] + [std_data]
+     arr = np.hstack([deg] + blocks)
+     header = ",".join([degree_name] + list(col_names) + [f"{c}{std_suffix}" for c in col_names])
+     np.savetxt(path, arr, delimiter=",", header=header, comments='')
