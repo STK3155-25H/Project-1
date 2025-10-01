@@ -331,7 +331,7 @@ $$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^{n} \left( y_i - \tilde{y}_i \right)^2$
 $$R^2 = 1 - \frac{\sum_{i=1}^{n} \left( y_i - \tilde{y}_i \right)^2}{\sum_{i=1}^{n} \left( y_i - \bar{y} \right)^2}$$
 where $n$ is the number of data points, $y_i$ are the true values, $\tilde{y}_i$ are the predicted values, and $\bar{y}$ denotes the mean of the true values.
 
-\subsection{OLS resulst}
+\subsection{OLS}
 
 The analysis starts with performing a standard ordinary least squares regression using polynomials in $x$ up to order 15. The dependence of the polynomial degree and number of data point has been explored by plotting the mse as a function of polynomial degree for different amount of data points. This can be seen in Figure \ref{fig:OLS_graph}.\\\\
 As one can see, generally the mse goes down as the polynomial degree increases. But for a small amount of data points like $n = 40$ and $n = 50$, when the polynomial degree goes to high the mse starts to increase again.\\
@@ -342,7 +342,7 @@ This behavior reflects overfitting: at high degrees, the model captures both the
     
 \input{Graphs/OLS_MSE.tex}
 
-\subsection{Ridge results}
+\subsection{Ridge}
 \textbf{We can also put the theta values graph in and show that the ridge method lowers the extreme high theta values for high degrees.}\\\\
 Now, Ridge regression is applied to the same dataset, exploring the impact of different regularization parameters $\lambda$. First, the effect of the regularization parameter $\lambda $ on the MSE as a function of polynomial degree was analyzed for a fixed number of data points n=100: the results are shown in Figure \ref{fig:RIDGE_MSE_Lambda}.
 Small values of $\lambda$ (e.g., 0.001, 0.01) behave similarly to OLS, with the MSE decreasing as polynomial degree increases. However, as $\lambda$ increases (e.g., 1, 10, 100), the MSE curve flattens and even increases for high polynomial degrees, indicating that strong regularization prevents overfitting but may lead to underfitting if too large.
@@ -359,17 +359,22 @@ The parameters $\theta$ as a function of polynomial degree for Ridge regression 
 This stability indicates that Ridge's $L_2$ regularization effectively constrains the magnitude of the coefficients, preventing them from becoming excessively large and reducing overfitting.
 The result is a more robust model that generalizes better to unseen data.
 
-\subsection{gradient descent methods}
+\subsection{Gradient Descent Methods}
 \textbf{Have figures for the different learning rates to update for ols and ridge. Have figures for the advanced methods for a fixed learning rate for the gradient descent methods.}\\\\
 The analytical expression for paramters $\theta$ is now compared to the results obtained using gradient descent methods.\\\\
 First, the standard gradient descent method is applied to both OLS and Ridge regression, exploring the impact of different learning rates $\eta$. 
-The results for OLS and Ridge with varying learning rates are shown in the figures below and one can see that the gradient descent is very sensitive to the choice of the learning rate.
-For learning rate equale to 0.01, as shown in the Figure \ref{fig:GD_OLS_LR}, the method converges to the analytical solution for polynomial degrees up to 15, with the MSE closely matching the analytical results.
-For learning rates smaller than 0.01, the method converges more slowly and does not reach the analytical solution within the set number of iterations, resulting in a higher MSE. 
-For learning rate bigger than 0.01, the method diverges and does not converge to the analytical solution, also the MSE shoots up dramatically.\\
-
+The results for OLS and Ridge with varying learning rates are shown in the figures below and it is evident that the gradient descent is very sensitive to the choice of the learning rate.\\
+For example, with a learning rate equale to 0.01, as shown in the Figure \ref{fig:GD_OLS_LR}, the method converges to the analytical solution for polynomial degrees up to 15, with the MSE closely matching the analytical results.
+For smaller learning rates, the algorithm does not reach the analytical solution within the set number of iterations, resulting in a higher MSE. 
+For learning rate bigger than 0.01, the algorithm diverges, failing to converge to the analytical solution and causing the MSE to increase dramatically.
 \input{Graphs/GD_OLS_LR.tex}
+Similarly, for Ridge regression with $\lambda = 0.01$, as shown in the Figure \ref{fig:GD_RIDGE_LR}, a learning rate of 0.01 allows convergence to the analytical solution, while smaller rates lead to slower convergence and larger MSE.
 \input{Graphs/GD_RIDGE_LR.tex}
+ 
+In both cases, the analytical solution is more accurate than gradient descent, except for a learning rate of 0.01, where the two methods yield nearly identical results.\\\\
+Next, advanced gradient descent methods are applied to both OLS and Ridge regression.
+
+
 \input{Graphs/AGD_OLS.tex}
 \input{Graphs/AGD_RIDGE.tex}
 
