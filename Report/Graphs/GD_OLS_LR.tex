@@ -5,8 +5,8 @@
     width=8cm,
     height=6cm,
     xlabel={Polynomial degree},
-    ylabel={MSE (Test)},
-    title={OLS MSE vs Polynomial degree},
+    ylabel={MSE},
+    title={OLS Using GD With Different Learning Rates},
     legend pos=north east,
     grid=both,
     y tick label style={
@@ -27,6 +27,6 @@
     \addlegendentry{$lr=0.0001$}
 \end{axis}
 \end{tikzpicture}
-\caption{\textbf{caption here}}
+\caption{Comparison of OLS regression test MSE across polynomial degrees for different learning rates. The plot contrasts the exact analytical solution with gradient descent results using step sizes $0.01$, $0.001$, and $0.0001$, highlighting the impact of learning rate on convergence towards the analytical optimum.}
 \label{fig:GD_OLS_LR}
 \end{figure}

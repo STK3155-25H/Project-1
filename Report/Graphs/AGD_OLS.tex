@@ -5,8 +5,8 @@
     width=8cm,
     height=6cm,
     xlabel={Polynomial degree},
-    ylabel={MSE (Test)},
-    title={OLS MSE vs Polynomial degree(lr=0.01)},
+    ylabel={MSE},
+    title={OLS With Advanced GD Methods},
     legend pos=north east,
     grid=both,
     y tick label style={
@@ -33,6 +33,6 @@
     \addlegendentry{$adam$}
 \end{axis}
 \end{tikzpicture}
-\caption{\textbf{caption here}}
+\caption{Comparison of OLS regression test MSE using analytical solution and gradient-based optimizers. The figure shows mean squared error across polynomial degrees for analytical OLS, vanilla gradient descent, momentum, Adagrad, RMSProp, and Adam ($learning rate = 0.01$), highlighting the performance gap and convergence behavior of iterative methods versus the exact solution.}
 \label{fig:AGD_OLS}
 \end{figure}

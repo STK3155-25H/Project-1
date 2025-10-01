@@ -1,4 +1,4 @@
- \documentclass[%
+ \documentclass[
  reprint,            % two-column layout
  amsmath,amssymb,
  aps,
@@ -73,6 +73,23 @@ where $\tilde{\mathbf{y}}$ represents the predictions of the model, $\boldsymbol
 The goal of regression is to find an estimate of the optimal parameter $\boldsymbol{\theta}$ that best explains the observed data according to a chosen criterion. 
 
 A detailed description of the methods follows.
+
+\subsection{Scaling Of The Data}
+Before applying any regression and optimization methods, the dataset was split into a training and testing dataset and scaled appropriately.
+This was performed using the \texttt{split\_scale} and \texttt{polynomial\_features\_scaled} functions.
+First the training and test sets were seperated.\\
+The input feature $x$ was then standardized using statistics computed on the training set: each feature column was centered by subtracting its mean and scaled by dividing by its standard deviation.
+This process produces features with zero mean and unit variance.
+The same mean and standard deviation from the training set were applied to scale the test set, avoiding any data leakage.\\
+For polynomial regression, each feature was expanded into polynomial terms up to a maximum degree.
+After generating the polynomial features, each column (except the intercept) was scaled using the mean and standard deviation of the corresponding column from the training set, via the \texttt{polynomial\_features\_scaled} function.
+This ensures that all polynomial features are on a comparable scale across training and test sets.\\\\
+Scaling was necessary for several reasons.\\
+First, high-degree polynomial terms can grow very large, causing numerical instability in the design matrix.
+Second, regularization methods like Ridge and Lasso assume features are on a comparable scale, otherwise the penalty distorts model behavior.
+Third, gradient-based optimizers converge faster and more stably when the features are standardized.
+Finally, applying training-set statistics to scale the test set ensures unbiased evaluation.
+
 
 \subsection{Ordinary Least Squares}
 Ordinary Least Squares (OLS) is the classical method for linear regression and it estimates $\boldsymbol{\theta}$ by minimizing the mean squared error. This is the cost function that is going to be optimize:
@@ -322,8 +339,15 @@ $$
 \mathbb{E}\left[(\boldsymbol{y}-\boldsymbol{\tilde{y}})^2\right]=\mathbb{E}\left[(\boldsymbol{y}-\mathbb{E}\left[\boldsymbol{\tilde{y}}\right])^2\right]+\mathrm{Var}\left[\boldsymbol{\tilde{y}}\right]+\sigma^2,
 $$
 
-that is the rewriting in terms of the bias, the variance of the model $\boldsymbol{\tilde{y}}$ and the variance of $\boldsymbol{\epsilon}$. \cite{misc} *I'm not able to cite because the .bib is deleting what I'm writing* \\\\ 
-This decomposition underlies the bias-variance trade-off: reducing bias typically increases variance and vice versa. The goal is to find a balance, achieving a model that is complex enough to capture the underlying patterns but simple enough to generalize well to new data.
+that is the rewriting in terms of the bias, the variance of the model $\boldsymbol{\tilde{y}}$ and the variance of $\boldsymbol{\epsilon}$. \cite{misc} 
+In order to derive this equation, the assumption that is made is that the unknown function $\boldsymbol{f}$ can be replaced by the target data $\boldsymbol{y}$.\\
+*I'm not able to cite because the .bib is deleting what I'm writing* \\\\ 
+This decomposition underlies the bias-variance trade-off: a high bias and low variance situation corresponds to a model that is too simple and underfits the data, while a low bias and high variance situation corresponds to a model that is too complex and overfits the data.
+The goal is to find a balance, achieving a model that is complex enough to capture the underlying patterns but simple enough to generalize well to new data.
+Resampling techniques provide the practical tool for measuring and managing this balance, by reliably estimating the generalization ability of the model.
+They involve repeatedly drawing samples from a training set and refitting a model of interest on each sample in order to obtain additional information about the fitted model. Two resampling techniques are discussed here: bootstrap and cross-validation.\\\\
+Bootstrap is a resampling technique that involves repeatedly drawing samples with replacement from the original dataset to create multiple "bootstrap" samples. Each bootstrap sample is used to fit the model, and the variability of the model's predictions across these samples provides an estimate of the model's variance. This method is particularly useful for estimating the uncertainty of model parameters and assessing the stability of the model.\\\\
+Cross-validation is a technique used to assess how the results of a statistical analysis will generalize to an independent dataset. The most common form is k-fold cross-validation, where the dataset is divided into k subsets (or "folds"). The model is trained on k-1 folds and validated on the remaining fold. This process is repeated k times, with each fold serving as the validation set once. The average performance across all k trials provides a robust estimate of the model's generalization error. Cross-validation helps in selecting model parameters and in preventing overfitting by ensuring that the model performs well on unseen data.\\\\
 
 \section{Results and Discussion}
 The performance of the regression models are evaluated using both the MSE and the score $R^2$. The definitions of these are the following:
@@ -360,7 +384,7 @@ This stability indicates that Ridge's $L_2$ regularization effectively constrain
 The result is a more robust model that generalizes better to unseen data.
 
 \subsection{Gradient Descent Methods}
-\textbf{Have figures for the different learning rates to update for ols and ridge. Have figures for the advanced methods for a fixed learning rate for the gradient descent methods.}\\\\
+
 The analytical expression for paramters $\theta$ is now compared to the results obtained using gradient descent methods.\\\\
 First, the standard gradient descent method is applied to both OLS and Ridge regression, exploring the impact of different learning rates $\eta$. 
 The results for OLS and Ridge with varying learning rates are shown in the figures below and it is evident that the gradient descent is very sensitive to the choice of the learning rate.\\
@@ -373,9 +397,14 @@ Similarly, for Ridge regression with $\lambda = 0.01$, as shown in the Figure \r
  
 In both cases, the analytical solution is more accurate than gradient descent, except for a learning rate of 0.01, where the two methods yield nearly identical results.\\\\
 Next, advanced gradient descent methods are applied to both OLS and Ridge regression.
-
+For OLS, as shown in the Figure \ref{fig:AGD_OLS}, Momentum, Adagrad, RMSprop, and Adam all successfully converge to the analytical solution with MSE values closely matching the analytical results across polynomial degrees.
+ RMSprop and Adam show better performance at higher polynomial degrees, because of their adaptive learning rate mechanisms.
 
 \input{Graphs/AGD_OLS.tex}
+
+For Ridge regression with $\lambda = 0.01$, as shown in the Figure \ref{fig:AGD_RIDGE}, RMSProp and Adam show a better convergence at higher degrees, but still the analytical solution is the best one. 
+ *wait for code update*
+
 \input{Graphs/AGD_RIDGE.tex}
 
 \subsection{Lasso resulsts}

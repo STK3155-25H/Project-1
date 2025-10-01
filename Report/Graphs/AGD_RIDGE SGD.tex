@@ -5,8 +5,8 @@
     width=8cm,
     height=6cm,
     xlabel={Polynomial degree},
-    ylabel={MSE (Test)},
-    title={RIDGE MSE vs Polynomial degree(lr=0.01, lambda=0.01)},
+    ylabel={MSE},
+    title={RIDGE Regression With Advanced SGD Methods},
     legend pos=north east,
     grid=both,
     y tick label style={
@@ -30,6 +30,6 @@
     \addlegendentry{$adam$}
 \end{axis}
 \end{tikzpicture}
-\caption{\textbf{caption here}}
+\caption{Comparison of Ridge regression test MSE using analytical and stachastic-gradient-based methods. The plot shows mean squared error across polynomial degrees for the analytical solution, vanilla gradient descent, momentum, Adagrad, RMSProp, and Adam ($learning rate = 0.01$), highlighting differences in convergence and generalization performance between exact and iterative approaches.}
 \label{fig:AGD_RIDGE_SGD}
 \end{figure}
