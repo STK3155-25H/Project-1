@@ -118,4 +118,4 @@ for eta in learning_rates:
         std=mse_gd_ridge_std[:, idx0]
     )
 
-print("Part C done.")
+print(f"Part C done. Aggregated over {N_RUNS} runs..")

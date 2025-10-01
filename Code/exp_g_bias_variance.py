@@ -80,4 +80,4 @@ for idx, n in enumerate(n_points_list):
     save_vector_with_degree(TAB / f"part_g_bias2_n={n}.csv",    b2_mean,  f"Bias2_n={n}",    std=b2_std)
     save_vector_with_degree(TAB / f"part_g_variance_n={n}.csv", var_mean, f"Variance_n={n}", std=var_std)
 
-print("Part G done.")
+print(f"Part G done. Aggregated over {N_RUNS} runs..")

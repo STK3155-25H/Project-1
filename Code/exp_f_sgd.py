@@ -103,4 +103,4 @@ for (model, method, lr), arr in results_runs.items():
         f"MSE_{model}_{method}_lr={lr}_sgd",
         std=std_vec
     )
-print("Part F done.")
+print(f"Part F done. Aggregated over {N_RUNS} runs.")

@@ -104,4 +104,4 @@ for (model, method, lr), arr in results_runs.items():
         std=std_vec
     )
 
-print("Part E done.")
+print(f"Part E done. Aggregated over {N_RUNS} runs.")

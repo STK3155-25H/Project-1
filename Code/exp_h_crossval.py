@@ -111,4 +111,4 @@ save_vector_with_degree(
 )
 
 
-print("Part H done.")
+print(f"Part G done. Aggregated over {N_RUNS} runs..")

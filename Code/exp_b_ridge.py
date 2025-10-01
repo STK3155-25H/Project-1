@@ -104,4 +104,4 @@ save_matrix_with_degree_cols_plus_std(
 )
 
 
-print("Part B done")
+print(f"Part B done. Aggregated over {N_RUNS} runs.")

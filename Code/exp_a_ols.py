@@ -82,4 +82,4 @@ col_names = [f"n={n}" for n in n_points]
 save_matrix_with_degree_cols_plus_std(TAB / "part_a_mse_test.csv", mse_test_list, mse_test_std, col_names)
 save_matrix_with_degree_cols_plus_std(TAB / "part_a_r2_test.csv",  R2_test_list,  R2_test_std,  col_names)
 
-print("Part A done.")
+print(f"Part A done. Aggregated over {N_RUNS} runs.")
