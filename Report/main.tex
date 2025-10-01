@@ -75,7 +75,21 @@ The goal of regression is to find an estimate of the optimal parameter $\boldsym
 A detailed description of the methods follows.
 
 \subsection{Scaling Of The Data}
-Before applying any regression and optimization methods, all the data has been scaled to zero mean and unit variance. 
+Before applying any regression and optimization methods, the dataset was split into a training and testing dataset and scaled appropriately.
+This was performed using the \texttt{split\_scale} and \texttt{polynomial\_features\_scaled} functions.
+First the training and test sets were seperated.\\
+The input feature $x$ was then standardized using statistics computed on the training set: each feature column was centered by subtracting its mean and scaled by dividing by its standard deviation.
+This process produces features with zero mean and unit variance.
+The same mean and standard deviation from the training set were applied to scale the test set, avoiding any data leakage.\\
+For polynomial regression, each feature was expanded into polynomial terms up to a maximum degree.
+After generating the polynomial features, each column (except the intercept) was scaled using the mean and standard deviation of the corresponding column from the training set, via the \texttt{polynomial\_features\_scaled} function.
+This ensures that all polynomial features are on a comparable scale across training and test sets.\\\\
+Scaling was necessary for several reasons.\\
+First, high-degree polynomial terms can grow very large, causing numerical instability in the design matrix.
+Second, regularization methods like Ridge and Lasso assume features are on a comparable scale, otherwise the penalty distorts model behavior.
+Third, gradient-based optimizers converge faster and more stably when the features are standardized.
+Finally, applying training-set statistics to scale the test set ensures unbiased evaluation.
+
 
 \subsection{Ordinary Least Squares}
 Ordinary Least Squares (OLS) is the classical method for linear regression and it estimates $\boldsymbol{\theta}$ by minimizing the mean squared error. This is the cost function that is going to be optimize:
