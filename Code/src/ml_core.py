@@ -181,7 +181,7 @@ def polynomial_features_scaled(x, degree, intercept=True, col_means=None, col_st
 
 # -----------------------------------------------------------------------------------------
 # Splitting and scaling function for the data
-def split_scale(x, y):
+def split_scale(x, y, random_state=None):
     """
     Split dataset into train/test sets and scale features.
 
@@ -203,8 +203,10 @@ def split_scale(x, y):
     y_test_centered : ndarray of shape (n_test,)
         Centered test targets.
     """
+    rs = seed if random_state is None else random_state
+
     # split the data
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=seed)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=rs)
     # reshape the x datas to make them a 2d matrix
     X_train = x_train.reshape(-1, 1)
     X_test = x_test.reshape(-1, 1)
@@ -533,16 +535,21 @@ def save_vector_with_degree(path, vec, value_name="value", degree_name="degree",
 
     np.savetxt(path, arr, delimiter=",", header=header, comments='')
 
-def save_matrix_with_degree_cols(path, data, col_names, degree_name="degree"):
-    """
-    Saves a 2d matrix (rows=degree, cols=col_names) with degree column first.
-    """
-    data = np.asarray(data)
-    if data.ndim != 2:
-        raise ValueError("data must be 2D (rows=degree, cols=series)")
-    if data.shape[1] != len(col_names):
-        raise ValueError("len(col_names) must match data.shape[1]")
-    deg = np.arange(1, data.shape[0] + 1)
-    arr = np.column_stack([deg, data])
-    header = ",".join([degree_name] + list(col_names))
-    np.savetxt(path, arr, delimiter=",", header=header, comments='')
+def save_matrix_with_degree_cols_plus_std(path, mean_data, std_data, col_names, degree_name="degree", std_suffix="_std"):
+     """
+     Salva le colonne mean mantenendo i nomi originali e APPENDE, nello stesso CSV,
+     le corrispondenti colonne di std come <colname><std_suffix>. La prima colonna resta 'degree'.
+     """
+     mean_data = np.asarray(mean_data)
+     std_data = np.asarray(std_data)
+     if mean_data.shape != std_data.shape:
+         raise ValueError("mean_data e std_data devono avere la stessa shape")
+     if mean_data.ndim != 2:
+         raise ValueError("data deve essere 2D (rows=degree, cols=serie)")
+     if mean_data.shape[1] != len(col_names):
+         raise ValueError("len(col_names) deve coincidere con data.shape[1]")
+     deg = np.arange(1, mean_data.shape[0] + 1).reshape(-1, 1)
+     blocks = [mean_data] + [std_data]
+     arr = np.hstack([deg] + blocks)
+     header = ",".join([degree_name] + list(col_names) + [f"{c}{std_suffix}" for c in col_names])
+     np.savetxt(path, arr, delimiter=",", header=header, comments='')
