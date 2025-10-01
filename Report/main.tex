@@ -360,7 +360,7 @@ This stability indicates that Ridge's $L_2$ regularization effectively constrain
 The result is a more robust model that generalizes better to unseen data.
 
 \subsection{Gradient Descent Methods}
-\textbf{Have figures for the different learning rates to update for ols and ridge. Have figures for the advanced methods for a fixed learning rate for the gradient descent methods.}\\\\
+
 The analytical expression for paramters $\theta$ is now compared to the results obtained using gradient descent methods.\\\\
 First, the standard gradient descent method is applied to both OLS and Ridge regression, exploring the impact of different learning rates $\eta$. 
 The results for OLS and Ridge with varying learning rates are shown in the figures below and it is evident that the gradient descent is very sensitive to the choice of the learning rate.\\
@@ -373,9 +373,14 @@ Similarly, for Ridge regression with $\lambda = 0.01$, as shown in the Figure \r
  
 In both cases, the analytical solution is more accurate than gradient descent, except for a learning rate of 0.01, where the two methods yield nearly identical results.\\\\
 Next, advanced gradient descent methods are applied to both OLS and Ridge regression.
-
+For OLS, as shown in the Figure \ref{fig:AGD_OLS}, Momentum, Adagrad, RMSprop, and Adam all successfully converge to the analytical solution with MSE values closely matching the analytical results across polynomial degrees.
+ RMSprop and Adam show better performance at higher polynomial degrees, because of their adaptive learning rate mechanisms.
 
 \input{Graphs/AGD_OLS.tex}
+
+For Ridge regression with $\lambda = 0.01$, as shown in the Figure \ref{fig:AGD_RIDGE}, RMSProp and Adam show a better convergence at higher degrees, but still the analytical solution is the best one. 
+ *wait for code update*
+
 \input{Graphs/AGD_RIDGE.tex}
 
 \subsection{Lasso resulsts}
