@@ -5,7 +5,7 @@
     width=8cm,
     height=6cm,
     xlabel={Polynomial degree},
-    ylabel={MSE (Test)},
+    ylabel={MSE},
     title={Cross Validation},
     legend pos=north east,
     grid=both,
@@ -15,15 +15,15 @@
     }
     ]
     \addplot [blue, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_h_cv_mse_ols.csv};
-    \addlegendentry{$MSE$}
+    \addlegendentry{$OLS$}
 
     \addplot [orange, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_h_cv_mse_ridge.csv};
-    \addlegendentry{$Bias2$}
+    \addlegendentry{$RIDGE$}
 
     \addplot [green!70!black, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_h_cv_mse_lasso.csv};
-    \addlegendentry{$Variance$}
+    \addlegendentry{$LASSO$}
 \end{axis}
 \end{tikzpicture}
-\caption{\textbf{caption here}}
+\caption{Cross-validation test MSE for OLS, Ridge, and LASSO regression across polynomial degrees. The plot compares model performance as complexity increases, highlighting how regularization in Ridge and LASSO helps control overfitting relative to OLS.}
 \label{fig:Cross_Val}
 \end{figure}
