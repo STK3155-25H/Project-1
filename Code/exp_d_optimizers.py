@@ -16,7 +16,7 @@ n_points = [100]   # fix one dataset size
 max_degree = 15
 noise = True
 lam = 0.01          # Ridge regularization
-learning_rates = [0.001, 0.01]  # reasonable η for advanced methods
+learning_rates = [0.01]  # reasonable η for advanced methods
 methods = ['vanilla', 'momentum', 'adagrad', 'rmsprop', 'adam']
 n_iter = 2000
 
