@@ -36,8 +36,8 @@ FIG.mkdir(parents=True, exist_ok=True)
 TAB.mkdir(parents=True, exist_ok=True)
 print(f">>> Starting Part B Ridge experiment | runs={N_RUNS} | "
       f"n_points={n_points} | lambdas={lam_list} | max_degree={max_degree} | noise={noise}")
-print(">>> Seed policy: per run r uso np.random.seed(seed+r) e lo stesso random_state=seed+r nello split,")
-print(">>> così per ogni (run, n) il dataset e lo split sono identici tra tutti i lambda (confronto fair).")
+# Seed policy: for each run r I use np.random.seed(seed+r) and the same random_state=seed+r in the split,")
+# So for each (run, n) the dataset and the lambdas are identical for each lambda (fair comparison).")
 
 # Unica progress bar: una per le run
 for r in trange(N_RUNS, desc="Runs", unit="run"):
