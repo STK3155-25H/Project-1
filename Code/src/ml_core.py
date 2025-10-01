@@ -9,6 +9,7 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.utils import resample
 import time
 import os
+from numba import njit
 
 seed = os.environ.get("SEED")
 
