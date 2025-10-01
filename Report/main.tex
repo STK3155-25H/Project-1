@@ -360,7 +360,14 @@ This stability indicates that Ridge's $L_2$ regularization effectively constrain
 The result is a more robust model that generalizes better to unseen data.
 
 \subsection{gradient descent methods}
-\textbf{Have figures for the different learning rates to update for ols and ridge. Have figures for the advanced methods for a fixed learning rate for the gradient descent methods.}
+\textbf{Have figures for the different learning rates to update for ols and ridge. Have figures for the advanced methods for a fixed learning rate for the gradient descent methods.}\\\\
+The analytical expression for paramters $\theta$ is now compared to the results obtained using gradient descent methods.\\\\
+First, the standard gradient descent method is applied to both OLS and Ridge regression, exploring the impact of different learning rates $\eta$. 
+The results for OLS and Ridge with varying learning rates are shown in the figures below and one can see that the gradient descent is very sensitive to the choice of the learning rate.
+For learning rate equale to 0.01, as shown in the Figure \ref{fig:GD_OLS_LR}, the method converges to the analytical solution for polynomial degrees up to 15, with the MSE closely matching the analytical results.
+For learning rates smaller than 0.01, the method converges more slowly and does not reach the analytical solution within the set number of iterations, resulting in a higher MSE. 
+For learning rate bigger than 0.01, the method diverges and does not converge to the analytical solution, also the MSE shoots up dramatically.\\
+
 \input{Graphs/GD_OLS_LR.tex}
 \input{Graphs/GD_RIDGE_LR.tex}
 \input{Graphs/AGD_OLS.tex}
