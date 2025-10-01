@@ -18,7 +18,7 @@ from tqdm import tqdm, trange
 n_points = [40, 50, 100, 500, 1000]
 max_degree = 15
 noise = True
-N_RUNS = 20
+N_RUNS = 30
 
 
 # -----------------------------

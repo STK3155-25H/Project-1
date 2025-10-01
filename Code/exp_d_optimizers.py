@@ -21,7 +21,7 @@ lam = 0.01
 learning_rates = [0.01]      # usare sempre l'indice 0
 methods = ['vanilla', 'momentum', 'adagrad', 'rmsprop', 'adam']
 n_iter = 1000
-N_RUNS = 20                  
+N_RUNS = 30                  
 
 # -----------------------------
 # Storage per-run (run x degree)

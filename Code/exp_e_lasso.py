@@ -22,7 +22,7 @@ n_iter = 1000           # more iterations for convergence
 methods = ['vanilla', 'momentum', 'adagrad', 'rmsprop', 'adam']
 # 1 run with vanilla method with lr = [0.0001, 0.001, 0.01]
 # 1 run with lr = 0.01 and methods = ['vanilla', 'momentum', 'adagrad', 'rmsprop', 'adam']
-N_RUNS = 20
+N_RUNS = 30
 LR_FOR_METHODS = 0.01    
 
 # -----------------------------

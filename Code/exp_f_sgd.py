@@ -22,7 +22,7 @@ learning_rates = [0.01]  # learning rates
 n_iter = 1000           # iterations
 batch_size = 10         # mini-batch size
 methods = ['vanilla', 'momentum', 'adagrad', 'rmsprop', 'adam']
-N_RUNS = 20
+N_RUNS = 30
 
 # -----------------------------
 # Storage

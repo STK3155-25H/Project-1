@@ -19,7 +19,7 @@ noise = True
 lam = 0.01          # Ridge regularization parameter
 learning_rates = [0.0001, 0.001, 0.01]  # try several η values
 n_iter = 2000
-N_RUNS = 20
+N_RUNS = 30
 
 # -----------------------------
 # Storage

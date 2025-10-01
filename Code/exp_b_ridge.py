@@ -16,7 +16,7 @@ n_points = [40, 50, 100, 500, 1000]
 lam_list = [0, 0.001, 0.01, 0.1, 1, 10, 100]
 max_degree = 15
 noise = True
-N_RUNS = 20
+N_RUNS = 30
 
 # -----------------------------
 # Storage

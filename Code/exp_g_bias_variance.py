@@ -18,7 +18,7 @@ n_points_list = [100]   # Different dataset sizes
 max_degree = 15
 noise = True
 n_bootstrap = 50   # Number of bootstrap samples
-N_RUNS = 20
+N_RUNS = 30
 # -----------------------------
 # Storage arrays
 # -----------------------------

@@ -20,7 +20,7 @@ noise = True
 k_folds = 5
 lam_ridge = 0.01
 lam_lasso = 0.01
-N_RUNS = 20
+N_RUNS = 30
 
 # Output dirs
 OUT = Path("outputs"); FIG = OUT / "figures"; TAB = OUT / "tables"
