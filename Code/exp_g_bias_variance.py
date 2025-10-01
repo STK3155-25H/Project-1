@@ -66,21 +66,6 @@ for j, n_points in enumerate(n_points_list):
         bias2_list  [degree-1, j] = bias2
         variance_list[degree-1, j]= var
 
-# -----------------------------
-# Plot results
-# -----------------------------
-for j, n_points in enumerate(n_points_list):
-    plt.figure(figsize=(12,6))
-    plt.plot(range(1, max_degree+1), mse_list[:, j],     label='MSE')
-    plt.plot(range(1, max_degree+1), bias2_list[:, j],   label='Bias^2')
-    plt.plot(range(1, max_degree+1), variance_list[:, j],label='Variance')
-    plt.xlabel('Polynomial degree')
-    plt.ylabel('Error')
-    plt.title(f'Bias-Variance Trade-Off, n={n_points}')
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    plt.savefig(FIG / f"part_g_bias_variance_n={n_points}.png", dpi=150)
 
 # Save per-n tables
 for idx, n in enumerate(n_points_list):

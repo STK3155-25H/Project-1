@@ -23,7 +23,6 @@ methods = ['vanilla', 'momentum', 'adagrad', 'rmsprop', 'adam']
 # 1 run with vanilla method with lr = [0.0001, 0.001, 0.01]
 # 1 run with lr = 0.01 and methods = ['vanilla', 'momentum', 'adagrad', 'rmsprop', 'adam']
 N_RUNS = 20
-N_RUNS = 20             
 LR_FOR_METHODS = 0.01    
 
 # -----------------------------
@@ -104,6 +103,5 @@ for (model, method, lr), arr in results_runs.items():
         f"MSE_{model}_{method}_lr={lr}",
         std=std_vec
     )
-
 
 print("Part E done.")
