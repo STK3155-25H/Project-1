@@ -415,7 +415,8 @@ def Gradient_descent_advanced(X, y, Type=0, lam=0.01, lr=0.01, n_iter=1000, tol=
     m = np.zeros(p)      # Adam first moment
     v_adam = np.zeros(p) # Adam second moment
     t = 0
-    
+    H = (X.T @ X) / n if (Type == 0 and not use_sgd) else None
+
     for epoch in range(n_iter):
         theta_old = theta.copy()
 
@@ -447,7 +448,14 @@ def Gradient_descent_advanced(X, y, Type=0, lam=0.01, lr=0.01, n_iter=1000, tol=
             
         t += 1
         # Calculate theta
-        if method == 'vanilla':
+        if method == 'vanilla' and (Type == 0) and (not use_sgd) and (H is not None):
+            # Exact steepest-descent step on quadratic:
+            # alpha* = (g^T g) / (g^T H g)
+            gg = float(grad @ grad)
+            denom = float(grad @ (H @ grad))
+            alpha = gg / denom if denom > 0.0 else lr
+            theta -= alpha * grad
+        elif method == 'vanilla':
             theta -= lr * grad
             
         elif method == 'momentum':
