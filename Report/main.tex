@@ -222,7 +222,7 @@ steep coordinates require a smaller step size to avoid oscillation and flat coor
 
 In order to mitigate this problem, gradient descent with momentum is introduced: it refers to a method that smoothens the optimization trajectory by adding a term that helps the optimizer remember the past gradients.
 
-Mathematically, let $\boldsymbol{v}_n$ denote the velocity (or accumulated gradient) at iteration $n$. The update rules for gradient descent with momentum are:
+Mathematically, let $\boldsymbol{m}_n$ denote the velocity (or accumulated gradient) at iteration $n$. The update rules for gradient descent with momentum are:
 $$
 \boldsymbol{v}_{n+1} = \gamma \, \boldsymbol{v}_n - \eta \, \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}_n),
 $$
