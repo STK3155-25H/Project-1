@@ -12,7 +12,9 @@
     y tick label style={
         /pgf/number format/fixed,
         /pgf/number format/precision=2
-    }
+    },
+    ymax=0.2,
+    restrict y to domain=0:0.2
     ]
     \addplot [blue, mark=none] table [x=degree, y={lambda=0}, col sep=comma] {../outputs/tables/part_b_mse_n100_all_lambdas.csv};
     \addlegendentry{$\lambda=0$}
