@@ -427,11 +427,10 @@ Compared to OLS, which is unbiased but can have high variance, Lasso achieves a 
 
 \textbf{Here we will discuss stachastic gradient descent with 3 figures of the 3 regressions methods but with sgd}
 
-Stochastic Gradient Descent (SGD) is now applied to OLS, Ridge, and Lasso regression.\\
-For OLS, as shown in the Figure \ref{fig:AGD_OLS_SGD}, SGD converges to a solution with MSE values that are slightly higher than those obtained with standard gradient descent methods, 
-due to the fact that, with SGD, the gradient is computed using individual samples or small mini-batches.           
-           
-
+Stochastic Gradient Descent (SGD) is now applied to OLS, Ridge, and Lasso regression.
+For OLS, as shown in Figure \ref{fig:AGD_OLS_SGD}, SGD converges to a solution with MSE values that are slightly higher than those obtained with standard gradient descent methods. This difference arises because SGD computes the gradient using individual samples or small mini-batches instead of the entire dataset. While this makes each update faster and more memory-efficient, it also introduces randomness into the updates, leading to a noisier and less stable convergence trajectory.
+Ridge regression with SGD, as shown in Figure \ref{fig:AGD_RIDGE_SGD}, exhibits a similar pattern: the MSE is slightly higher compared to batch methods due to the stochastic nature of the updates. However, the $L_2$ penalty contributes to more stable coefficient shrinkage, so the convergence remains reliable and generalization can even improve compared to OLS.
+In the case of Lasso regression with SGD, shown in Figure \ref{fig:AGD_LASSO_SGD}, the optimization becomes more challenging because of the $L_1$ penalty, which creates flat regions and non-differentiable points at zero. Here, the stochasticity can both complicate and help: while it may cause small fluctuations and slightly higher MSE, it also allows the algorithm to escape plateaus and drive coefficients exactly to zero, reinforcing sparsity in the solution.
 
 
 \input{Graphs/AGD_OLS SGD.tex}
@@ -441,7 +440,7 @@ due to the fact that, with SGD, the gradient is computed using individual sample
 \subsection{bias variance trade off}
 Fitting using a OLS model on the runge function demonstrates a clear bias-variance tradeoff as demonstrated in figure \ref{fig:Bias_Var}.
 
-\input{Graphs/Bias_Var.tex}
+% \input{Graphs/Bias_Var.tex}
 
 \subsection{Cross Validation}
 \input{Graphs/Cross_Validation.tex}
