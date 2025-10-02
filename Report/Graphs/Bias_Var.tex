@@ -12,7 +12,9 @@
     y tick label style={
         /pgf/number format/fixed,
         /pgf/number format/precision=2
-    }
+    },
+    ymax=1
+    restrict y to domain=0:100
     ]
     \addplot [blue, mark=none] table [x=degree, col sep=comma] {../outputs/tables/part_g_mse_n=100.csv};
     \addlegendentry{$MSE$}
