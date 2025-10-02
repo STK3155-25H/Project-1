@@ -222,24 +222,24 @@ steep coordinates require a smaller step size to avoid oscillation and flat coor
 
 In order to mitigate this problem, gradient descent with momentum is introduced: it refers to a method that smoothens the optimization trajectory by adding a term that helps the optimizer remember the past gradients.
 
-Mathematically, let $\boldsymbol{v}_n$ denote the velocity (or accumulated gradient) at iteration $n$. The update rules for gradient descent with momentum are:
-$$
-\boldsymbol{v}_{n+1} = \gamma \, \boldsymbol{v}_n - \eta \, \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}_n),
-$$
-$$
-\boldsymbol{\theta}_{n+1} = \boldsymbol{\theta}_n + \boldsymbol{v}_{n+1},
-$$
-where $\gamma \in [0,1)$ is the momentum coefficient, which controls how much of the past gradients are remembered in the current update. A value close to 1 means the optimizer will have more inertia while a value closer to 0 means less reliance on past gradients. This mechanism enables the algorithm to suppress oscillations along steep directions while simultaneously accelerating progress across flatter regions of the cost surface. The result is a convergence process that is both faster and more stable than standard gradient descent.\\
+Mathematically, let $\boldsymbol{m}_n$ denote the velocity (or accumulated gradient) at iteration $n$. The update rules for gradient descent with momentum are:
+\[
+\boldsymbol{m}_{n+1} = \beta \, \boldsymbol{m}_n + (1-\beta)\nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}_n),
+\]
+\[
+\boldsymbol{\theta}_{n+1} = \boldsymbol{\theta}_n - \eta \, \boldsymbol{m}_{n+1}.
+\]
+where $\beta \in [0,1)$ is the momentum coefficient, which controls how much of the past gradients are remembered in the current update. A value close to 1 means the optimizer will have more inertia while a value closer to 0 means less reliance on past gradients. This mechanism enables the algorithm to suppress oscillations along steep directions while simultaneously accelerating progress across flatter regions of the cost surface. The result is a convergence process that is both faster and more stable than standard gradient descent.\\
 This leads to more advanced optimization methods which use an adaptive learning rate for each parameter that depends on the history of gradients.\\
 
 
 \subsection{Adagrad}
 Adagrad adapts the learning rate for each parameter based on the historical squared gradients, giving smaller updates to frequently updated parameters and larger updates to infrequent ones. This is particularly useful for sparse data.  
 \[
-\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{G_t} + \epsilon} \, \nabla l_{i_t}(\theta_t),
+\boldsymbol{\theta}_{n+1} = \boldsymbol{\theta}_n - \frac{\eta}{\sqrt{\boldsymbol{v}_n} + \epsilon} \, \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}_n).
 \]
 
-where \(G_t\) is the sum of squared gradients up to time \(t\) and \(\epsilon\) prevents division by zero.  \\
+where \(v_n\) is the sum of squared gradients up to time \(n\) and \(\epsilon\) prevents division by zero.  \\
 
 The accumulation of squared gradients can lead to excessively small learning rates over time, slowing down convergence.
 
@@ -250,15 +250,15 @@ The accumulation of squared gradients can lead to excessively small learning rat
 RMSprop tackles Adagrad's excessive shrinkage of the learning rate by using an exponentially decaying average of past squared gradients instead of a simple sum. This prevents the learning rate from shrinking too much and slowing down.  
 If the running average is
 \[
-v_t = \rho v_{t-1} + (1 - \rho)\left( \nabla C(\theta_t) \right)^2,
+v_n = \beta v_{n-1} + (1 - \beta)\left( \nabla C(\theta_n) \right)^2,
 \]
-with decay rate \(\rho\) 0.9 or 0.99,
+with decay rate \(\beta\) 0.9 or 0.99,
 
 the new parameter update is
-\[\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{v_t + \epsilon}} \nabla C(\theta_t).
+\[\theta_{n+1} = \theta_n - \frac{\eta}{\sqrt{v_n + \epsilon}} \nabla C(\theta_n).
 \]
 (AAA cite lecture notes)
-On the other hand, RMSprop requires tuning of the decay rate \(\rho\) and the base learning rate \(\eta\).
+On the other hand, RMSprop requires tuning of the decay rate \(\beta\) and the base learning rate \(\eta\).
 
 \subsubsection{Implementation}
 (AAA)
@@ -267,20 +267,20 @@ On the other hand, RMSprop requires tuning of the decay rate \(\rho\) and the ba
 Adam (Adaptive Moment Estimation) combines momentum and RMSprop, maintaining both an exponentially decaying average of past gradients (first moment) and squared gradients (second moment), with bias correction. It adapts the learning rate per parameter, providing stability, while incorporating momentum, accelerating the convergence.
 So, combining the moving averages of momentum
 \[
-m_t = \beta_1 m_{t-1} + (1-\beta_1) \nabla_\theta C(\theta_t)
+m_n = \beta_1 m_{n-1} + (1-\beta_1) \nabla_\theta C(\theta_n)
 \]  
 and of the squared gradients
 
 \[
-v_t = \beta_2 v_{t-1} + (1-\beta_2) (\nabla_\theta C(\theta_t))^2,
+v_n = \beta_2 v_{n-1} + (1-\beta_2) (\nabla_\theta C(\theta_n))^2,
 \]  
 and correcting bias
 \[
-\hat{m}_t = \frac{m_t}{1-\beta_1^t}, \quad \hat{v}_t = \frac{v_t}{1-\beta_2^t},
+\hat{m}_n = \frac{m_n}{1-\beta_1^n}, \quad \hat{v}_n = \frac{v_n}{1-\beta_2^n},
 \]  
 the update rule in Adam becomes
 \[
-\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\hat{v}_t}+\epsilon} \hat{m}_t,
+\theta_{n+1} = \theta_n - \frac{\eta}{\sqrt{\hat{v}_n}+\epsilon} \hat{m}_n,
 \]  
 where \(\epsilon\) prevents division by zero.
 
