@@ -403,13 +403,21 @@ For OLS, as shown in the Figure \ref{fig:AGD_OLS}, Momentum, Adagrad, RMSprop, a
 \input{Graphs/AGD_OLS.tex}
 
 For Ridge regression with $\lambda = 0.01$, as shown in the Figure \ref{fig:AGD_RIDGE}, RMSProp and Adam show a better convergence at higher degrees, but still the analytical solution is the best one. 
- *wait for code update*
+\textbf{why analytical is better than advanced methods?}
 
 \input{Graphs/AGD_RIDGE.tex}
 
 \subsection{Lasso resulsts}
-\textbf{Have a figure for different lr with standard methond for lasso, and then a figure for the advanced methods, we can then compare this to the previeus subsection to see what the dif is}
+\textbf{Have a figure for different lr with standard methond for lasso, and then a figure for the advanced methods, we can then compare this to the previeus subsection to see what the dif is}\\
+Lasso regression does not have an analytical solution, so only gradient descent methods are applied.\\\\
+First, the standard gradient descent method is applied to Lasso regression, exploring the impact of different learning rates $\eta$. 
+The results for Lasso with varying learning rates are shown in the Figure \ref{fig:GD_LASSO_LR}.
+With a learning rate equal to 0.01, the method converges for polynomial degrees up to 15, with the MSE being relatively low.
+For smaller learning rates, the algorithm converges very slowly, requiring a large number of iterations to approach the minimum.
 \input{Graphs/GD_LASSO_LR.tex}
+
+When using more advanced gradient descent methods for Lasso regression, as shown in the Figure \ref{fig:AGD_LASSO}, the convergence improves significantly.
+
 \input{Graphs/AGD_LASSO.tex}
 
 \subsection{Stochastic Gradient Descent}
