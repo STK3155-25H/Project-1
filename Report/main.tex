@@ -428,8 +428,9 @@ Compared to OLS, which is unbiased but can have high variance, Lasso achieves a 
 \textbf{Here we will discuss stachastic gradient descent with 3 figures of the 3 regressions methods but with sgd}
 
 Stochastic Gradient Descent (SGD) is now applied to OLS, Ridge, and Lasso regression.\\
-For OLS, as shown in the Figure \ref{fig:AGD_OLS_SGD}, SGD converges to a solution with MSE values that are slightly higher than those obtained with standard gradient descent methods, due to the inherent noise in the updates.           
-However, with an appropriate learning rate, SGD can achieve comparable performance to batch methods.            
+For OLS, as shown in the Figure \ref{fig:AGD_OLS_SGD}, SGD converges to a solution with MSE values that are slightly higher than those obtained with standard gradient descent methods, 
+due to the fact that, with SGD, the gradient is computed using individual samples or small mini-batches.           
+           
 
 
 
