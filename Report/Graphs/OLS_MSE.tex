@@ -10,7 +10,7 @@
     legend pos=north east,
     grid=both,
     ymax=1,
-    restrict y to domain=0:1
+    restrict y to domain=0:10
     ]
     \addplot [blue, mark=none] table [x=degree, y={n=40}, col sep=comma] {../outputs/tables/part_a_mse_test.csv};
     \addlegendentry{$n=40$}
