@@ -366,7 +366,7 @@ This behavior reflects overfitting: at high degrees, the model captures both the
     
 \input{Graphs/OLS_MSE.tex}
 
-\subsection{Ridge}
+\subsection{Ridge regression}
 \textbf{We can also put the theta values graph in and show that the ridge method lowers the extreme high theta values for high degrees.}\\\\
 Now, Ridge regression is applied to the same dataset, exploring the impact of different regularization parameters $\lambda$. First, the effect of the regularization parameter $\lambda $ on the MSE as a function of polynomial degree was analyzed for a fixed number of data points n=100: the results are shown in Figure \ref{fig:RIDGE_MSE_Lambda}.
 Small values of $\lambda$ (e.g., 0.001, 0.01) behave similarly to OLS, with the MSE decreasing as polynomial degree increases. However, as $\lambda$ increases (e.g., 1, 10, 100), the MSE curve flattens and even increases for high polynomial degrees, indicating that strong regularization prevents overfitting but may lead to underfitting if too large.
@@ -407,8 +407,7 @@ For Ridge regression with $\lambda = 0.01$, as shown in the Figure \ref{fig:AGD_
 
 \input{Graphs/AGD_RIDGE.tex}
 
-\subsection{Lasso resulsts}
-\textbf{Have a figure for different lr with standard methond for lasso, and then a figure for the advanced methods, we can then compare this to the previeus subsection to see what the dif is}\\
+\subsection{Lasso regression}
 Lasso regression does not have an analytical solution, so only gradient descent methods are applied.\\\\
 First, the standard gradient descent method is applied to Lasso regression, exploring the impact of different learning rates $\eta$. 
 The results for Lasso with varying learning rates are shown in the Figure \ref{fig:GD_LASSO_LR}.
@@ -417,11 +416,23 @@ For smaller learning rates, the algorithm converges very slowly, requiring a lar
 \input{Graphs/GD_LASSO_LR.tex}
 
 When using more advanced gradient descent methods for Lasso regression, as shown in the Figure \ref{fig:AGD_LASSO}, the convergence improves significantly.
-
+Ridge and Lasso regression show similar MSE across polynomial degrees.
+However, the MSE values for Lasso are generally higher than those for Ridge regression, due to the nature of the $L_1$ penalty. 
+This encourages many coefficients to become exactly zero, which makes the model more interpretable but increases the bias of the coefficients.
+On the other hand, Ridge regression shrinks coefficients towards zero but does not set them exactly to zero, leading to lower bias and lower MSE.
+Compared to OLS, which is unbiased but can have high variance, Lasso achieves a lower MSE by reducing the variance, even with the bias it introduces
 \input{Graphs/AGD_LASSO.tex}
 
 \subsection{Stochastic Gradient Descent}
+
 \textbf{Here we will discuss stachastic gradient descent with 3 figures of the 3 regressions methods but with sgd}
+
+Stochastic Gradient Descent (SGD) is now applied to OLS, Ridge, and Lasso regression.\\
+For OLS, as shown in the Figure \ref{fig:AGD_OLS_SGD}, SGD converges to a solution with MSE values that are slightly higher than those obtained with standard gradient descent methods, due to the inherent noise in the updates.           
+However, with an appropriate learning rate, SGD can achieve comparable performance to batch methods.            
+
+
+
 \input{Graphs/AGD_OLS SGD.tex}
 \input{Graphs/AGD_RIDGE SGD.tex}
 \input{Graphs/AGD_LASSO SGD.tex}
