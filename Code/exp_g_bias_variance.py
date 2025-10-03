@@ -14,7 +14,7 @@ from tqdm import trange
 # -----------------------------
 # Settings
 # -----------------------------
-n_points_list = [100]   # Different dataset sizes
+n_points_list = [200]   # Different dataset sizes
 max_degree = 15
 noise = True
 n_bootstrap = 50   # Number of bootstrap samples
