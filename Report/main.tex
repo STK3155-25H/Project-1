@@ -107,7 +107,9 @@ Ordinary Least Squares (OLS) is the classical method for linear regression and i
 $$
 C(\boldsymbol{\theta})=\frac{1}{n}\left\{\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\right)\right\}$$
 
-It means that it's required that the derivative with respect to $\boldsymbol{\theta}$ be set equal to zero: $$\frac{\partial C(\boldsymbol{\theta)}}{\partial \boldsymbol{\theta_j}} =0= \mathbf{X}^\top(\mathbf{y-X\boldsymbol{\theta})}$$
+It means that it's required that the derivative with respect to $\boldsymbol{\theta}$ be set equal to zero: $$\frac{\partial C(\boldsymbol{\theta})}{\partial \boldsymbol{\theta_j}} 
+= 0 = \mathbf{X}^\top \big(\mathbf{y} - \mathbf{X}\boldsymbol{\theta}\big)
+$$
 
 $$\mathbf{X}^\top \mathbf{y}= \mathbf{X}^\top \mathbf{X} \boldsymbol{\theta}$$
 
@@ -131,7 +133,7 @@ where the second term represents an $L^2$ penalty on the size of the coefficient
 This leads to the Ridge regression minimization problem where it is required that $ |\boldsymbol{\theta}\|_2^2 \leq t$, where $t$ is a finite positive number. 
 One of the main motivations behind Ridge is its ability to resolve the problem of non-invertibility of $\mathbf{X}^\top \mathbf{X}$, which often arises when features are highly correlated. Ridge regression resolves this problem by adding the parameter $\boldsymbol{\lambda}$ to the diagonal of $\mathbf{X}^\top \mathbf{X}$ before inverting it.
 Taking the derivatives with respect to $\boldsymbol{\theta}$ the optimal parameters are obtained:
-$$ \boldsymbol{\hat\theta_{Ridge}}=(\mathbf{X}^\top \mathbf{X} + \boldsymbol{\lambda}\mathbf{I})^{-1} \mathbf{X}^\top \mathbf{y}$$
+$$ \boldsymbol{\hat\theta_{Ridge}}=(\mathbf{X}^\top \mathbf{X} + \lambda\mathbf{I})^{-1} \mathbf{X}^\top \mathbf{y}$$
 with $\mathbf{I}$ being a $p\times p$ identity matrix.
 
 \subsubsection{Implementation}
@@ -213,19 +215,22 @@ where \(i_t\) is a randomly selected data point and \(\eta\) is the learning rat
 While Stochastic Gradient Descent is faster and more memory-efficient than full-batch gradient descent, it introduces noise in the parameter updates, which can make convergence less stable and less precise. However, this stochasticity can be beneficial, as it can help escape poor local minima and explore the optimization landscape more effectively, making it well suited for large datasets.
 
 \subsubsection{Implementation}
+
+In the implementation of Stochastic Gradient Descent (SGD), the parameter vector $\boldsymbol{\theta}$ is initialized to zero and updated iteratively using gradients computed on randomly selected data points or mini-batches, rather than the entire dataset. This reduces the computational cost per update and introduces stochasticity into the optimization trajectory, which can help escape shallow local minima. The batch size is a tunable parameter: when set to 1, the algorithm uses a single sample at each iteration; larger batch sizes trade off between noise reduction and computational efficiency.  
 \begin{algorithm}[H]
 \caption{Stochastic Gradient Descent}
 \begin{algorithmic}[1]
 \State Initialize $\boldsymbol{\theta}^{(0)}$
 \For{$n = 0, 1, 2, \dots$ until convergence}
-    \State Randomly select a data point (or mini-batch) $i_t$
-    \State Compute stochastic gradient: $\nabla_{\boldsymbol{\theta}} \ell_{i_n}(\boldsymbol{\theta}^{(n)})$
-    \State Update: $\boldsymbol{\theta}^{(n+1)} \gets \boldsymbol{\theta}^{(n)} - \eta \, \nabla_{\boldsymbol{\theta}} \ell_{i_n}(\boldsymbol{\theta}^{(n)})$
+    \State Randomly select a data point or mini-batch $i_t$
+    \State Compute stochastic gradient: $\mathbf{g} \gets \nabla_{\boldsymbol{\theta}} \ell_{i_t}(\boldsymbol{\theta}^{(n)})$
+    \State Update parameters: $\boldsymbol{\theta}^{(n+1)} \gets \boldsymbol{\theta}^{(n)} - \eta \, \mathbf{g}$
 \EndFor
 \end{algorithmic}
 \end{algorithm}
 
 \subsection{Momentum}
+
 The learning rate $\eta$ plays a crucial role in the convergence and a limitation of these methods is the fixed learning rate ${\eta}$: 
 \begin{itemize}
     \item if $\eta$ is too large, the updates can overshoot the minimum, causing oscillations or divergence
@@ -246,8 +251,24 @@ Mathematically, let $\boldsymbol{m}_n$ denote the velocity (or accumulated gradi
 where $\beta \in [0,1)$ is the momentum coefficient, which controls how much of the past gradients are remembered in the current update. A value close to 1 means the optimizer will have more inertia while a value closer to 0 means less reliance on past gradients. This mechanism enables the algorithm to suppress oscillations along steep directions while simultaneously accelerating progress across flatter regions of the cost surface. The result is a convergence process that is both faster and more stable than standard gradient descent.\\
 This leads to more advanced optimization methods which use an adaptive learning rate for each parameter that depends on the history of gradients.\\
 
+\subsubsection{Implementation}
+
+Momentum was implemented inside the general routine \verb|Gradient_descent_advanced| by setting \verb|method='momentum'|. In addition to the parameter vector $\boldsymbol{\theta}$, a velocity vector $\mathbf{m}$ of the same size is initialized to zero. At each iteration the velocity is updated as a moving average of past gradients, scaled by the momentum coefficient $\beta$, and the parameters are updated using this velocity.
+The default value $\beta=0.9$ was used in the experiments, providing a balance between stability and acceleration. Convergence is checked by comparing the change in parameters with a tolerance threshold.
+\begin{algorithm}[H]
+\caption{Gradient Descent with Momentum}
+\begin{algorithmic}[1]
+\State Initialize $\boldsymbol{\theta}^{(0)}$, velocity $\mathbf{m}^{(0)}=0$
+\For{$n = 0, 1, 2, \dots$ until convergence}
+\State Compute gradient $\mathbf{g} \gets \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}^{(n)})$
+\State Update velocity: $\mathbf{m} \gets \beta \mathbf{m} + (1-\beta)\mathbf{g}$
+\State Update parameters: $\boldsymbol{\theta}^{(n+1)} \gets \boldsymbol{\theta}^{(n)} - \eta \mathbf{m}$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Adagrad}
+
 Adagrad adapts the learning rate for each parameter based on the historical squared gradients, giving smaller updates to frequently updated parameters and larger updates to infrequent ones\cite{hjorthjensen_week37}.
 This is particularly useful for sparse data.  
 \[
@@ -259,9 +280,23 @@ where \(v_n\) is the sum of squared gradients up to time \(n\) and \(\epsilon\) 
 The accumulation of squared gradients can lead to excessively small learning rates over time, slowing down convergence.
 
 \subsubsection{Implementation}
-(AAA)
+
+Adagrad was included as an option in \verb|Gradient_descent_advanced| by setting \verb|method='adagrad'|. An accumulator vector $\mathbf{G}$ of the same size as $\boldsymbol{\theta}$ is initialized to zero. At each iteration, the squared gradient is added to $\mathbf{G}$ and used to scale the learning rate for each parameter.
+To ensure numerical stability, a small constant $\epsilon=10^{-8}$ is added before taking the square root. This prevents division by zero and is standard in Adagrad implementations.
+\begin{algorithm}[H]
+\caption{Adagrad}
+\begin{algorithmic}[1]
+\State Initialize $\boldsymbol{\theta}^{(0)}$, accumulator $\mathbf{G}^{(0)}=0$
+\For{$n = 0, 1, 2, \dots$ until convergence}
+\State Compute gradient $\mathbf{g} \gets \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}^{(n)})$
+\State Update accumulator: $\mathbf{G} \gets \mathbf{G} + \mathbf{g}^2$
+\State Update parameters: $\boldsymbol{\theta}^{(n+1)} \gets \boldsymbol{\theta}^{(n)} - \eta \, \mathbf{g} / (\sqrt{\mathbf{G}}+\epsilon)$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{RMSprop}
+
 RMSprop tackles Adagrad's excessive shrinkage of the learning rate by using an exponentially decaying average of past squared gradients instead of a simple sum\cite{hjorthjensen_week37}.
 This prevents the learning rate from shrinking too much and slowing down.  
 If the running average is
@@ -277,9 +312,23 @@ the new parameter update is
 On the other hand, RMSprop requires tuning of the decay rate \(\beta\) and the base learning rate \(\eta\).
 
 \subsubsection{Implementation}
-(AAA)
+
+RMSprop was implemented by selecting \verb|method='rmsprop'| inside \verb|Gradient_descent_advanced|. Instead of storing the full sum of squared gradients, an exponentially decaying moving average is maintained in a vector $\mathbf{S}$ initialized to zero. At each iteration, $\mathbf{S}$ is updated using the decay rate $\rho$ (set to 0.9 in our experiments), and the gradient is rescaled accordingly.
+As with Adagrad, a small constant $\epsilon=10^{-8}$ is added for stability. This prevents excessively small denominators when gradients are close to zero.
+\begin{algorithm}[H]
+\caption{RMSprop}
+\begin{algorithmic}[1]
+\State Initialize $\boldsymbol{\theta}^{(0)}$, accumulator $\mathbf{S}^{(0)}=0$
+\For{$n = 0, 1, 2, \dots$ until convergence}
+\State Compute gradient $\mathbf{g} \gets \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}^{(n)})$
+\State Update moving average: $\mathbf{S} \gets \rho \mathbf{S} + (1-\rho)\mathbf{g}^2$
+\State Update parameters: $\boldsymbol{\theta}^{(n+1)} \gets \boldsymbol{\theta}^{(n)} - \eta , \mathbf{g} / (\sqrt{\mathbf{S}}+\epsilon)$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Adam}
+
 Adam (Adaptive Moment Estimation) combines momentum and RMSprop, maintaining both an exponentially decaying average of past gradients (first moment) and squared gradients (second moment), with bias correction\cite{hjorthjensen_week37}. It adapts the learning rate per parameter, providing stability, while incorporating momentum, accelerating the convergence.
 So, combining the moving averages of momentum
 \[
@@ -301,8 +350,24 @@ the update rule in Adam becomes
 where \(\epsilon\) prevents division by zero.
 
 Adam can sometimes converge to slightly worse minima than SGD in certain tasks, and hyperparameter tuning is still required.
+
 \subsubsection{Implementation}
-(AAA)
+
+Adam was implemented inside \verb|Gradient_descent_advanced| with \verb|method='adam'|. Two vectors of the same size as $\boldsymbol{\theta}$ are initialized: the first moment estimate $\mathbf{m}$ and the second moment estimate $\mathbf{v}$, both starting at zero. At each iteration, these estimates are updated with exponential moving averages of the gradient and squared gradient. Bias correction is applied using the current iteration counter $t$.
+Default hyperparameters $\beta_1=0.9$, $\beta_2=0.999$, and $\epsilon=10^{-8}$ were used, consistent with common practice. This implementation therefore combines momentum and RMSprop into a single adaptive optimizer.
+\begin{algorithm}[H]
+\caption{Adam}
+\begin{algorithmic}[1]
+\State Initialize $\boldsymbol{\theta}^{(0)}$, $\mathbf{m}^{(0)}=0$, $\mathbf{v}^{(0)}=0$, timestep $t=0$
+\For{$n = 0, 1, 2, \dots$ until convergence}
+\State $t \gets t+1$
+\State Compute gradient $\mathbf{g} \gets \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}^{(n)})$
+\State Update moments: $\mathbf{m}, \mathbf{v}$
+\State Apply bias correction to $\mathbf{m}, \mathbf{v}$
+\State Update parameters: $\boldsymbol{\theta}^{(n+1)}$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Gradient descents comparison}
 Stochastic Gradient Descent (SGD) is appreciated for its simplicity and memory efficiency, particularly when tackling large datasets. However, it sometimes oscillates and may converge slowly. 
@@ -315,7 +380,8 @@ RMSprop was introduced to counter Adagrad's diminishing learning rate, making it
 
 Adam is more often the preferred method because it merges the advantages of momentum and adaptive learning rates, generally performing robustly in most deep learning scenarios, though it may require careful parameter tuning to reach optimal performance.
 
-(AAA in our case)
+
+
 
 \subsection{Bias-variance trade-off and resampling techniques}
 
