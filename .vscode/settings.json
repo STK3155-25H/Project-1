@@ -1,7 +1,7 @@
 {
     "git.autofetch": true,
     "python.defaultInterpreterPath": "/opt/homebrew/bin/python3",
-    "files.autoSave": "afterDelay",
+    "files.autoSave": "off",
 "latex-workshop.latex.tools": [
     {
         "name": "pdflatex",

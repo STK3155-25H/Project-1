@@ -32,6 +32,10 @@ import time
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import List, Dict, Tuple
+import matplotlib.pyplot as plt
+from collections import defaultdict
+from sklearn.linear_model import LinearRegression, Ridge as SkRidge, Lasso as SkLasso
+
 
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -40,9 +44,9 @@ from sklearn.utils import resample
 # --- make local Code importable (this file lives in Code/) ---
 THIS_DIR = Path(__file__).resolve().parent
 ROOT_DIR = THIS_DIR.parent
-OUT_DIR = ROOT_DIR / "../outputs"
-TABLES_DIR = OUT_DIR / "benchmarks"
-LOGS_DIR = OUT_DIR / "benchmarks/logs"
+OUT_DIR = ROOT_DIR / "../outputs/benchmarks"
+TABLES_DIR = OUT_DIR / "tables"
+LOGS_DIR = OUT_DIR / "logs"
 
 # Add Code/ to sys.path so we can `import ml_core`
 if str(THIS_DIR) not in sys.path:
@@ -104,6 +108,64 @@ def print_table(rows: List[Dict[str, object]], columns: List[str], max_rows: int
     print(line)
     for r in data:
         print(sep.join(f"{str(r.get(c, '')):{col_widths[c]}}" for c in columns))
+
+
+def run_sklearn_method(method: str, Xtr, Xte, y_tr, y_te, lam: float):
+    """
+    Fit/predict with scikit-learn equivalents and return timings + metrics.
+    Returns: (theta_like, metrics_dict)
+    Note: returns a 'theta_like' vector to keep interface consistent, but it's not used further.
+    """
+    t0 = time.perf_counter()
+
+    if method == "sklearn-ols":
+        model = LinearRegression(fit_intercept=False)
+    elif method == "sklearn-ridge":
+        model = SkRidge(alpha=lam, fit_intercept=False)  # solver='auto'
+    elif method == "sklearn-lasso":
+        model = SkLasso(alpha=lam, fit_intercept=False, max_iter=10000)
+    else:
+        raise ValueError(f"Unknown sklearn method: {method}")
+
+    model.fit(Xtr, y_tr)
+    t1 = time.perf_counter()
+    fit_ms = (t1 - t0) * 1000.0
+
+    t2 = time.perf_counter()
+    yhat_tr = model.predict(Xtr)
+    yhat_te = model.predict(Xte)
+    t3 = time.perf_counter()
+    pred_ms = (t3 - t2) * 1000.0
+
+    # metrics
+    mse_tr = MSE(y_tr, yhat_tr)
+    mse_te = MSE(y_te, yhat_te)
+    r2_tr = R2_score(y_tr, yhat_tr)
+    r2_te = R2_score(y_te, yhat_te)
+
+    # iterations, if exposed
+    iters = 0
+    if hasattr(model, "n_iter_"):
+        niter = model.n_iter_
+        # sklearn can expose int or array; normalize
+        if isinstance(niter, (list, tuple, np.ndarray)):
+            iters = int(np.max(niter))
+        else:
+            iters = int(niter)
+
+    # Fake theta to keep interfaces aligned (not used afterwards)
+    theta_like = np.zeros(Xtr.shape[1])
+
+    metrics = dict(
+        fit_time_ms=fit_ms,
+        predict_time_ms=pred_ms,
+        mse_train=mse_tr,
+        mse_test=mse_te,
+        r2_train=r2_tr,
+        r2_test=r2_te,
+        iters=iters,
+    )
+    return theta_like, metrics
 
 # --------------------------
 # FLOPs & memory estimates
@@ -256,64 +318,84 @@ def run_one_method(
     iters = 0
     converged = True
 
-    if method == "ols":
-        theta = OLS_parameters(Xtr, y_tr)
-    elif method == "ridge":
-        theta = Ridge_parameters(Xtr, y_tr, lam=lam, intercept=True)
-    elif method.startswith("gd-"):
-        # Map gd-* to optimizer names in your Gradient_descent_advanced
-        opt = method.replace("gd-", "")  # vanilla, momentum, adagrad, rmsprop, adam
-        hist = Gradient_descent_advanced(
-            Xtr, y_tr,
-            Type=0,             # OLS loss
-            lam=lam,
-            lr=gd_opts["lr"],
-            n_iter=gd_opts["n_iter"],
-            tol=gd_opts["tol"],
-            method=opt,
-            beta=gd_opts["beta"],
-            epsilon=gd_opts["epsilon"],
-            batch_size=gd_opts["batch_size"],
-            use_sgd=gd_opts["use_sgd"],
-            theta_history=True
-        )
-        if hist is None or len(hist) == 0:
-            # Fallback: assume zeros (rare)
-            theta = np.zeros(p)
-            iters = 0
-            converged = False
+    # ===== NEW: sklearn methods =====
+    if method in ("sklearn-ols", "sklearn-ridge", "sklearn-lasso"):
+        theta, m = run_sklearn_method(method, Xtr, Xte, y_tr, y_te, lam=lam)
+        fit_ms = m["fit_time_ms"]
+        pred_ms = m["predict_time_ms"]
+        total_ms = fit_ms + pred_ms
+        mse_tr = m["mse_train"]
+        mse_te = m["mse_test"]
+        r2_tr = m["r2_train"]
+        r2_te = m["r2_test"]
+        iters = m["iters"]
+        converged = True if iters == 0 else True  # if sklearn returns iters, it converged
+        # FLOPs/mem: leave FLOPs NaN (solver-dependent), memory estimate similar to closed-form for ols/ridge; unknown for lasso
+        if method in ("sklearn-ols", "sklearn-ridge"):
+            flops = float("nan")
+            mem_mb = bytes_to_mb(estimate_memory_bytes("ols", n_train, p))
         else:
-            theta = hist[-1]
-            iters = len(hist)
-            converged = iters < gd_opts["n_iter"]
+            flops = float("nan")
+            mem_mb = float("nan")
+
+    # ===== Your implementations =====
     else:
-        raise ValueError(f"Unknown method: {method}")
+        if method == "ols":
+            theta = OLS_parameters(Xtr, y_tr)
+        elif method == "ridge":
+            theta = Ridge_parameters(Xtr, y_tr, lam=lam, intercept=True)
+        elif method.startswith("gd-"):
+            # Map gd-* to optimizer names in your Gradient_descent_advanced
+            opt = method.replace("gd-", "")  # vanilla, momentum, adagrad, rmsprop, adam
+            hist = Gradient_descent_advanced(
+                Xtr, y_tr,
+                Type=0,             # OLS loss
+                lam=lam,
+                lr=gd_opts["lr"],
+                n_iter=gd_opts["n_iter"],
+                tol=gd_opts["tol"],
+                method=opt,
+                beta=gd_opts["beta"],
+                epsilon=gd_opts["epsilon"],
+                batch_size=gd_opts["batch_size"],
+                use_sgd=gd_opts["use_sgd"],
+                theta_history=True
+            )
+            if hist is None or len(hist) == 0:
+                theta = np.zeros(p)
+                iters = 0
+                converged = False
+            else:
+                theta = hist[-1]
+                iters = len(hist)
+                converged = iters < gd_opts["n_iter"]
+        else:
+            raise ValueError(f"Unknown method: {method}")
 
-    t1 = time.perf_counter()
-    fit_ms = (t1 - t0) * 1000.0
+        t1 = time.perf_counter()
+        fit_ms = (t1 - t0) * 1000.0
 
-    # --- Predict ---
-    t2 = time.perf_counter()
-    yhat_tr = Xtr @ theta
-    yhat_te = Xte @ theta
-    t3 = time.perf_counter()
-    pred_ms = (t3 - t2) * 1000.0
+        # Predict
+        t2 = time.perf_counter()
+        yhat_tr = Xtr @ theta
+        yhat_te = Xte @ theta
+        t3 = time.perf_counter()
+        pred_ms = (t3 - t2) * 1000.0
+        total_ms = (t3 - t0) * 1000.0
 
-    total_ms = (t3 - t0) * 1000.0
+        # Metrics
+        mse_tr = MSE(y_tr, yhat_tr)
+        mse_te = MSE(y_te, yhat_te)
+        r2_tr = R2_score(y_tr, yhat_tr)
+        r2_te = R2_score(y_te, yhat_te)
 
-    # --- Metrics ---
-    mse_tr = MSE(y_tr, yhat_tr)
-    mse_te = MSE(y_te, yhat_te)
-    r2_tr = R2_score(y_tr, yhat_tr)
-    r2_te = R2_score(y_te, yhat_te)
-
-    # FLOPs & memory
-    if method in ("ols", "ridge"):
-        flops = estimate_flops_closed_form(n_train, p, solver="pinv")
-        mem_mb = bytes_to_mb(estimate_memory_bytes(method, n_train, p))
-    else:
-        flops = estimate_flops_gd(n_train, p, iters=iters, method=method, batch_size=gd_opts["batch_size"] if gd_opts["use_sgd"] else None)
-        mem_mb = bytes_to_mb(estimate_memory_bytes("gd", n_train, p, gd_opts["batch_size"] if gd_opts["use_sgd"] else None))
+        # FLOPs & memory
+        if method in ("ols", "ridge"):
+            flops = estimate_flops_closed_form(n_train, p, solver="pinv")
+            mem_mb = bytes_to_mb(estimate_memory_bytes(method, n_train, p))
+        else:
+            flops = estimate_flops_gd(n_train, p, iters=iters, method=method, batch_size=gd_opts["batch_size"] if gd_opts["use_sgd"] else None)
+            mem_mb = bytes_to_mb(estimate_memory_bytes("gd", n_train, p, gd_opts["batch_size"] if gd_opts["use_sgd"] else None))
 
     row = BenchRow(
         degree=degree,
@@ -384,6 +466,192 @@ def bias_variance_grid(
         })
     return results
 
+
+def _ensure_figs_dir():
+    figs_dir = OUT_DIR / "figures"
+    figs_dir.mkdir(parents=True, exist_ok=True)
+    return figs_dir
+
+def _group_by_method_and_degree(rows: List[BenchRow]) -> Dict[str, Dict[int, BenchRow]]:
+    """
+    Returns: { method : { degree : BenchRow } }
+    Assumes a single row per (method, degree).
+    """
+    grid = defaultdict(dict)
+    for r in rows:
+        grid[r.method][r.degree] = r
+    return grid
+
+def _sorted_xy_for_metric(grid: Dict[int, BenchRow], metric: str) -> Tuple[List[int], List[float]]:
+    degs = sorted(grid.keys())
+    ys = [getattr(grid[d], metric) for d in degs]
+    return degs, ys
+
+def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: str, logger: Logger | None = None):
+    """
+    Generate and save a set of plots that are useful to discuss in an article:
+      1. Test R^2 vs degree (per method)
+      2. Fit time vs degree (per method, log-y)
+      3. Iterations vs degree (GD methods only)
+      4. FLOPs estimate vs degree (per method, log-y)
+      5. Memory estimate vs degree (per method)
+      6. Condition number of X'X vs degree
+      7. Scaled-vs-unscaled Test MSE delta (stability proxy) vs degree
+      8. Bias–Variance decomposition vs degree
+      9. (Bonus) Accuracy–Speed Pareto: R^2(test) vs Fit time (log-x) scatter
+    """
+    figs_dir = _ensure_figs_dir()
+    saved = []
+
+    grid = _group_by_method_and_degree(rows)
+
+    # 1) R^2(test) vs degree
+    plt.figure(figsize=(7, 4.5))
+    for m, g in grid.items():
+        degs, ys = _sorted_xy_for_metric(g, "r2_test")
+        plt.plot(degs, ys, marker="o", label=m)
+    plt.xlabel("Polynomial degree")
+    plt.ylabel(r"$R^2$ (test)")
+    plt.title(r"Test $R^2$ vs Degree")
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    f1 = figs_dir / f"r2_test_vs_degree_{stamp}.png"
+    plt.tight_layout(); plt.savefig(f1, dpi=160); plt.close()
+    saved.append(f1)
+
+    # 2) Fit time vs degree (log-y)
+    plt.figure(figsize=(7, 4.5))
+    for m, g in grid.items():
+        degs, ys = _sorted_xy_for_metric(g, "fit_time_ms")
+        plt.semilogy(degs, ys, marker="o", label=m)
+    plt.xlabel("Polynomial degree")
+    plt.ylabel("Fit time (ms, log)")
+    plt.title("Fit Time vs Degree")
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    f2 = figs_dir / f"fit_time_vs_degree_{stamp}.png"
+    plt.tight_layout(); plt.savefig(f2, dpi=160); plt.close()
+    saved.append(f2)
+
+    # 3) Iterations vs degree (only GD methods)
+    plt.figure(figsize=(7, 4.5))
+    plotted_any = False
+    for m, g in grid.items():
+        if not m.startswith("gd-"): 
+            continue
+        degs, ys = _sorted_xy_for_metric(g, "iters")
+        plt.plot(degs, ys, marker="o", label=m)
+        plotted_any = True
+    if plotted_any:
+        plt.xlabel("Polynomial degree")
+        plt.ylabel("Iterations")
+        plt.title("Iterations to Convergence (GD) vs Degree")
+        plt.grid(True, alpha=0.3)
+        plt.legend()
+        f3 = figs_dir / f"gd_iterations_vs_degree_{stamp}.png"
+        plt.tight_layout(); plt.savefig(f3, dpi=160); plt.close()
+        saved.append(f3)
+    else:
+        plt.close()
+
+    # 4) FLOPs estimate vs degree (log-y)
+    plt.figure(figsize=(7, 4.5))
+    for m, g in grid.items():
+        degs, ys = _sorted_xy_for_metric(g, "flops_est")
+        # protect against zeros
+        ys = [y if (isinstance(y, (int, float)) and y > 0) else np.nan for y in ys]
+        plt.semilogy(degs, ys, marker="o", label=m)
+    plt.xlabel("Polynomial degree")
+    plt.ylabel("FLOPs (log)")
+    plt.title("FLOPs Estimate vs Degree")
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    f4 = figs_dir / f"flops_vs_degree_{stamp}.png"
+    plt.tight_layout(); plt.savefig(f4, dpi=160); plt.close()
+    saved.append(f4)
+
+    # 5) Memory estimate vs degree
+    plt.figure(figsize=(7, 4.5))
+    for m, g in grid.items():
+        degs, ys = _sorted_xy_for_metric(g, "mem_mb_est")
+        plt.plot(degs, ys, marker="o", label=m)
+    plt.xlabel("Polynomial degree")
+    plt.ylabel("Estimated memory (MB)")
+    plt.title("Memory Footprint vs Degree")
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    f5 = figs_dir / f"memory_vs_degree_{stamp}.png"
+    plt.tight_layout(); plt.savefig(f5, dpi=160); plt.close()
+    saved.append(f5)
+
+    # 6) Condition number vs degree (use OLS rows once per degree)
+    # Pick the first method available (condition number is per design, not method)
+    any_method = next(iter(grid))
+    degs, conds = _sorted_xy_for_metric(grid[any_method], "cond_XTX")
+    plt.figure(figsize=(7, 4.5))
+    plt.semilogy(degs, conds, marker="o")
+    plt.xlabel("Polynomial degree")
+    plt.ylabel("cond(X'X) (log)")
+    plt.title("Design Conditioning vs Degree")
+    plt.grid(True, alpha=0.3)
+    f6 = figs_dir / f"condition_vs_degree_{stamp}.png"
+    plt.tight_layout(); plt.savefig(f6, dpi=160); plt.close()
+    saved.append(f6)
+
+    # 7) Stability delta (scaled - unscaled Test MSE) vs degree
+    # As stored, the delta is duplicated per method; we read it from any_method
+    degs, deltas = _sorted_xy_for_metric(grid[any_method], "scaled_vs_unscaled_mse_delta")
+    plt.figure(figsize=(7, 4.5))
+    plt.plot(degs, deltas, marker="o")
+    plt.axhline(0.0, ls="--", alpha=0.5)
+    plt.xlabel("Polynomial degree")
+    plt.ylabel("Δ Test MSE (scaled − unscaled)")
+    plt.title("Numerical Stability Proxy vs Degree")
+    plt.grid(True, alpha=0.3)
+    f7 = figs_dir / f"stability_delta_vs_degree_{stamp}.png"
+    plt.tight_layout(); plt.savefig(f7, dpi=160); plt.close()
+    saved.append(f7)
+
+    # 8) Bias–Variance decomposition vs degree
+    if bv_results:
+        degs_bv = [int(r["degree"]) for r in bv_results]
+        mse_bv = [r["mse"] for r in bv_results]
+        bias2_bv = [r["bias2"] for r in bv_results]
+        var_bv = [r["variance"] for r in bv_results]
+
+        plt.figure(figsize=(7, 4.5))
+        plt.plot(degs_bv, mse_bv, marker="o", label="MSE")
+        plt.plot(degs_bv, bias2_bv, marker="o", label="Bias²")
+        plt.plot(degs_bv, var_bv, marker="o", label="Variance")
+        plt.xlabel("Polynomial degree")
+        plt.ylabel("Error components")
+        plt.title("Bias–Variance Decomposition (OLS)")
+        plt.grid(True, alpha=0.3)
+        plt.legend()
+        f8 = figs_dir / f"bias_variance_{stamp}.png"
+        plt.tight_layout(); plt.savefig(f8, dpi=160); plt.close()
+        saved.append(f8)
+
+    # 9) Accuracy–Speed Pareto: R^2(test) vs Fit time (log-x), points by (method, degree)
+    plt.figure(figsize=(7, 4.8))
+    for m, g in grid.items():
+        xs, ys = _sorted_xy_for_metric(g, "fit_time_ms")
+        r2s = [g[d].r2_test for d in xs]
+        # jitter x a tiny bit by degree to reduce overlap in some cases
+        plt.semilogx(xs, r2s, marker="o", linestyle="", label=m)
+    plt.xlabel("Fit time (ms, log)")
+    plt.ylabel(r"$R^2$ (test)")
+    plt.title("Accuracy–Speed Pareto (per method & degree)")
+    plt.grid(True, which="both", alpha=0.3)
+    plt.legend()
+    f9 = figs_dir / f"pareto_r2_vs_time_{stamp}.png"
+    plt.tight_layout(); plt.savefig(f9, dpi=160); plt.close()
+    saved.append(f9)
+
+    if logger:
+        for p in saved:
+            logger.write(f"[INFO] Saved figure -> {p}\n")
+
 # --------------------------
 # Main
 # --------------------------
@@ -392,8 +660,14 @@ def main():
     parser.add_argument("--n-points", type=int, default=100, help="Total points on Runge function in [-1,1].")
     parser.add_argument("--max-degree", type=int, default=15, help="Max polynomial degree.")
     parser.add_argument("--noise", action="store_true", help="Add Gaussian noise to Runge(y).")
-    parser.add_argument("--methods", nargs="+", default=["ols", "ridge", "gd-vanilla", "gd-momentum", "gd-adam"],
-                        help="Which methods to run. Options: ols, ridge, gd-vanilla, gd-momentum, gd-adagrad, gd-rmsprop, gd-adam")
+    parser.add_argument(
+    "--methods",
+    nargs="+",
+    default=["ols", "ridge", "gd-vanilla", "gd-momentum", "gd-adam", "sklearn-ols", "sklearn-ridge", "sklearn-lasso"],
+    help=("Methods to run. "
+          "Ours: ols, ridge, gd-vanilla, gd-momentum, gd-adagrad, gd-rmsprop, gd-adam. "
+          "Scikit-learn: sklearn-ols, sklearn-ridge, sklearn-lasso"))
+
     parser.add_argument("--lam", type=float, default=1e-2, help="Lambda for Ridge (and ignored elsewhere).")
 
     # GD knobs
@@ -551,6 +825,7 @@ def main():
     preview_cols = ["degree", "method", "n_points", "p", "fit_time_ms", "iters", "mse_test", "r2_test", "flops_est", "mem_mb_est", "cond_XTX", "scaled_vs_unscaled_mse_delta"]
     preview = [asdict(r) for r in rows]
     print_table(preview, preview_cols, max_rows=12)
+    make_plots(rows, bv_results, stamp, logger=logger)
 
     logger.write("\n[INFO] Done.\n")
     logger.close()
