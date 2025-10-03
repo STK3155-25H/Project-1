@@ -11,13 +11,28 @@ TESTS=$(OUT)/tests
 PYTEST?=pytest
 PYTEST_FLAGS?=-q
 SEED?=123
+BENCHMARKS = $(CODE)/src
 
 # Common knobs (override like: make a MAX_DEGREE=12)
 MAX_DEGREE?=15
 NPOINTS?=40,50,100,500,1000
 
+BENCH_NPOINTS?=100
+BENCH_MAX_DEGREE?=15
+METHODS?=ols ridge gd-vanilla gd-momentum gd-adam
+LAM?=0.01
+LR?=0.01
+N_ITER?=10000
+TOL?=1e-8
+BETA?=0.9
+EPSILON?=1e-8
+USE_SGD?=false          # set to true to use mini-batches
+BATCH_SIZE?=32
+BOOTSTRAP?=30
+TEST_SIZE?=0.33
+
 # ---------- Phony ----------
-.PHONY: help setup dirs all a b c d e g h figures tables clean
+.PHONY: help setup dirs all a b c d e g h figures tables clean bench benchmark benchmarkrun
 
 help:
 	@echo "Targets:"
@@ -36,6 +51,10 @@ help:
 	@echo "  tables       List saved tables"
 	@echo "  clean        Remove generated outputs"
 	@echo "  tests        Run unit tests (pytest) su Code/tests"
+	@echo "  bench        Run complete benchmark (single, metric-rich) -> outputs/tables + logs"
+	@echo "  benchmark    Alias for 'bench'"
+	@echo "  benchmarkrun Alias for 'bench'"
+
 
 setup:
 	$(PY) -m pip install -r requirements.txt
@@ -94,6 +113,23 @@ figures:
 tables:
 	@echo "Tables:"; \
 	if [ -d "$(TABLES)" ]; then find "$(TABLES)" -type f; else echo "(none yet)"; fi
+
+# ---------- Complete benchmark run ----------
+bench: dirs
+	@STAMP=`date +%Y%m%d-%H%M%S`; \
+	FLAGS="--n-points $(BENCH_NPOINTS) --max-degree $(BENCH_MAX_DEGREE) \
+	       --lam $(LAM) --lr $(LR) --n-iter $(N_ITER) --tol $(TOL) \
+	       --beta $(BETA) --epsilon $(EPSILON) --batch-size $(BATCH_SIZE) \
+	       --bootstrap $(BOOTSTRAP) --test-size $(TEST_SIZE)"; \
+	if [ "$(USE_SGD)" = "true" ]; then FLAGS="$$FLAGS --use-sgd"; fi; \
+	if [ -n "$(NOISE)" ]; then FLAGS="$$FLAGS --noise"; fi; \
+	if [ -n "$(METHODS)" ]; then FLAGS="$$FLAGS --methods $(METHODS)"; fi; \
+	echo "Running benchmarks with: $$FLAGS" | tee "$(LOGS)/bench_$$STAMP.log"; \
+	$(PY) $(BENCHMARKS)/exp_benchmarks_metrics.py $$FLAGS 2>&1 | tee -a "$(LOGS)/bench_$$STAMP.log"; \
+	echo "Done. See CSVs in $(TABLES) and log $(LOGS)/bench_$$STAMP.log"
+
+benchmark: bench
+benchmarkrun: bench
 
 clean:
 	rm -rf $(OUT)
