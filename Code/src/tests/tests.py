@@ -174,7 +174,7 @@ def test_gradient_descent_converges_to_ols_ols_case(seeded_src, degree, lr):
 
     theta_gd = GD(
         Xtr, y_train, Type=0, lam=0.0, lr=lr,
-        n_iter=8000, tol=1e-10, method="vanilla", theta_history=False
+        n_iter=50000, tol=1e-10, method="vanilla", theta_history=False
     )
     # Devono coincidere (entro tolleranza numerica)
     np.testing.assert_allclose(theta_gd, theta_star, rtol=1e-5, atol=1e-6)
