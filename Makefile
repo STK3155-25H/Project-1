@@ -7,7 +7,7 @@ OUT=outputs
 FIGS=$(OUT)/figures
 TABLES=$(OUT)/tables
 LOGS=$(OUT)/logs
-TESTS=$(OUT)/tests
+TESTS=$(OUT)/scripts
 PYTEST?=pytest
 PYTEST_FLAGS?=-q
 SEED?=123
@@ -17,7 +17,7 @@ MAX_DEGREE?=15
 NPOINTS?=40,50,100,500,1000
 
 # ---------- Phony ----------
-.PHONY: help setup dirs all a b c d e g h figures tables clean
+.PHONY: help setup dirs all a b c d e g h tables clean benchmarks
 
 help:
 	@echo "Targets:"
@@ -33,9 +33,11 @@ help:
 	@echo "  h            Run Part H (Cross-Validation)"
 	@echo "  all          Run all parts A…H"
 	@echo "  figures      List saved figures"
-	@echo "  tables       List saved tables"
+# 	@echo "  tables       List saved tables"
 	@echo "  clean        Remove generated outputs"
-	@echo "  tests        Run unit tests (pytest) su Code/tests"
+	@echo "  tests        Run unit tests (pytest) su Code/scripts"
+	@echo "  benchmarks   Run benchmarks su Code/scripts"
+
 
 setup:
 	$(PY) -m pip install -r requirements.txt
@@ -86,10 +88,14 @@ tests:
 	-o python_files="tests.py test_*.py" \
 	-o testpaths="$(CODE)/tests" 2>&1 | tee "$(TESTS)/tests_$${STAMP}.log"
 
+benchmarks: dirs
+	@STAMP=`date +%Y%m%d-%H%M%S`; \
+	$(PY) $(TESTS)/benchmark_ml_impls.py 2>&1 | tee "$(LOGS)/benchmarks_$$STAMP.log"
 
-figures:
-	@echo "Figures:"; \
-	if [ -d "$(FIGS)" ]; then find "$(FIGS)" -type f; else echo "(none yet)"; fi
+
+# figures:
+# 	@echo "Figures:"; \
+# 	if [ -d "$(FIGS)" ]; then find "$(FIGS)" -type f; else echo "(none yet)"; fi
 
 tables:
 	@echo "Tables:"; \
