@@ -49,9 +49,9 @@ The results show that OLS fits become highly unstable for high polynomial degree
 \section{Introduction}
 \label{sec:Introduction}
 Regression is a cornerstone in data analysis, machine learning, and scientific modeling, enabling the approximation of relationships between variables and facilitating predictions.
-Choosing the right regression method is crucial, as it directly affects model accuracy, stability, and interpretability \textbf{Citation here on these topics}.
-Understanding the performance of different regression techniques is therefore a central problem in statistical learning and computational physics \textbf{Cite here}.
-In this project we investigate various regression methods\textbf{Either site the lecture notes here or where we explain ols, ridge and lasso}, such as Ordinary Least Squares, Ridge Regression, and Lasso Regression.
+As datasets become larger and larger, choosing the right regression method is crucial, as it directly affects model accuracy, stability, and interpretability\cite{mehta2019highbias}.
+Understanding the performance of different regression techniques is therefore a central problem in statistical learning and computational physics \cite{aiken2021framework}.
+In this project we investigate various regression methods, such as Ordinary Least Squares, Ridge Regression, and Lasso Regression.
 It focuses on fitting polynomials to a specific one-dimensional function, the Runge function\textbf{Cite here on runge function}:
 \[
 \frac{1}{1+25x^2}, \quad x\in[-1, 1]
@@ -102,7 +102,7 @@ Finally, applying training-set statistics to scale the test set ensures unbiased
 
 
 \subsection{Ordinary Least Squares}
-Ordinary Least Squares (OLS) is the classical method for linear regression and it estimates $\boldsymbol{\theta}$ by minimizing the mean squared error\cite{hjorthjensen2025week35}. This is the cost function that is going to be optimize:
+Ordinary Least Squares (OLS) is the classical method for linear regression and it estimates $\boldsymbol{\theta}$ by minimizing the mean squared error\cite{hjorthjensen_week35}. This is the cost function that is going to be optimize:
 
 $$
 C(\boldsymbol{\theta})=\frac{1}{n}\left\{\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\right)\right\}$$
@@ -123,7 +123,7 @@ The inputs of the OLS function are a feature matrix $\mathbf{X} \in \mathbb{R}^{
 The function is implemented in Python, using the NumPy library for efficient numerical computations. The function \texttt{np.linalg.pinv} is used to compute the pseudoinverse of the matrix $\mathbf{X}^\top \mathbf{X}$, which is particularly useful when $\mathbf{X}^\top \mathbf{X}$ is not invertible. This ensures numerical stability.
 
 \subsection{Ridge regression}
-A regularization parameter $\lambda$ can be introduced by defining a new cost function to be optimized, that is:
+A regularization parameter $\lambda$ can be introduced by defining a new cost function to be optimized\cite{hjorthjensen_week35}, that is:
 $$ C(\boldsymbol{\theta}) 
 =\frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\theta}\vert\vert_2^2
 $$
@@ -139,7 +139,8 @@ The inputs of the Ridge function are a feature matrix $\mathbf{X} \in \mathbb{R}
 The function uses the same function \texttt{np.linalg.pinv} to compute the pseudoinverse of the matrix $\mathbf{X}^\top \mathbf{X} + \boldsymbol{\lambda}\mathbf{I}$, ensuring numerical stability.
 
 \subsection{Lasso regression}
-Here the regularization term is based on the $L_1$ norm of the parameters. The cost function is defined as
+Here the regularization term is based on the $L_1$ norm of the parameters\cite{hjorthjensen_week35}.
+The cost function is defined as
 $$
 C(\boldsymbol{\theta}) 
 = \frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2
@@ -160,7 +161,7 @@ Typically, Lasso Regression is preferred when the goal is to simplify the model 
 
 Although OLS and Ridge regression have analytical solutions, such solutions are not always available in general, so a numerical approach is often needed to optimize the same cost function.\\
 
-Consider the cost function $C(\boldsymbol{\theta})$ that has to be minimized with respect to the parameters $\boldsymbol{\theta}$.  
+Consider the cost function $C(\boldsymbol{\theta})$ that has to be minimized with respect to the parameters $\boldsymbol{\theta}$\cite{hjorthjensen_week36}.  
 A second-order Taylor expansion around a point $\boldsymbol{\theta}_n$ is performed:
 $$
 C(\boldsymbol{\theta}) \approx C(\boldsymbol{\theta}_n) + (\boldsymbol{\theta}-\boldsymbol{\theta}_n)^\top \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}_n) 
@@ -200,7 +201,10 @@ After each update, the algorithm recomputes the cost function and its gradient u
 (AAA: I don't know if we want something like this)
 
 \subsection{Stochastic Gradient Descent (SGD)}
-Gradient descent can be computationally expensive when applied to large datasets. Stochastic Gradient Descent (SGD) addresses this by updating the model parameters using a single (or small batch of) data point(s) per iteration, rather than the full dataset. This introduces noise in the updates but significantly reduces computation time. The update rule is as follows:  
+Gradient descent can be computationally expensive when applied to large datasets.
+Stochastic Gradient Descent (SGD) addresses this by updating the model parameters using a single (or small batch of) data point(s) per iteration, rather than the full dataset\cite{hjorthjensen_week37}.
+This introduces noise in the updates but significantly reduces computation time.
+The update rule is as follows:  
 $$
 \boldsymbol{\theta}_{n+1} = \boldsymbol{\theta}_n - {\eta \boldsymbol{\nabla}} l_{i_n} (\boldsymbol{\theta_t}),
 $$  
@@ -230,7 +234,7 @@ The learning rate $\eta$ plays a crucial role in the convergence and a limitatio
 Moreover, for a function with steep directions and flat directions, a single global $ \eta$ may be inappropriate:
 steep coordinates require a smaller step size to avoid oscillation and flat coordinates could use a larger step to speed up progress.
 
-In order to mitigate this problem, gradient descent with momentum is introduced: it refers to a method that smoothens the optimization trajectory by adding a term that helps the optimizer remember the past gradients.
+In order to mitigate this problem, gradient descent with momentum is introduced: it refers to a method that smoothens the optimization trajectory by adding a term that helps the optimizer remember the past gradients\cite{hjorthjensen_week37}.
 
 Mathematically, let $\boldsymbol{m}_n$ denote the velocity (or accumulated gradient) at iteration $n$. The update rules for gradient descent with momentum are:
 \[
@@ -244,7 +248,8 @@ This leads to more advanced optimization methods which use an adaptive learning 
 
 
 \subsection{Adagrad}
-Adagrad adapts the learning rate for each parameter based on the historical squared gradients, giving smaller updates to frequently updated parameters and larger updates to infrequent ones. This is particularly useful for sparse data.  
+Adagrad adapts the learning rate for each parameter based on the historical squared gradients, giving smaller updates to frequently updated parameters and larger updates to infrequent ones\cite{hjorthjensen_week37}.
+This is particularly useful for sparse data.  
 \[
 \boldsymbol{\theta}_{n+1} = \boldsymbol{\theta}_n - \frac{\eta}{\sqrt{\boldsymbol{v}_n} + \epsilon} \, \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}_n).
 \]
@@ -257,7 +262,8 @@ The accumulation of squared gradients can lead to excessively small learning rat
 (AAA)
 
 \subsection{RMSprop}
-RMSprop tackles Adagrad's excessive shrinkage of the learning rate by using an exponentially decaying average of past squared gradients instead of a simple sum. This prevents the learning rate from shrinking too much and slowing down.  
+RMSprop tackles Adagrad's excessive shrinkage of the learning rate by using an exponentially decaying average of past squared gradients instead of a simple sum\cite{hjorthjensen_week37}.
+This prevents the learning rate from shrinking too much and slowing down.  
 If the running average is
 \[
 v_n = \beta v_{n-1} + (1 - \beta)\left( \nabla C(\theta_n) \right)^2,
@@ -274,7 +280,7 @@ On the other hand, RMSprop requires tuning of the decay rate \(\beta\) and the b
 (AAA)
 
 \subsection{Adam}
-Adam (Adaptive Moment Estimation) combines momentum and RMSprop, maintaining both an exponentially decaying average of past gradients (first moment) and squared gradients (second moment), with bias correction. It adapts the learning rate per parameter, providing stability, while incorporating momentum, accelerating the convergence.
+Adam (Adaptive Moment Estimation) combines momentum and RMSprop, maintaining both an exponentially decaying average of past gradients (first moment) and squared gradients (second moment), with bias correction\cite{hjorthjensen_week37}. It adapts the learning rate per parameter, providing stability, while incorporating momentum, accelerating the convergence.
 So, combining the moving averages of momentum
 \[
 m_n = \beta_1 m_{n-1} + (1-\beta_1) \nabla_\theta C(\theta_n)
@@ -313,7 +319,7 @@ Adam is more often the preferred method because it merges the advantages of mome
 
 \subsection{Bias-variance trade-off and resampling techniques}
 
-The bias-variance trade-off is a fundamental concept in machine learning and statistics that describes the relationship between a model's complexity, the accuracy of its predictions, and how well it can make predictions on previously unseen data that were not used to train the model. 
+The bias-variance trade-off is a fundamental concept in machine learning and statistics that describes the relationship between a model's complexity, the accuracy of its predictions, and how well it can make predictions on previously unseen data that were not used to train the model\cite{hjorthjensen_week38}. 
 Bias is the error due to approximating a complex real-world problem with a simplified model: 
 $$\mathrm{Bias}[\tilde y]= \mathbb{E}[(f-\mathbb{E}[\tilde y])^2]$$
 
@@ -354,11 +360,20 @@ that is the rewriting in terms of the bias, the variance of the model $\boldsymb
 In order to derive this equation, the assumption that is made is that the unknown function $\boldsymbol{f}$ can be replaced by the target data $\boldsymbol{y}$.\\
 *I'm not able to cite because the .bib is deleting what I'm writing* \\\\ 
 This decomposition underlies the bias-variance trade-off: a high bias and low variance situation corresponds to a model that is too simple and underfits the data, while a low bias and high variance situation corresponds to a model that is too complex and overfits the data.
-The goal is to find a balance, achieving a model that is complex enough to capture the underlying patterns but simple enough to generalize well to new data.
+The goal is to find a balance, achieving a model that is complex enough to capture the underlying patterns but simple enough to generalize well to new data.\\\\
+
 Resampling techniques provide the practical tool for measuring and managing this balance, by reliably estimating the generalization ability of the model.
-They involve repeatedly drawing samples from a training set and refitting a model of interest on each sample in order to obtain additional information about the fitted model. Two resampling techniques are discussed here: bootstrap and cross-validation.\\\\
-Bootstrap is a resampling technique that involves repeatedly drawing samples with replacement from the original dataset to create multiple "bootstrap" samples. Each bootstrap sample is used to fit the model, and the variability of the model's predictions across these samples provides an estimate of the model's variance. This method is particularly useful for estimating the uncertainty of model parameters and assessing the stability of the model.\\\\
-Cross-validation is a technique used to assess how the results of a statistical analysis will generalize to an independent dataset. The most common form is k-fold cross-validation, where the dataset is divided into k subsets (or "folds"). The model is trained on k-1 folds and validated on the remaining fold. This process is repeated k times, with each fold serving as the validation set once. The average performance across all k trials provides a robust estimate of the model's generalization error. Cross-validation helps in selecting model parameters and in preventing overfitting by ensuring that the model performs well on unseen data.\\\\
+They involve repeatedly drawing samples from a training set and refitting a model of interest on each sample in order to obtain additional information about the fitted model.
+Two resampling techniques are discussed here: bootstrap and cross-validation.\\\\
+Bootstrap is a resampling technique that involves repeatedly drawing samples with replacement from the original dataset to create multiple "bootstrap" samples\cite{hjorthjensen_week38}.
+Each bootstrap sample is used to fit the model, and the variability of the model's predictions across these samples provides an estimate of the model's variance.
+This method is particularly useful for estimating the uncertainty of model parameters and assessing the stability of the model.\\\\
+Cross-validation is a technique used to assess how the results of a statistical analysis will generalize to an independent dataset\cite{hjorthjensen_week38}.
+The most common form is k-fold cross-validation, where the dataset is divided into k subsets (or "folds").
+The model is trained on k-1 folds and validated on the remaining fold.
+This process is repeated k times, with each fold serving as the validation set once.
+The average performance across all k trials provides a robust estimate of the model's generalization error.
+Cross-validation helps in selecting model parameters and in preventing overfitting by ensuring that the model performs well on unseen data.\\\\
 
 \section{Results and Discussion}
 \label{sec:Results_and_Discussion}
