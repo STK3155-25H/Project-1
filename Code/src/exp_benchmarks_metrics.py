@@ -487,6 +487,8 @@ def _sorted_xy_for_metric(grid: Dict[int, BenchRow], metric: str) -> Tuple[List[
     ys = [getattr(grid[d], metric) for d in degs]
     return degs, ys
 
+
+
 def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: str, logger: Logger | None = None):
     """
     Generate and save a set of plots that are useful to discuss in an article:
@@ -635,11 +637,13 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
     # 9) Accuracy–Speed Pareto: R^2(test) vs Fit time (log-x), points by (method, degree)
     plt.figure(figsize=(7, 4.8))
     for m, g in grid.items():
-        xs, ys = _sorted_xy_for_metric(g, "fit_time_ms")
-        r2s = [g[d].r2_test for d in xs]
-        # jitter x a tiny bit by degree to reduce overlap in some cases
-        plt.semilogx(xs, r2s, marker="o", linestyle="", label=m)
-    plt.xlabel("Fit time (ms, log)")
+        # x = fit_time_ms, y = r2_test per degree
+        degs = sorted(g.keys())
+        xs = [g[d].fit_time_ms for d in degs]
+        ys = [g[d].r2_test for d in degs]
+        # scatter with lines by method to show degree evolution
+        plt.semilogx(xs, ys, marker="o", linestyle="-", label=m)
+    plt.xlabel("Fit time (ms, log scale)")
     plt.ylabel(r"$R^2$ (test)")
     plt.title("Accuracy–Speed Pareto (per method & degree)")
     plt.grid(True, which="both", alpha=0.3)
@@ -651,6 +655,75 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
     if logger:
         for p in saved:
             logger.write(f"[INFO] Saved figure -> {p}\n")
+
+    # --- Helpers to compare our impl vs sklearn for OLS and Ridge ---
+    def _pair_series(ours_name: str, skl_name: str, metric: str):
+        """Return (degrees_sorted, ours_values, skl_values) for a metric, intersecting degrees present in both."""
+        if ours_name not in grid or skl_name not in grid:
+            return [], [], []
+        g_ours = grid[ours_name]
+        g_skl = grid[skl_name]
+        common = sorted(set(g_ours.keys()).intersection(g_skl.keys()))
+        return common, [getattr(g_ours[d], metric) for d in common], [getattr(g_skl[d], metric) for d in common]
+
+    # 10) Our vs sklearn – accuracy gap (OLS): ΔR2 and ΔMSE vs degree
+    degs, r2_o, r2_s = _pair_series("ols", "sklearn-ols", "r2_test")
+    _,  mse_o, mse_s = _pair_series("ols", "sklearn-ols", "mse_test")
+    if degs:
+        plt.figure(figsize=(7, 4.5))
+        dr2 = [ro - rs for ro, rs in zip(r2_o, r2_s)]
+        dmse = [mo - ms for mo, ms in zip(mse_o, mse_s)]
+        plt.plot(degs, dr2, marker="o", label=r"Δ$R^2$ (ours − sklearn)")
+        plt.plot(degs, dmse, marker="o", label=r"ΔMSE (ours − sklearn)")
+        plt.axhline(0.0, ls="--", alpha=0.5)
+        plt.xlabel("Polynomial degree")
+        plt.title("OLS: Our vs scikit-learn (Accuracy Gap)")
+        plt.grid(True, alpha=0.3)
+        plt.legend()
+        f10 = figs_dir / f"cmp_ols_accuracy_gap_{stamp}.png"
+        plt.tight_layout(); plt.savefig(f10, dpi=160); plt.close()
+        saved.append(f10)
+
+    # 11) Our vs sklearn – accuracy gap (Ridge): ΔR2 and ΔMSE vs degree
+    degs, r2_o, r2_s = _pair_series("ridge", "sklearn-ridge", "r2_test")
+    _,  mse_o, mse_s = _pair_series("ridge", "sklearn-ridge", "mse_test")
+    if degs:
+        plt.figure(figsize=(7, 4.5))
+        dr2 = [ro - rs for ro, rs in zip(r2_o, r2_s)]
+        dmse = [mo - ms for mo, ms in zip(mse_o, mse_s)]
+        plt.plot(degs, dr2, marker="o", label=r"Δ$R^2$ (ours − sklearn)")
+        plt.plot(degs, dmse, marker="o", label=r"ΔMSE (ours − sklearn)")
+        plt.axhline(0.0, ls="--", alpha=0.5)
+        plt.xlabel("Polynomial degree")
+        plt.title("Ridge: Our vs scikit-learn (Accuracy Gap)")
+        plt.grid(True, alpha=0.3)
+        plt.legend()
+        f11 = figs_dir / f"cmp_ridge_accuracy_gap_{stamp}.png"
+        plt.tight_layout(); plt.savefig(f11, dpi=160); plt.close()
+        saved.append(f11)
+
+    # 12) Our vs sklearn – fit time ratio (ours/sklearn) vs degree (OLS & Ridge)
+    plt.figure(figsize=(7, 4.5))
+    plotted = False
+    for ours_name, skl_name, label in [("ols", "sklearn-ols", "OLS"), ("ridge", "sklearn-ridge", "Ridge")]:
+        degs, t_o, t_s = _pair_series(ours_name, skl_name, "fit_time_ms")
+        if not degs:
+            continue
+        ratio = [ (to / ts) if (isinstance(ts, (int, float)) and ts > 0) else np.nan for to, ts in zip(t_o, t_s) ]
+        plt.semilogy(degs, ratio, marker="o", label=f"{label} (ours/sklearn)")
+        plotted = True
+    if plotted:
+        plt.xlabel("Polynomial degree")
+        plt.ylabel("Fit time ratio (ours / sklearn, log)")
+        plt.title("Fit Time Ratio vs Degree")
+        plt.grid(True, which="both", alpha=0.3)
+        plt.legend()
+        f12 = figs_dir / f"time_ratio_vs_degree_{stamp}.png"
+        plt.tight_layout(); plt.savefig(f12, dpi=160); plt.close()
+        saved.append(f12)
+    else:
+        plt.close()
+
 
 # --------------------------
 # Main
