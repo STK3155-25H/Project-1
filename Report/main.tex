@@ -436,29 +436,37 @@ Compared to OLS, which is unbiased but can have high variance, Lasso achieves a 
 \input{Graphs/AGD_LASSO.tex}
 
 \subsection{Stochastic Gradient Descent}
-
-\textbf{Here we will discuss stachastic gradient descent with 3 figures of the 3 regressions methods but with sgd}
-
 Stochastic Gradient Descent (SGD) is now applied to OLS, Ridge, and Lasso regression.
-For OLS, as shown in Figure \ref{fig:AGD_OLS_SGD}, SGD converges to a solution with MSE values that are slightly higher than those obtained with standard gradient descent methods. This difference arises because SGD computes the gradient using individual samples or small mini-batches instead of the entire dataset. While this makes each update faster and more memory-efficient, it also introduces randomness into the updates, leading to a noisier and less stable convergence trajectory.
-Ridge regression with SGD, as shown in Figure \ref{fig:AGD_RIDGE_SGD}, exhibits a similar pattern: the MSE is slightly higher compared to batch methods due to the stochastic nature of the updates. However, the $L_2$ penalty contributes to more stable coefficient shrinkage, so the convergence remains reliable and generalization can even improve compared to OLS.
-In the case of Lasso regression with SGD, shown in Figure \ref{fig:AGD_LASSO_SGD}, the optimization becomes more challenging because of the $L_1$ penalty, which creates flat regions and non-differentiable points at zero. Here, the stochasticity can both complicate and help: while it may cause small fluctuations and slightly higher MSE, it also allows the algorithm to escape plateaus and drive coefficients exactly to zero, reinforcing sparsity in the solution.
-
+For OLS, as shown in Figure \ref{fig:AGD_OLS_SGD}, SGD converges to a solution with MSE values that are slightly higher than those obtained with standard gradient descent methods. 
+This difference arises because SGD computes the gradient using individual samples or small mini-batches instead of the entire dataset. While this makes each update faster and more memory-efficient, it also introduces noise into the updates, leading to a less stable convergence.
 
 \input{Graphs/AGD_OLS SGD.tex}
+
+Ridge regression with SGD, as shown in Figure \ref{fig:AGD_RIDGE_SGD}, exhibits a similar pattern: the MSE is slightly higher compared to batch methods due to the stochastic nature of the updates. However, the $L_2$ penalty contributes to more stable coefficient shrinkage, so the convergence remains reliable and generalization can even improve compared to OLS.
+
 \input{Graphs/AGD_RIDGE SGD.tex}
+
+In the case of Lasso regression with SGD, shown in Figure \ref{fig:AGD_LASSO_SGD}, the optimization becomes more challenging because of the $L_1$ penalty, which creates flat regions and non-differentiable points at zero. Here, the stochasticity can both complicate and help: while it may cause small fluctuations and slightly higher MSE, it also allows the algorithm to escape plateaus and drive coefficients exactly to zero, reinforcing sparsity in the solution.
+
 \input{Graphs/AGD_LASSO SGD.tex}
 
-\subsection{bias variance trade off}
-Fitting the runge function using a OLS model demonstrates a clear bias-variance tradeoff as demonstrated in figure \ref{fig:Bias_Var}.
-For low polynomial degree the variance, bias and mse stay low(close to 0).
+\subsection{Bias-Variance trade off}
+To illustrate the bias-variance trade-off, the Runge function is fitted using an OLS model with varying polynomial degrees. 
+The bias, variance, and mean squared error (MSE) are computed using bootstrap resampling with 50 resamples. The results are shown in Figure \ref{fig:Bias_Var}.
+For low polynomial degree the variance, bias and mse remain close to 0, indicating that the model is simple but stable.
 As the degree of the polynomial increases at a certain point the variance jumps up dramatically, causing a corresponding rise in MSE.
 This reflects overfitting, where the model starts capturing noise in the training data rather than just the underlying signal.\\\\
 The optimal model complexity lies between these extremes, balancing bias and variance to minimize prediction error.
-Regularization and resampling techniques help manage variance while maintaining reasonable bias.
+The bootstrap analysis highlights how the number of data points affects this balance: when the number of data points is low, the variance increases more rapidly with polynomial degree, leading to higher MSE, whil with more data points, the variance is reduced and the MSE stabiliez.\\
 \input{Graphs/Bias_Var.tex}
 
 \subsection{Cross Validation}
+Cross-validation is now applied to evaluate the performance of OLS, Ridge, and Lasso regression models.
+The MSE is computed using 5-fold cross-validation for polynomial degrees ranging from 1 to 15, as shown in Figure \ref{fig:Cross_Validation}.
+For OLS, the MSE decreases initially with increasing polynomial degree, but then rises sharply at higher degrees due to overfitting, especially with fewer data points.
+Ridge regression, with a regularization parameter $\lambda = 0.01$, shows a more stable MSE across polynomial degrees, effectively controlling overfitting.
+Lasso regression, also with $\lambda = 0.01$, exhibits a similar trend, but with slightly higher MSE than Ridge due to the stronger bias introduced by the $L_1$ penalty.       
+
 These results highlight the bias-variance trade-off: while OLS achieves very low bias at high degrees, its variance becomes large.
 Ridge and Lasso introduce a small bias but yield more stable models that generalize better.
 \input{Graphs/Cross_Validation.tex}
