@@ -52,11 +52,11 @@ Regression is a cornerstone in data analysis, machine learning, and scientific m
 As datasets become larger and larger, choosing the right regression method is crucial, as it directly affects model accuracy, stability, and interpretability\cite{mehta2019highbias}.
 Understanding the performance of different regression techniques is therefore a central problem in statistical learning and computational physics \cite{aiken2021framework}.
 In this project we investigate various regression methods, such as Ordinary Least Squares, Ridge Regression, and Lasso Regression.
-It focuses on fitting polynomials to a specific one-dimensional function, the Runge function\textbf{Cite here on runge function}:
+It focuses on fitting polynomials to a specific one-dimensional function, the Runge function:
 \[
 \frac{1}{1+25x^2}, \quad x\in[-1, 1]
 \]
-The Runge function serves as a classical example that illustrates the challenges of high-degree polynomial interpolation, such as oscillations near the boundaries, known as Runge's phenomenon\textbf{Cite here on runge phenomenon}. This makes it an ideal test case to compare the performances of the different methods.
+The Runge function serves as a classical example that illustrates the challenges of high-degree polynomial interpolation, such as oscillations near the boundaries, known as Runge's phenomenon\cite{runge1901}. This makes it an ideal test case to compare the performances of the different methods.
 First, an OLS regression analysis is performed, exploring the dependence on the number of data points and the degree of polynomial. The analysis is then extended to Ridge and Lasso regressions, which add a regularization parameter ${\lambda}$. Gradient descent methods are implemented.
 The analysis starts with the standard gradient descent method, but then, to improve efficiency and convergence, several variants of the gradient descent have been developed, such as momentum, stochastic gradient descent and adaptive methods, including Adagrad, RMSprop, ADAM.
 The performance of OLS, Ridge and Lasso is then compared with the gradient descent-based optimization methods.
@@ -383,7 +383,6 @@ $$R^2 = 1 - \frac{\sum_{i=1}^{n} \left( y_i - \tilde{y}_i \right)^2}{\sum_{i=1}^
 where $n$ is the number of data points, $y_i$ are the true values, $\tilde{y}_i$ are the predicted values, and $\bar{y}$ denotes the mean of the true values.
 
 \subsection{OLS}
-
 The analysis starts with performing a standard ordinary least squares regression using polynomials in $x$ up to order 15. The dependence of the polynomial degree and number of data point has been explored by plotting the mse as a function of polynomial degree for different amount of data points. This can be seen in Figure \ref{fig:OLS_graph}.\\\\
 As one can see, generally the mse goes down as the polynomial degree increases. But for a small amount of data points like $n = 40$ and $n = 50$, when the polynomial degree goes to high the mse starts to increase again.\\
 This happens because of overfitting. When the polynomial degree increases the model tries to fit the data too perfectly and will fit the underlying random noise as well and the model will then perform poorly of unseen data. For a high number of data points this is barely noticeable but for a lower amount of data points the effect will become more pronounced.\\\\
