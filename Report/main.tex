@@ -89,7 +89,7 @@ Before applying any regression and optimization methods, the dataset was split i
 This was performed using the \texttt{split\_scale} and \texttt{polynomial\_features\_scaled} functions.\\
 First the training and test sets were seperated.
 The input feature $x$ was then standardized using statistics computed on the training set: each feature column was centered by subtracting its mean and scaled by dividing by its standard deviation.
-This process produces features with zero mean and unit variance.
+This process produces features with zero mean and unit variance \cite{hjorthjensen_week35}.
 The same mean and standard deviation from the training set were applied to scale the test set, avoiding any data leakage.\\
 For polynomial regression, each feature was expanded into polynomial terms up to a maximum degree.
 After generating the polynomial features, each column (except the intercept) was scaled using the mean and standard deviation of the corresponding column from the training set, via the \texttt{polynomial\_features\_scaled} function.
@@ -129,7 +129,7 @@ A regularization parameter $\lambda$ can be introduced by defining a new cost fu
 $$ C(\boldsymbol{\theta}) 
 =\frac{1}{n}\vert\vert \boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\vert\vert_2^2+\lambda\vert\vert \boldsymbol{\theta}\vert\vert_2^2
 $$
-where the second term represents an $L^2$ penalty on the size of the coefficients.
+where the second term represents an $L_2$ penalty on the size of the coefficients.
 This leads to the Ridge regression minimization problem where it is required that $ |\boldsymbol{\theta}\|_2^2 \leq t$, where $t$ is a finite positive number. 
 One of the main motivations behind Ridge is its ability to resolve the problem of non-invertibility of $\mathbf{X}^\top \mathbf{X}$, which often arises when features are highly correlated. Ridge regression resolves this problem by adding the parameter $\boldsymbol{\lambda}$ to the diagonal of $\mathbf{X}^\top \mathbf{X}$ before inverting it.
 Taking the derivatives with respect to $\boldsymbol{\theta}$ the optimal parameters are obtained:
@@ -158,6 +158,8 @@ When this happens, the corresponding predictor is completely removed from the mo
 In contrast, Ridge regression never eliminates variables: it only shrinks the coefficients $\hat{\theta}_j$ towards zero but keeps all predictors in the model.
 Typically, Lasso Regression is preferred when the goal is to simplify the model and improve interpretability, especially when there are a lot of features. On the other hand, Ridge regression is better for handling multicollinearity among features. 
 
+\subsubsection{Implementation}
+? 
 
 \subsection{Gradient descent}
 
