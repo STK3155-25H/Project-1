@@ -403,7 +403,7 @@ as both the NumPy global seed before generating noise and the random\_state for 
 \begin{itemize}
     \item \textbf{SGD \ref{Stochastic Gradient Descent}:} to make mini-batch selections identical across models within a run and degree, we reset the RNG to a deterministic, per-degree seed before each optimizer call (thus the same mini-batch sequence is used by all methods being compared).
     \item \textbf{Bootstrap (Part~G):} for each run, bootstrap resamples of the training set are drawn with sklearn's resample using fixed per-bootstrap seeds; predictions are evaluated on the fixed test set of that run.
-    \item \textbf{Cross-Validation (Part~H):} for each run we instantiate one KFold with shuffle=True and random\_state $=s_r$, so folds are identical across degrees and models within the run.
+    \item \textbf{Cross-Validation \ref{Cross Validation}:} for each run we instantiate one KFold with shuffle=True and random\_state $=s_r$, so folds are identical across degrees and models within the run.
 \end{itemize}
 
 \paragraph*{What is averaged.}
