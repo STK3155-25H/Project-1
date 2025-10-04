@@ -407,16 +407,16 @@ as both the NumPy global seed before generating noise and the random\_state for 
 \end{itemize}
 
 \paragraph*{What is averaged.}
-For parts up to F, each metrig displayed at a given degree $d$ is the mean test metric over $N_{\text{runs}}$. For each average metric displayed is also computed its standard deviation. For part G, the MSE, $\mathrm{bias}^2$, and variance are computed from bootstrap predictions within each run and then averaged across runs. For Part~H, per-run degree-$d$ scores are the mean MSE across $k=5$ folds.
+For parts up to F, each metric displayed at a given degree $d$ is the mean test metric over $N_{\text{runs}}$. For each average metric displayed is also computed its standard deviation. For part G, the MSE, $\mathrm{bias}^2$, and variance are computed from bootstrap predictions within each run and then averaged across runs. For Part~H, per-run degree-$d$ scores are the mean MSE across $k=5$ folds.
 
-\paragraph*{Modeling/optimization details.}
-OLS and Ridge are also computed in closed form; for Ridge the intercept is not penalized. LASSO is solved with (sub)gradient descent. Gradient-based experiments use:
-\begin{itemize}
-    \item \textbf{Part~C:} vanilla GD with learning rates $\{10^{-4},10^{-3},10^{-2}\}$, $n_{\text{iter}}=2000$, Ridge $\lambda=0.01$.
-    \item \textbf{Part~D:} advanced optimizers (vanilla, momentum, adagrad, rmsprop, adam) at $\eta=0.01$, $n_{\text{iter}}=1000$, for OLS and Ridge ($\lambda=0.01$).
-    \item \textbf{Part~E:} two setups: (i) vanilla with $\eta\in\{10^{-4},10^{-3},10^{-2}\}$; (ii) all methods above at fixed $\eta=0.01$; models: OLS, Ridge ($\lambda=0.01$), LASSO ($\lambda=0.01$).
-    \item \textbf{Part~F (SGD):} same methods at $\eta=0.01$, $n_{\text{iter}}=5000$, mini-batch size $=10$.
-\end{itemize}
+% \paragraph*{Modeling/optimization details.}
+% OLS and Ridge are also computed in closed form; for Ridge the intercept is not penalized. LASSO is solved with (sub)gradient descent. Gradient-based experiments use:
+% \begin{itemize}
+%     \item \textbf{Part~C:} vanilla GD with learning rates $\{10^{-4},10^{-3},10^{-2}\}$, $n_{\text{iter}}=2000$, Ridge $\lambda=0.01$.
+%     \item \textbf{Part~D:} advanced optimizers (vanilla, momentum, adagrad, rmsprop, adam) at $\eta=0.01$, $n_{\text{iter}}=1000$, for OLS and Ridge ($\lambda=0.01$).
+%     \item \textbf{Part~E:} two setups: (i) vanilla with $\eta\in\{10^{-4},10^{-3},10^{-2}\}$; (ii) all methods above at fixed $\eta=0.01$; models: OLS, Ridge ($\lambda=0.01$), LASSO ($\lambda=0.01$).
+%     \item \textbf{Part~F (SGD):} same methods at $\eta=0.01$, $n_{\text{iter}}=5000$, mini-batch size $=10$.
+% \end{itemize}
 
 
 \subsection{OLS}
@@ -472,7 +472,6 @@ For Ridge regression with $\lambda = 0.01$, as shown in the Figure \ref{fig:AGD_
 \textbf{why analytical is better than advanced methods?}
 
 \input{Graphs/AGD_RIDGE.tex}
-
 \subsection{Lasso regression}
 \label{Lasso regression}
 Lasso regression does not have an analytical solution, so only gradient descent methods are applied.\\\\
