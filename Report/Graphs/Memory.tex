@@ -1,0 +1,35 @@
+% File: ols_mse.tex
+\begin{figure}[H]
+\begin{tikzpicture}
+\begin{axis}[
+    width=8cm,
+    height=6cm,
+    xlabel={Polynomial degree},
+    ylabel={Memory},
+    title={Memory vs Degree},
+    legend pos=north east,
+    grid=both,
+    y tick label style={
+        /pgf/number format/fixed,
+        /pgf/number format/precision=2
+    }
+    ]
+    \addplot [blue, mark=none] table [x=degree, col sep=comma, y=mem_mb_est] {../outputs/benchmarks/tables/benchmarks_gd_vanilla.csv};
+    \addlegendentry{$vanilla$}
+
+    \addplot [orange, mark=none] table [x=degree, col sep=comma, y=mem_mb_est] {../outputs/benchmarks/tables/benchmarks_gd_momentum.csv};
+    \addlegendentry{$momentum$}
+
+    \addplot [green!70!black, mark=none] table [x=degree, col sep=comma, y=mem_mb_est]  {../outputs/benchmarks/tables/benchmarks_gd_adam.csv};
+    \addlegendentry{$adam$}
+
+    \addplot [red, mark=none] table [x=degree, col sep=comma, y=mem_mb_est]  {../outputs/benchmarks/tables/benchmarks_ols.csv};
+    \addlegendentry{$OLS$}
+
+    \addplot [purple, mark=none] table [x=degree, col sep=comma, y=mem_mb_est]  {../outputs/benchmarks/tables/benchmarks_ridge.csv};
+    \addlegendentry{$Ridge$}
+\end{axis}
+\end{tikzpicture}
+\caption{Memory usage estimate of our implementation of different methods. The plot compares vanilla gradient descent, momentum, Adam  ($learning rate = 0.01$).}
+\label{fig:Memory}
+\end{figure}

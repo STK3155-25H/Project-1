@@ -517,7 +517,7 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
     plt.title(r"Test $R^2$ vs Degree")
     plt.grid(True, alpha=0.3)
     plt.legend()
-    f1 = figs_dir / f"r2_test_vs_degree_{stamp}.png"
+    f1 = figs_dir / f"r2_test_vs_degree.png"
     plt.tight_layout(); plt.savefig(f1, dpi=160); plt.close()
     saved.append(f1)
 
@@ -531,7 +531,7 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
     plt.title("Fit Time vs Degree")
     plt.grid(True, alpha=0.3)
     plt.legend()
-    f2 = figs_dir / f"fit_time_vs_degree_{stamp}.png"
+    f2 = figs_dir / f"fit_time_vs_degree.png"
     plt.tight_layout(); plt.savefig(f2, dpi=160); plt.close()
     saved.append(f2)
 
@@ -550,7 +550,7 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
         plt.title("Iterations to Convergence (GD) vs Degree")
         plt.grid(True, alpha=0.3)
         plt.legend()
-        f3 = figs_dir / f"gd_iterations_vs_degree_{stamp}.png"
+        f3 = figs_dir / f"gd_iterations_vs_degree.png"
         plt.tight_layout(); plt.savefig(f3, dpi=160); plt.close()
         saved.append(f3)
     else:
@@ -568,7 +568,7 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
     plt.title("FLOPs Estimate vs Degree")
     plt.grid(True, alpha=0.3)
     plt.legend()
-    f4 = figs_dir / f"flops_vs_degree_{stamp}.png"
+    f4 = figs_dir / f"flops_vs_degree.png"
     plt.tight_layout(); plt.savefig(f4, dpi=160); plt.close()
     saved.append(f4)
 
@@ -582,7 +582,7 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
     plt.title("Memory Footprint vs Degree")
     plt.grid(True, alpha=0.3)
     plt.legend()
-    f5 = figs_dir / f"memory_vs_degree_{stamp}.png"
+    f5 = figs_dir / f"memory_vs_degree.png"
     plt.tight_layout(); plt.savefig(f5, dpi=160); plt.close()
     saved.append(f5)
 
@@ -596,7 +596,7 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
     plt.ylabel("cond(X'X) (log)")
     plt.title("Design Conditioning vs Degree")
     plt.grid(True, alpha=0.3)
-    f6 = figs_dir / f"condition_vs_degree_{stamp}.png"
+    f6 = figs_dir / f"condition_vs_degree.png"
     plt.tight_layout(); plt.savefig(f6, dpi=160); plt.close()
     saved.append(f6)
 
@@ -610,7 +610,7 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
     plt.ylabel("Δ Test MSE (scaled − unscaled)")
     plt.title("Numerical Stability Proxy vs Degree")
     plt.grid(True, alpha=0.3)
-    f7 = figs_dir / f"stability_delta_vs_degree_{stamp}.png"
+    f7 = figs_dir / f"stability_delta_vs_degree.png"
     plt.tight_layout(); plt.savefig(f7, dpi=160); plt.close()
     saved.append(f7)
 
@@ -630,7 +630,7 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
         plt.title("Bias–Variance Decomposition (OLS)")
         plt.grid(True, alpha=0.3)
         plt.legend()
-        f8 = figs_dir / f"bias_variance_{stamp}.png"
+        f8 = figs_dir / f"bias_variance.png"
         plt.tight_layout(); plt.savefig(f8, dpi=160); plt.close()
         saved.append(f8)
 
@@ -648,7 +648,7 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
     plt.title("Accuracy–Speed Pareto (per method & degree)")
     plt.grid(True, which="both", alpha=0.3)
     plt.legend()
-    f9 = figs_dir / f"pareto_r2_vs_time_{stamp}.png"
+    f9 = figs_dir / f"pareto_r2_vs_time.png"
     plt.tight_layout(); plt.savefig(f9, dpi=160); plt.close()
     saved.append(f9)
 
@@ -680,7 +680,7 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
         plt.title("OLS: Our vs scikit-learn (Accuracy Gap)")
         plt.grid(True, alpha=0.3)
         plt.legend()
-        f10 = figs_dir / f"cmp_ols_accuracy_gap_{stamp}.png"
+        f10 = figs_dir / f"cmp_ols_accuracy_gap.png"
         plt.tight_layout(); plt.savefig(f10, dpi=160); plt.close()
         saved.append(f10)
 
@@ -698,7 +698,7 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
         plt.title("Ridge: Our vs scikit-learn (Accuracy Gap)")
         plt.grid(True, alpha=0.3)
         plt.legend()
-        f11 = figs_dir / f"cmp_ridge_accuracy_gap_{stamp}.png"
+        f11 = figs_dir / f"cmp_ridge_accuracy_gap.png"
         plt.tight_layout(); plt.savefig(f11, dpi=160); plt.close()
         saved.append(f11)
 
@@ -718,11 +718,50 @@ def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: 
         plt.title("Fit Time Ratio vs Degree")
         plt.grid(True, which="both", alpha=0.3)
         plt.legend()
-        f12 = figs_dir / f"time_ratio_vs_degree_{stamp}.png"
+        f12 = figs_dir / f"time_ratio_vs_degree.png"
         plt.tight_layout(); plt.savefig(f12, dpi=160); plt.close()
         saved.append(f12)
     else:
         plt.close()
+
+ 
+def _sanitize_method_name(m: str) -> str:
+    # Evita caratteri fastidiosi nei nomi file
+    return (
+        m.lower()
+         .replace(" ", "_")
+         .replace("/", "_")
+         .replace("\\", "_")
+         .replace("-", "_")
+         .replace("(", "")
+         .replace(")", "")
+         .replace("__", "_")
+    )
+
+def write_per_method_csvs(rows: List[BenchRow], stamp: str) -> List[Path]:
+    """
+    Scrive un CSV per ciascun metodo, filtrando le righe di `rows`.
+    Ritorna l'elenco dei percorsi creati (utile per log).
+    """
+    by_method: Dict[str, List[BenchRow]] = defaultdict(list)
+    for r in rows:
+        by_method[r.method].append(r)
+
+    written: List[Path] = []
+    for method, mrows in by_method.items():
+        # Ordina per grado per plotting più semplice in pgfplots
+        mrows_sorted = sorted(mrows, key=lambda r: r.degree)
+        fieldnames = list(asdict(mrows_sorted[0]).keys()) if mrows_sorted else []
+
+        safe = _sanitize_method_name(method)
+        out_path = TABLES_DIR / f"benchmarks_{safe}.csv"
+        with open(out_path, "w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=fieldnames)
+            w.writeheader()
+            for r in mrows_sorted:
+                w.writerow(asdict(r))
+        written.append(out_path)
+    return written
 
 
 # --------------------------
@@ -766,7 +805,7 @@ def main():
     ensure_dirs()
     stamp = now_stamp()
 
-    log_path = LOGS_DIR / f"benchmarks_{stamp}.log"
+    log_path = LOGS_DIR / f"benchmarks.log"
     logger = Logger(log_path)
     logger.write(f"[INFO] Starting benchmarks at {stamp}\n")
     logger.write(f"[INFO] Seed = {seed}\n")
@@ -829,7 +868,7 @@ def main():
                 ))
 
     # Save main CSV
-    csv_path = TABLES_DIR / f"benchmarks_{stamp}.csv"
+    csv_path = TABLES_DIR / f"benchmarks.csv"
     fieldnames = list(asdict(rows[0]).keys()) if rows else []
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
@@ -838,12 +877,17 @@ def main():
             writer.writerow(asdict(r))
     logger.write(f"[INFO] Saved main benchmarks CSV -> {csv_path}\n")
 
+    # Save one CSV per method (comodo per pgfplots/LaTeX)
+    method_csvs = write_per_method_csvs(rows, stamp)
+    for p in method_csvs:
+        logger.write(f"[INFO] Saved per-method CSV -> {p}\n")
+
     # Bias-variance study (OLS closed-form only; fast and illustrative)
     bv_results = bias_variance_grid(
         x=x, y=y, degrees=degrees, n_bootstrap=args.bootstrap,
         test_size=args.test_size, rs=seed
     )
-    bv_csv = TABLES_DIR / f"bias_variance_{stamp}.csv"
+    bv_csv = TABLES_DIR / f"bias_variance.csv"
     with open(bv_csv, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["degree", "mse", "bias2", "variance"])
         writer.writeheader()
