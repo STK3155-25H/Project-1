@@ -22,6 +22,9 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{booktabs}
+\usepackage{pgfplotstable}
+\usepackage{xstring}   % robust string compare for row filtering
+\pgfplotsset{compat=1.18}
 
 
 
@@ -736,6 +739,7 @@ Overall, Adam was the best-performing optimizer among the iterative methods, pro
 When plotting $R^2$ as a function of computation time, OLS and Ridge consistently lie on the Pareto frontier — they deliver the highest accuracy per millisecond of computation.
 Gradient descent variants, while slower, provide flexibility for large-scale or streaming applications where closed-form inversion is impractical.
 The Pareto frontier visualization highlights this trade-off: OLS and Ridge occupy the optimal region, while GD methods form a secondary frontier under higher computational budgets.
+\input{Graphs/PARETO.tex}
 
 \paragraph*{Computational cost and memory footprint.}
 The estimated number of floating-point operations (FLOPs) confirmed the theoretical expectations:

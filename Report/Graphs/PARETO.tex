@@ -1,0 +1,62 @@
+
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  width=9.5cm, height=7.2cm,
+  xmode=log, log basis x=10,
+  xlabel={Fit time (ms, log scale)},
+  ylabel={$R^2$ (test)},
+  title={Accuracy--Speed Pareto (per method \& degree)},
+  grid=both,
+  legend pos=south east,
+  xmin=5e-2, xmax=5e2,
+  ymin=-0.05, ymax=1.02,
+  y tick label style={/pgf/number format/fixed,/pgf/number format/precision=2},
+]
+
+% Load once
+\pgfplotstableread[col sep=comma, trim cells]{../outputs/benchmarks/tables/benchmarks.csv}\bench
+
+% One plot, colored by "method"
+\addplot[
+  only marks,
+  mark=*,
+  mark size=2.2pt,
+  scatter,
+  scatter src=explicit symbolic,
+  % Map each "method" string to a style
+  scatter/classes={
+    ols={mark=*,draw=blue,fill=blue},
+    ridge={mark=*,draw=orange,fill=orange},
+    gd-vanilla={mark=*,draw=green!60!black,fill=green!60!black},
+    gd-momentum={mark=*,draw=red,fill=red},
+    gd-adam={mark=*,draw=purple,fill=purple}
+  },
+]
+table[
+  x=fit_time_ms,
+  y=r2_test,
+  meta=method,         % <-- use "method" column to choose class
+  col sep=comma
+]{\bench};
+
+% Legend entries (match classes)
+\addlegendimage{mark=*,only marks,draw=blue,fill=blue}
+\addlegendentry{ols}
+\addlegendimage{mark=*,only marks,draw=orange,fill=orange}
+\addlegendentry{ridge}
+\addlegendimage{mark=*,only marks,draw=green!60!black,fill=green!60!black}
+\addlegendentry{gd-vanilla}
+\addlegendimage{mark=*,only marks,draw=red,fill=red}
+\addlegendentry{gd-momentum}
+\addlegendimage{mark=*,only marks,draw=purple,fill=purple}
+\addlegendentry{gd-adam}
+
+\end{axis}
+\end{tikzpicture}
+\caption{Accuracy--speed Pareto front from a single CSV: each point is a (method, degree) configuration, colored by method.}
+\label{fig:pareto_r2_time_allinone}
+\end{figure}
+

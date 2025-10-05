@@ -829,7 +829,7 @@ def main():
                 ))
 
     # Save main CSV
-    csv_path = TABLES_DIR / f"benchmarks_{stamp}.csv"
+    csv_path = TABLES_DIR / f"benchmarks.csv"
     fieldnames = list(asdict(rows[0]).keys()) if rows else []
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
