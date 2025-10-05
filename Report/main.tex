@@ -21,6 +21,8 @@
 \captionsetup{hypcap=true}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{booktabs}
+
 
 
 \pgfplotsset{compat=1.18}
@@ -420,9 +422,11 @@ $$
 $$
 
 which, using the abovementioned expectation values can be rewritten as
-$$
-\mathbb{E}\left[(\boldsymbol{y}-\boldsymbol{\tilde{y}})^2\right]=\mathbb{E}\left[(\boldsymbol{y}-\mathbb{E}\left[\boldsymbol{\tilde{y}}\right])^2\right]+\mathrm{Var}\left[\boldsymbol{\tilde{y}}\right]+\sigma^2,
-$$
+\begin{equation}
+    \label{eq: bias-var-...}
+\mathbb{E}\left[(\boldsymbol{y}-\boldsymbol{\tilde{y}})^2\right]=\mathbb{E}\left[(\boldsymbol{y}-\mathbb{E}\left[\boldsymbol{\tilde{y}}\right])^2\right]+\mathrm{Var}\left[\boldsymbol{\tilde{y}}\right]+\sigma^2
+\end{equation}
+
 
 that is the rewriting in terms of the bias, the variance of the model $\boldsymbol{\tilde{y}}$ and the variance of $\boldsymbol{\epsilon}$. \cite{misc} 
 In order to derive this equation, the assumption that is made is that the unknown function $\boldsymbol{f}$ can be replaced by the target data $\boldsymbol{y}$.\\
@@ -443,7 +447,6 @@ This process is repeated k times, with each fold serving as the validation set o
 The average performance across all k trials provides a robust estimate of the model's generalization error.
 Cross-validation helps in selecting model parameters and in preventing overfitting by ensuring that the model performs well on unseen data.\\\\
 
-\subsection{Validation and testing}
 
 \subsection{Use of AI tools}
 In this project, AI tools such as ChatGPT and GitHub Copilot were utilized to improve the efficiency and quality of the work. 
@@ -457,7 +460,7 @@ The performance of the regression models are evaluated using both the MSE and th
 $$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^{n} \left( y_i - \tilde{y}_i \right)^2$$
 $$R^2 = 1 - \frac{\sum_{i=1}^{n} \left( y_i - \tilde{y}_i \right)^2}{\sum_{i=1}^{n} \left( y_i - \bar{y} \right)^2}$$
 where $n$ is the number of data points, $y_i$ are the true values, $\tilde{y}_i$ are the predicted values, and $\bar{y}$ denotes the mean of the true values.
-\subsection*{How we produced all reported results (averaging, randomness, and fairness)}
+\subsection*{How we produced all reported results}
 \label{sec:results_setup}
 Unless otherwise stated, every result displayed in this section is the mean over $N_{\text{runs}}=30$ independent repetitions. Each run uses a new noisy dataset and a new train/test split, but within a run all models and methods see the same data and splits to enable fair, paired comparisons.
 
@@ -490,6 +493,105 @@ For parts up to F, each metric displayed at a given degree $d$ is the mean test 
 
 
 % \subsection{Averaging over multiple runs}
+
+\subsection*{Validation and testing}
+\label{Validation_and_Testing}
+
+To ensure the correctness and robustness of all implemented methods, a comprehensive testing suite was developed. 
+Each function within the project was systematically validated against scikit-learn's out-of-the-box implementations, 
+ensuring full consistency with well-established numerical baselines. 
+The test suite employs the Pytest framework and compares analytical, gradient-based, and resampling functions through deterministic and quantitative checks. 
+All tests were designed to be reproducible, relying on a fixed random seed to guarantee identical data splits and noise realizations across runs. 
+The seed policy used is consistent with what is described in the previous paragraph \ref{sec:results_setup}.
+
+For the implemented preprocessing routines, the generated design matrices were compared element-wise with those produced by scikit-learn's classes, verifying identical scaling and intercept behavior (Results asserted with a numerical tolerance of \(\text{rtol}=10^{-12}\)).
+
+Metric functions such as the Mean Squared Error (MSE) and the coefficient of determination ($R^2$) were also cross-checked against scikit-learn's corresponding functions, ensuring numerical equivalence up to machine precision (\(\text{rtol}=10^{-12}\), \(\text{atol}=10^{-12}\)).
+
+Analytical regression solvers like OLS and Ridge Regression were validated by comparing their estimated coefficients and predictions to those obtained from scikit-learn under identical configurations. 
+For Ridge regression, both penalized and unpenalized intercept versions were tested to confirm full consistency with scikit-learn's regularization scheme. 
+The detailed numerical tolerances used in these validations are summarized in Table~\ref{tab:analytical_solvers}.
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\caption{Analytical solver validation results}
+\label{tab:analytical_solvers}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Model} & \textbf{Ref.} & \textbf{rtol} & \textbf{atol} \\
+\midrule
+OLS & \texttt{LinearReg.} (\texttt{fit\_int=False}) & $10^{-10}$ & $10^{-12}$ \\
+Ridge & \texttt{Ridge} ($\alpha=\lambda$) & $10^{-10}$ & $10^{-10}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The custom gradient descent optimizer was evaluated by verifying that its converged parameters coincide with the analytical OLS solution within a tolerance of $10^{-5}$, demonstrating the correctness of both gradient computations and convergence logic. 
+A full summary of these quantitative checks is reported in Table~\ref{tab:gd_validation}.
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\caption{Gradient Descent validation results}
+\label{tab:gd_validation}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Check} & \textbf{rtol} & \textbf{atol} \\
+\midrule
+Parameters vs.\ OLS & – & $10^{-5}$ \\
+Predictions vs.\ OLS & $10^{-6}$ & $10^{-8}$ \\
+MSE gap & – & $\le 10^{-8}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For LASSO regression, predictions and coefficient vectors were compared to \texttt{sklearn.linear\_model.Lasso} under equivalent configurations, confirming numerical agreement up to small regularization-dependent deviations. 
+The tolerances and bounds applied during this validation are reported in Table~\ref{tab:lasso_validation}.
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\caption{LASSO regression validation summary}
+\label{tab:lasso_validation}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Quantity} & \textbf{Tolerance} & \textbf{Error Bound} \\
+\midrule
+Predictions & $r:10^{-4}, a:10^{-5}$ & – \\
+Coefficients ($L^1$ dist.) & – & $\le 10^{-3}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The bias–variance decomposition implementation was internally validated by checking the analytical identity~\ref{eq: bias-var-...} using bootstrap-generated predictions, 
+confirming maximum absolute discrepancies across polynomial degrees below $10^{-10}$. 
+Cross-validation consistency was also verified by enforcing identical \texttt{KFold} partitions across models and degrees, 
+with matching CV scores within \(\text{rtol}=10^{-10}\), \(\text{atol}=10^{-12}\). 
+These resampling-based validation results are summarized in Table~\ref{tab:resampling_validation}.
+
+\begin{table}[H]
+\centering
+\small
+\setlength{\tabcolsep}{3pt}
+\caption{Resampling-based validation checks}
+\label{tab:resampling_validation}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Procedure} & \textbf{rtol} & \textbf{atol} \\
+\midrule
+Bias–variance identity & – & $\le 10^{-10}$ \\
+Cross-val.\ scores & $10^{-10}$ & $10^{-12}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All assertions passed successfully, confirming that the entire computational pipeline—from data scaling to analytical and iterative solvers—produces results consistent with standard machine learning libraries and theoretical expectations.\footnote{This testing suite was executed continuously in a GitHub workflow, ensuring the validity of each commit and experiment.}
+
+
 
 \subsection{OLS}
 \label{OLS}
