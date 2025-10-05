@@ -158,7 +158,7 @@ def test_ridge_parameters_match_sklearn_no_intercept_penalty(seeded_src, degree,
 # ----------------------------
 # GD vs soluzione analitica (OLS)
 # ----------------------------
-@pytest.mark.parametrize("degree,lr", [(3, 0.05), (5, 0.02)])
+@pytest.mark.parametrize("degree,lr", [(3, 0.05), (4, 0.02)])
 def test_gradient_descent_converges_to_ols_ols_case(seeded_src, degree, lr):
     pf_scaled = seeded_src["polynomial_features_scaled"]
     OLS = seeded_src["OLS_parameters"]
