@@ -7,7 +7,7 @@
     xlabel={Polynomial degree},
     ylabel={Error},
     title={Bias-Variance Tradeoff},
-    legend pos=north east,
+    legend pos=north west,
     grid=both,
     y tick label style={
         /pgf/number format/fixed,
@@ -24,7 +24,6 @@
     \addlegendentry{$Variance$}
 \end{axis}
 \end{tikzpicture}
-\caption{Decomposition of test MSE into bias and variance across polynomial degrees (training set size
-n=200). The plot illustrates the bias–variance tradeoff: low-degree models exhibit high bias and low variance, while high-degree models show low bias and increased variance, with MSE reflecting the combined effect.}
+\caption{Bias–variance decomposition of test MSE vs. polynomial degree ($n=200$), showing that low-degree models have high bias and low variance, while high-degree models have low bias and increased variance, with MSE reflecting their combined effect.}
 \label{fig:Bias_Var}
 \end{figure}
