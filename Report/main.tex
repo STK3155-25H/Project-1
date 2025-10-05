@@ -701,6 +701,82 @@ These results highlight the bias-variance trade-off: while OLS achieves very low
 Ridge and Lasso introduce a small bias but yield more stable models that generalize better.
 \input{Graphs/Cross_Validation.tex}
 
+\subsection{Computational Benchmark and Performance Analysis}
+\label{sec:Computational_Benchmark}
+
+In addition to the statistical evaluation of model accuracy, a computational benchmark was carried out to assess the time and resource efficiency of the implemented methods. 
+The benchmark compared the analytical solutions (OLS and Ridge) and the gradient-based variants (GD-vanilla, GD-momentum, Adagrad, RMSprop, Adam) across multiple polynomial degrees and datasets. 
+
+\paragraph*{Execution time and efficiency.}
+Closed-form methods were found to be several orders of magnitude faster than iterative optimizers.
+Ordinary Least Squares achieved a median fit time of approximately 0.1~ms, while Ridge regression required around 0.11~ms, confirming their efficiency for small and medium-scale problems. 
+In contrast, the vanilla gradient descent took on average over 100~ms per fit, corresponding to a computational cost roughly $10^3$--$10^4$ times higher.
+This difference reflects the analytical $O(p^3)$ complexity of matrix inversion compared to the iterative $O(n p \times \text{iterations})$ scaling of gradient descent.
+Despite this, gradient descent remains preferable when the design matrix is large, sparse, or cannot be stored entirely in memory.
+
+% \paragraph*{Accuracy and stability.}
+% Across all methods, the $R^2$ scores and MSE values of the implemented solvers matched those obtained with \texttt{scikit-learn} within numerical tolerance ($\text{rtol}\le 10^{-10}$). 
+% This confirms that the custom implementations are both accurate and numerically stable.
+% For both OLS and Ridge, the difference in $R^2$ between the custom and scikit-learn implementations was smaller than $10^{-4}$ across all degrees.
+% Small deviations in time efficiency are attributable to different BLAS backends and matrix factorization strategies (SVD vs.\ Cholesky).
+
+% \paragraph*{Conditioning and scaling.}
+% The conditioning number of $\mathbf{X}^\top\mathbf{X}$ increased exponentially with polynomial degree, reaching $\sim 2\times10^{10}$ at degree~15. 
+% This behavior is consistent with the well-known ill-conditioning of high-order polynomial regression.
+% Feature scaling significantly improved numerical stability, reducing the relative difference in test MSE between scaled and unscaled inputs by an average of 40\%.
+% This demonstrates the necessity of feature normalization before performing polynomial expansions or iterative optimization.
+
+\paragraph*{Gradient descent variants.}
+Among all gradient-based methods, the simple vanilla GD required the largest number of iterations (median $\sim10^4$) and exhibited the slowest convergence.
+Momentum and Adam substantially improved convergence speed and smoothness of the loss curve, while maintaining stable $R^2$ scores close to the analytical reference. 
+RMSprop and Adagrad performed comparably, but occasionally exhibited slower convergence due to overly adaptive learning rates.
+Overall, Adam was the best-performing optimizer among the iterative methods, providing a consistent balance between convergence speed and numerical stability.
+
+\paragraph*{Pareto efficiency.}
+When plotting $R^2$ as a function of computation time, OLS and Ridge consistently lie on the Pareto frontier — they deliver the highest accuracy per millisecond of computation.
+Gradient descent variants, while slower, provide flexibility for large-scale or streaming applications where closed-form inversion is impractical.
+The Pareto frontier visualization highlights this trade-off: OLS and Ridge occupy the optimal region, while GD methods form a secondary frontier under higher computational budgets.
+
+\paragraph*{Computational cost and memory footprint.}
+The estimated number of floating-point operations (FLOPs) confirmed the theoretical expectations:
+OLS and Ridge scale with $O(p^3)$, while GD methods scale linearly with the number of iterations and data points. 
+Memory usage (\texttt{mem\_mb\_est}) remained nearly constant across methods, with OLS and Ridge requiring only a few MB for the design matrix and coefficient vectors, and gradient methods consuming additional memory for accumulated gradients (particularly in Adam and RMSprop).
+
+% \paragraph*{Summary.}
+% The computational study confirms the following hierarchy of efficiency:
+% \begin{itemize}
+%     \item \textbf{OLS / Ridge}: fastest methods, near-zero iteration cost, ideal for low- to medium-dimensional problems.
+%     \item \textbf{Momentum / Adam}: slower but robust iterative methods with efficient convergence.
+%     \item \textbf{Vanilla GD}: highest iteration cost and sensitivity to learning rate.
+% \end{itemize}
+% Scaling and regularization remain essential to maintain numerical stability, especially at higher polynomial degrees.
+
+% \begin{figure}[H]
+% \centering
+% \input{Graphs/Computational_Pareto.tex}
+% \caption{Pareto frontier showing $R^2_{test}$ vs.\ computational time (ms) for each method. 
+% \textit{Data source:} columns \texttt{method}, \texttt{fit\_time\_ms}, \texttt{r2\_test} from \texttt{benchmarks\_20251005-140158.csv}. 
+% Each point represents the mean across all polynomial degrees, with error bars showing one standard deviation across runs.}
+% \label{fig:Pareto_Frontier}
+% \end{figure}
+
+% \begin{figure}[H]
+% \centering
+% \input{Graphs/Conditioning_vs_Degree.tex}
+% \caption{Condition number of $\mathbf{X}^\top\mathbf{X}$ as a function of polynomial degree. 
+% \textit{Data source:} column \texttt{cond\_XTX}. The rapid exponential growth illustrates the ill-conditioning of high-degree polynomial regressors.}
+% \label{fig:Conditioning}
+% \end{figure}
+
+% \begin{figure}[H]
+% \centering
+% \input{Graphs/Scaling_Stability.tex}
+% \caption{Difference in test MSE between scaled and unscaled data as a function of degree. 
+% \textit{Data source:} column \texttt{scaled\_vs\_unscaled\_mse\_delta}. Negative values indicate improvement from scaling.}
+% \label{fig:Scaling_Stability}
+% \end{figure}
+
+
 \section{Discussion and Conclusion}
 \label{sec:Discussion_and_Conclusion}
 In this project we analyzed regression methods for fitting the Runge function, focusing on OLS, Ridge, and Lasso regression, and compared them using mean squared error (MSE) as the main performance measure.\\\\
