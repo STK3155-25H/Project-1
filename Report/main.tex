@@ -752,28 +752,26 @@ Ridge and Lasso introduce a small bias but yield more stable models that general
 
 \section{Conclusion}
 \label{sec:Discussion_and_Conclusion}
-In this project we analyzed regression methods for fitting the Runge function, focusing on OLS, Ridge, and Lasso regression, and compared them using mean squared error (MSE) as the main performance measure.\\\\
-OLS regression reproduced the function well at low polynomial degrees, but quickly overfitted when the degree increased, as reflected in strongly rising MSE.\\
-Ridge regression introduced $L_2$ regularization, which stabilized the coefficients and reduced variance, achieving more reliable predictions across polynomial degrees.\\
-Lasso regression, based on an $L_1$ penalty, further encouraged sparsity by setting coefficients exactly to zero.
-This simplified the model and generally produced slightly lower MSE compared to Ridge due to the stronger bias introduced.\\\\
-A central part of the project was the implementation and study of gradient descent methods.
-Standard gradient descent for OLS and Ridge regression showed a strong dependence on the learning rate: too small rates resulted in slow convergence and higher MSE, while too large rates caused divergence.
-With a carefully chosen learning rate, the results closely matched the analytical solutions.
-Advanced optimizers such as momentum, Adagrad, RMSprop, and Adam significantly improved stability and convergence.
-RMSprop and Adam in particular adapted learning rates during training, achieving consistent performance across polynomial degrees and bringing MSE close to the closed-form benchmarks.\\
-For Lasso regression, which lacks an analytical solution, gradient-based optimization was essential.
-Here, adaptive optimizers again provided faster and more stable convergence compared to plain gradient descent.
-Stochastic gradient descent further reduced computation time by using individual samples, at the cost of noisier updates, but still produced results consistent with batch methods.\\\\
-Bootstrap resampling provided a detailed view of the bias–variance trade-off across polynomial degrees.
-For low-degree models, the variance was minimal and the MSE closely followed the bias, indicating stable underfitting.
-As model complexity increased, variance rose sharply, causing MSE to grow due to overfitting.
-The bootstrap analysis also highlighted the effect of dataset size: larger datasets reduced variance and stabilized MSE, allowing higher-degree models to generalize better.\\\\
-Cross-validation confirmed these observations by evaluating OLS, Ridge, and Lasso models across polynomial degrees.
-OLS exhibited low bias but high variance at high degrees, resulting in overfitting.
-Ridge and Lasso introduced regularization, slightly increasing bias but significantly reducing variance, yielding more stable predictions and better generalization.
-Lasso additionally promoted sparsity, slightly improving MSE compared to Ridge in some cases.\\\\
-Together, the bootstrap and cross-validation analyses illustrate the fundamental **bias–variance trade-off**: the optimal model complexity balances low bias and moderate variance to minimize prediction error, and regularization methods like Ridge and Lasso are effective tools for achieving this balance, particularly when the number of data points is limited.
+This project analyzed different regression methods such as Ordinary Least Squares(OLS),
+Ridge and Lasso along with the effects of implementing gradient descent optimizers,
+the use of bootstrap methods and the exploration of the bias-variance trade-off.\\\\
+OLS performed well for simple models but overfitted at higher polynomial degrees.
+Ridge reduced variance through L2 regularization, while Lasso’s L1 penalty promoted sparsity and produced simpler, more interpretable models.\\\\
+A major focus was the implementation of gradient descent methods.
+Standard gradient descent proved to be realy sensitive to the learning rate, small rates let to slow convergence while large rates caused convergence.
+With some tuning the resulst came close the the analytical solutions.
+Advanced gradient descent methods such as Momentum, Adagrad, RMSprop, and Adam improved convergence speed and numerical stability, with Adam providing the most consistent and reliable results across different polynomial degrees.
+The use of stochastic methods was also implemented, these showed a lower computing time but at the cost of accuracy.
+For LASSO regression the use of gradient descent was essential as it lacks a analytical solution.\\\\
+Bootstrap and cross-validation results confirmed the bias–variance trade-off, showing that regularization helps balance underfitting and overfitting.
+Among the methods, Ridge and Lasso achieved the best generalization performance.\\\\
+Each approach presented trade-offs:
+OLS is simple but unstable for complex models;
+Ridge improves robustness but adds bias;
+Lasso enhances sparsity but may remove relevant predictors.\\\\
+The study demonstrated the value of regularization and adaptive optimization in regression analysis.
+Limitations include the focus on a single dataset and reliance on MSE as the main metric.
+Future work should extend these methods to real-world and higher-dimensional data, to further enhance model performance and interpretability.
 
 
 \bibliographystyle{apsrev4-2}
