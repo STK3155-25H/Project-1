@@ -212,9 +212,9 @@ The update rule is as follows:
 $$
 \boldsymbol{\theta}_{n+1} = \boldsymbol{\theta}_n - {\eta \boldsymbol{\nabla}} l_{i_n} (\boldsymbol{\theta_t}),
 $$  
-where \(i_t\) is a randomly selected data point and \(\eta\) is the learning rate. (AAA: cite lecture)\\
+where \(i_t\) is a randomly selected data point and \(\eta\) is the learning rate.\\
 
-While Stochastic Gradient Descent is faster and more memory-efficient than full-batch gradient descent, it introduces noise in the parameter updates, which can make convergence less stable and less precise. However, this stochasticity can be beneficial, as it can help escape poor local minima and explore the optimization landscape more effectively, making it well suited for large datasets.
+While Stochastic Gradient Descent is faster and more memory-efficient than full-batch gradient descent, it introduces noise in the parameter updates, which can make convergence less stable and less precise. However, this stochasticity can be beneficial, as it can help escape poor local minima and explore the optimization landscape more effectively, making it well suited for large datasets. \cite{hjorthjensen_week37}
 
 \subsubsection{Implementation}
 
@@ -251,7 +251,7 @@ Mathematically, let $\boldsymbol{m}_n$ denote the velocity (or accumulated gradi
 \boldsymbol{\theta}_{n+1} = \boldsymbol{\theta}_n - \eta \, \boldsymbol{m}_{n+1}.
 \]
 where $\beta \in [0,1)$ is the momentum coefficient, which controls how much of the past gradients are remembered in the current update. A value close to 1 means the optimizer will have more inertia while a value closer to 0 means less reliance on past gradients. This mechanism enables the algorithm to suppress oscillations along steep directions while simultaneously accelerating progress across flatter regions of the cost surface. The result is a convergence process that is both faster and more stable than standard gradient descent.\\
-This leads to more advanced optimization methods which use an adaptive learning rate for each parameter that depends on the history of gradients.\\
+This leads to more advanced optimization methods which use an adaptive learning rate for each parameter that depends on the history of gradients.\cite{hjorthjensen_week37}\\
 
 \subsubsection{Implementation}
 
@@ -279,7 +279,7 @@ This is particularly useful for sparse data.
 
 where \(v_n\) is the sum of squared gradients up to time \(n\) and \(\epsilon\) prevents division by zero.  \\
 
-The accumulation of squared gradients can lead to excessively small learning rates over time, slowing down convergence.
+The accumulation of squared gradients can lead to excessively small learning rates over time, slowing down convergence. \cite{goodfellow2016}
 
 \subsubsection{Implementation}
 
@@ -310,8 +310,8 @@ with decay rate \(\beta\) 0.9 or 0.99,
 the new parameter update is
 \[\theta_{n+1} = \theta_n - \frac{\eta}{\sqrt{v_n + \epsilon}} \nabla C(\theta_n).
 \]
-(AAA cite lecture notes)
-On the other hand, RMSprop requires tuning of the decay rate \(\beta\) and the base learning rate \(\eta\).
+
+On the other hand, RMSprop requires tuning of the decay rate \(\beta\) and the base learning rate \(\eta\). \cite{goodfellow2016}
 
 \subsubsection{Implementation}
 
@@ -351,7 +351,7 @@ the update rule in Adam becomes
 \]  
 where \(\epsilon\) prevents division by zero.
 
-Adam can sometimes converge to slightly worse minima than SGD in certain tasks, and hyperparameter tuning is still required.
+Adam can sometimes converge to slightly worse minima than SGD in certain tasks, and hyperparameter tuning is still required. \cite{goodfellow2016}
 
 \subsubsection{Implementation}
 
@@ -380,7 +380,7 @@ Adagrad's strength lies in its adaptability to sparse data, but it tends to redu
 
 RMSprop was introduced to counter Adagrad's diminishing learning rate, making it effective for online and non-stationary tasks where data characteristics frequently change. 
 
-Adam is more often the preferred method because it merges the advantages of momentum and adaptive learning rates, generally performing robustly in most deep learning scenarios, though it may require careful parameter tuning to reach optimal performance.
+Adam is more often the preferred method because it merges the advantages of momentum and adaptive learning rates, generally performing robustly in most deep learning scenarios, though it may require careful parameter tuning to reach optimal performance. \cite{goodfellow2016}
 
 
 
