@@ -13,7 +13,6 @@ from numba import njit
 
 seed = os.environ.get("SEED")
 
-
 if seed is not None:
     seed = int(seed) 
     print("Seed from env:", seed)
