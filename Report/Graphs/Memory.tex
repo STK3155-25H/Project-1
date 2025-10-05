@@ -15,13 +15,13 @@
     }
     ]
     \addplot [blue, mark=none] table [x=degree, col sep=comma, y=mem_mb_est] {../outputs/benchmarks/tables/benchmarks_gd_vanilla.csv};
-    \addlegendentry{$gd-vanilla$}
+    \addlegendentry{$vanilla$}
 
     \addplot [orange, mark=none] table [x=degree, col sep=comma, y=mem_mb_est] {../outputs/benchmarks/tables/benchmarks_gd_momentum.csv};
-    \addlegendentry{$gd-momentum$}
+    \addlegendentry{$momentum$}
 
     \addplot [green!70!black, mark=none] table [x=degree, col sep=comma, y=mem_mb_est]  {../outputs/benchmarks/tables/benchmarks_gd_adam.csv};
-    \addlegendentry{$gd-adam$}
+    \addlegendentry{$adam$}
 
     \addplot [red, mark=none] table [x=degree, col sep=comma, y=mem_mb_est]  {../outputs/benchmarks/tables/benchmarks_ols.csv};
     \addlegendentry{$OLS$}
