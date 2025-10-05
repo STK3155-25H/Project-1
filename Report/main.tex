@@ -183,7 +183,7 @@ where $\eta > 0$ is a learning rate controlling the step size.
 This iterative procedure moves the parameters towards the minimum of $C(\boldsymbol{\theta})$. For convex functions such as the mean squared error in linear regression, convergence is guaranteed if $\eta$ is chosen appropriately.
 
 \subsubsection{Implementation}
-The different gradient descent methods were implemented inside the general routine \verb|Gradient_descent_advanced|, in which a specific method can be selected using, for example, \verb|method='rmsprop'| for Rmsprop and so on. \\
+The different gradient descent methods were implemented inside the general routine \verb|Gradient_descent_advanced|, in which a specific method can be selected using, for example, \verb|method='rmsprop'| for RMSprop and so on. \\
 In the vanilla gradient descent, the iteration start from an initial guess $\boldsymbol{\theta}^{(0)}$, the parameters are updated iteratively according to the rule:
 \[
 \boldsymbol{\theta}^{(n+1)} = \boldsymbol{\theta}^{(n)} - \eta \, \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}^{(n)}),
