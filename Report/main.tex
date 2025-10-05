@@ -695,7 +695,7 @@ The bootstrap analysis highlights how the number of data points affects this bal
 \subsection{Cross Validation}
 \label{Cross Validation}
 Cross-validation is now applied to evaluate the performance of OLS, Ridge, and Lasso regression models.
-The MSE is computed using 5-fold cross-validation for polynomial degrees ranging from 1 to 15, as shown in Figure \ref{fig:Cross_Validation}.
+The MSE is computed using 5-fold cross-validation for polynomial degrees ranging from 1 to 15, as shown in Figure \ref{fig:Cross_Val}.
 For OLS, the MSE decreases initially with increasing polynomial degree, but then rises sharply at higher degrees due to overfitting, especially with fewer data points.
 Ridge regression, with a regularization parameter $\lambda = 0.01$, shows a more stable MSE across polynomial degrees, effectively controlling overfitting.
 Lasso regression, also with $\lambda = 0.01$, exhibits a similar trend, but with slightly higher MSE than Ridge due to the stronger bias introduced by the $L_1$ penalty.       
@@ -792,13 +792,14 @@ Memory usage (Figure~\ref{fig:Memory}) grows linearly with polynomial degree for
 
 
 \paragraph*{Accuracy–Speed Pareto analysis.}
-Finally, Figure~\ref{fig:fig:pareto_r2_time_allinone} summarizes the joint accuracy–efficiency trade–off by plotting test $R^2$ against wall–clock fit time (log scale on the $x$–axis). 
+Finally, Figure~\ref{fig:fig:pareto_r2_time} summarizes the joint accuracy–efficiency trade–off by plotting test $R^2$ against wall–clock fit time (log scale on the $x$–axis). 
 Two distinct frontiers emerge.  
 Closed–form solvers (OLS and Ridge) occupy the leftmost Pareto frontier, achieving $R^2\approx0.95$–$0.99$ at $\mathcal{O}(10^{-1})$\,ms.  
 Iterative optimizers form a secondary frontier at $\mathcal{O}(10^2)$\,ms: vanilla GD and momentum cluster around $R^2\approx0.5$–$0.85$, while Adam attains higher accuracy ($R^2\approx0.95$) but at greater cost. 
 When the design matrix fits in memory and $p$ is moderate, closed–form OLS/Ridge remain strictly Pareto–superior. 
 Iterative methods become attractive only for large–scale or streaming data, or when analytical solutions are unavailable (e.g., LASSO).
-\include{Graphs/PARETO}
+% \include{Graphs/PARETO}
+\include{Graphs/PARETO2}
 
 
 \section{Discussion and Conclusion}

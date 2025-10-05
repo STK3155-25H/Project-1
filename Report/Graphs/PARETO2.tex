@@ -1,0 +1,57 @@
+% File: ols_mse.tex
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=9cm,
+    height=7cm,
+    xlabel={Fit Time (ms)},
+    ylabel={$R^2$},
+    title={Pareto Front: Accuracy vs Speed (per Degree)},
+    legend pos=south east,
+    grid=both,
+    ymode=log, 
+    xmode=log, 
+    log basis y=10,
+    log basis x=10,
+    y tick label style={
+        /pgf/number format/fixed,
+        /pgf/number format/precision=2
+    },
+    legend cell align={left}
+]
+    % OLS
+    \addplot [red, thick, mark=*, mark size=1.5pt] 
+        table [x=fit_time_ms, y=r2_test, col sep=comma, 
+               sort key=degree] {../outputs/benchmarks/tables/benchmarks_ols.csv};
+    \addlegendentry{OLS}
+
+    % Ridge
+    \addplot [purple, thick, mark=triangle*, mark size=1.5pt] 
+        table [x=fit_time_ms, y=r2_test, col sep=comma, 
+               sort key=degree] {../outputs/benchmarks/tables/benchmarks_ridge.csv};
+    \addlegendentry{Ridge}
+
+    % GD Vanilla
+    \addplot [blue, thick, mark=square*, mark size=1.5pt] 
+        table [x=fit_time_ms, y=r2_test, col sep=comma, 
+               sort key=degree] {../outputs/benchmarks/tables/benchmarks_gd_vanilla.csv};
+    \addlegendentry{GD Vanilla}
+
+    % GD Momentum
+    \addplot [orange, thick, mark=diamond*, mark size=1.5pt] 
+        table [x=fit_time_ms, y=r2_test, col sep=comma, 
+               sort key=degree] {../outputs/benchmarks/tables/benchmarks_gd_momentum.csv};
+    \addlegendentry{GD Momentum}
+
+    % GD Adam
+    \addplot [green!70!black, thick, mark=otimes*, mark size=1.5pt] 
+        table [x=fit_time_ms, y=r2_test, col sep=comma, 
+               sort key=degree] {../outputs/benchmarks/tables/benchmarks_gd_adam.csv};
+    \addlegendentry{GD Adam}
+
+\end{axis}
+\end{tikzpicture}
+\caption{Pareto analysis of model accuracy ($R^2$) versus computational cost (fit time in milliseconds). Lines connect successive polynomial degrees per method.}
+\label{fig:pareto_r2_time}
+\end{figure}
