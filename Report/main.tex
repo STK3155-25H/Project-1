@@ -486,8 +486,7 @@ The most common form is k-fold cross-validation, where the dataset is divided in
 The model is trained on k-1 folds and validated on the remaining fold.
 This process is repeated k times, with each fold serving as the validation set once.
 The average performance across all k trials provides a robust estimate of the model's generalization error.
-Cross-validation helps in selecting model parameters and in preventing overfitting by ensuring that the model performs well on unseen data.\\\\
-
+Cross-validation helps in selecting model parameters and in preventing overfitting by ensuring that the model performs well on unseen data.
 
 \subsection{Use of AI tools}
 In this project, AI tools such as ChatGPT and GitHub Copilot were utilized to improve the efficiency and quality of the work. 
@@ -501,7 +500,8 @@ The performance of the regression models are evaluated using both the MSE and th
 $$ \mathrm{MSE} = \frac{1}{n} \sum_{i=1}^{n} \left( y_i - \tilde{y}_i \right)^2$$
 $$R^2 = 1 - \frac{\sum_{i=1}^{n} \left( y_i - \tilde{y}_i \right)^2}{\sum_{i=1}^{n} \left( y_i - \bar{y} \right)^2}$$
 where $n$ is the number of data points, $y_i$ are the true values, $\tilde{y}_i$ are the predicted values, and $\bar{y}$ denotes the mean of the true values.
-\subsection*{How we produced all reported results}
+
+\subsection*{How the reported results were generated (averaging, randomness, and fairness)}
 \label{sec:results_setup}
 Unless otherwise stated, every result displayed in this section is the mean over $N_{\text{runs}}=30$ independent repetitions.
 Each run uses a new noisy dataset and a new train/test split, but within a run all models and methods see the same data and splits to enable fair, paired comparisons.
@@ -512,8 +512,8 @@ To the mesh we added Gaussian noise \[ y = f(x) + \varepsilon, \quad \varepsilon
 We split the data into train/test with a $67\%/33\%$ split and standardize features using training statistics only (the intercept, when present, is not scaled).
 For polynomial models, features are expanded up to degree $d$ and then scaled column-wise using the training means/stds and re-used on the test set.
 
-\paragraph*{Reproducibility and fairness}
-Let $s_0$ be the global base seed. For run index $r=0,\dots,N_{\text{runs}}-1$ we set
+\paragraph*{Reproducibility and fairness.}
+Let $s_0$ be the global base seed. For each run index $r=0,\dots,N_{\text{runs}}-1$, the run seed is defined as
 \[
 s_r = s_0 + r,
 \]
@@ -521,13 +521,14 @@ as both the NumPy global seed before generating noise and the random\_state for 
 This guarantees that, within the same run, all methods share the exact same dataset and splits.
 Additional randomness is handled as follows:
 \begin{itemize}
-    \item \textbf{SGD \ref{Stochastic Gradient Descent}:} to make mini-batch selections identical across models within a run and degree, we reset the RNG to a deterministic ~\cite{numpy-seed}, per-degree seed before each optimizer call (thus the same mini-batch sequence is used by all methods being compared).
+    \item \textbf{SGD \ref{Stochastic Gradient Descent}:} to make mini-batch selections identical across models within a run and degree, the RNG is reset to a deterministic ~\cite{numpy-seed}, per-degree seed before each optimizer call (thus the same mini-batch sequence is used by all methods being compared).
     \item \textbf{Bootstrap \ref{Bias-Variance trade off}:} for each run, bootstrap resamples of the training set are drawn with sklearn's resample using fixed per-bootstrap seeds ~\cite{scikit-learn-resample}; predictions are evaluated on the fixed test set of that run.
-    \item \textbf{Cross-Validation \ref{Cross Validation}:} for each run we instantiate one KFold with shuffle=True and random\_state $=s_r$ ~\cite{scikit-learn-crossvalidation}, so folds are identical across degrees and models within the run.
+    \item \textbf{Cross-Validation \ref{Cross Validation}:} for each run a single KFold is instantiate with \texttt{shuffle=True} and \texttt{random\_state $=s_r$} ~\cite{scikit-learn-crossvalidation}, so folds are identical across degrees and models within the run.
 \end{itemize}
 
 \paragraph*{What is averaged.}
-For parts up to F, each metric displayed at a given degree $d$ is the mean test metric over $N_{\text{runs}}$. For each average metric displayed is also computed its standard deviation. For part G, the MSE, $\mathrm{bias}^2$, and variance are computed from bootstrap predictions within each run and then averaged across runs. For Part~H, per-run degree-$d$ scores are the mean MSE across $k=5$ folds.
+For all parts of the project, each metric displayed at a given degree $d$ is the mean test metric over $N_{\text{runs}}$. For each average metric displayed is also computed its standard deviation. 
+For part \ref{Bias-Variance trade off}, the MSE, $\mathrm{bias}^2$, and variance are computed from bootstrap predictions within each run and then averaged across runs. For part \ref{Cross Validation}, per-run degree-$d$ scores are the mean MSE across $k=5$ folds.
 
 % \paragraph*{Modeling/optimization details.}
 % OLS and Ridge are also computed in closed form; for Ridge the intercept is not penalized. LASSO is solved with (sub)gradient descent. Gradient-based experiments use:
@@ -538,9 +539,6 @@ For parts up to F, each metric displayed at a given degree $d$ is the mean test 
 %     \item \textbf{Part~F (SGD):} same methods at $\eta=0.01$, $n_{\text{iter}}=5000$, mini-batch size $=10$.
 % \end{itemize}
 
-
-% \subsection{Averaging over multiple runs}
-
 \subsection*{Validation and testing}
 \label{Validation_and_Testing}
 
@@ -549,9 +547,12 @@ Each function within the project was systematically validated against scikit-lea
 ensuring full consistency with well-established numerical baselines. 
 The test suite employs the Pytest framework and compares analytical, gradient-based, and resampling functions through deterministic and quantitative checks. 
 All tests were designed to be reproducible, relying on a fixed random seed to guarantee identical data splits and noise realizations across runs. 
-The seed policy used is consistent with what is described in the previous paragraph \ref{sec:results_setup}.\\\\
-For the implemented preprocessing routines, the generated design matrices were compared element-wise with those produced by scikit-learn's classes, verifying identical scaling and intercept behavior (Results asserted with a numerical tolerance of \(\text{rtol}=10^{-12}\)).\\
-Metric functions such as the Mean Squared Error (MSE) and the coefficient of determination ($R^2$) were also cross-checked against scikit-learn's corresponding functions, ensuring numerical equivalence up to machine precision (\(\text{rtol}=10^{-12}\), \(\text{atol}=10^{-12}\)).\\
+The seed policy used is consistent with what is described in the previous paragraph \ref{sec:results_setup}.
+
+For the implemented preprocessing routines, the generated design matrices were compared element-wise with those produced by scikit-learn's classes, verifying identical scaling and intercept behavior (results asserted with a numerical tolerance of \(\text{rtol}=10^{-12}\)).
+
+Metric functions such as the Mean Squared Error (MSE) and the coefficient of determination ($R^2$) were also cross-checked against scikit-learn's corresponding functions, ensuring numerical equivalence up to machine precision (\(\text{rtol}=10^{-12}\), \(\text{atol}=10^{-12}\)).
+
 Analytical regression solvers like OLS and Ridge Regression were validated by comparing their estimated coefficients and predictions to those obtained from scikit-learn under identical configurations. 
 For Ridge regression, both penalized and unpenalized intercept versions were tested to confirm full consistency with scikit-learn's regularization scheme. 
 The detailed numerical tolerances used in these validations are summarized in Table~\ref{tab:analytical_solvers}.
@@ -635,28 +636,20 @@ Cross-val.\ scores & $10^{-10}$ & $10^{-12}$ \\
 
 All assertions passed successfully, confirming that the entire computational pipeline—from data scaling to analytical and iterative solvers—produces results consistent with standard machine learning libraries and theoretical expectations.\footnote{This testing suite was executed continuously in a GitHub workflow, ensuring the validity of each commit and experiment.}
 
-
-
 \subsection{OLS}
 \label{OLS}
-The analysis begins with standard OLS regression using polynomials up to degree 15.
-Figure \ref{fig:OLS_graph} shows how MSE varies with polynomial degree and dataset size.\\
-In general, MSE decreases as the polynomial degree increases.
-However, for small datasets ($n=40or50$), MSE rises at higher degrees due to overfitting.
-As the model becomes more complex, it fits not only the underlying trend but also the random noise, reducing performance on unseen data.
-This effect is less noticeable with larger datasets.\\\\
+The analysis starts with performing a standard ordinary least squares regression using polynomials in $x$ up to order 15. The dependence of the polynomial degree and number of data point has been explored by plotting the mse as a function of polynomial degree for different amount of data points. This can be seen in Figure \ref{fig:OLS_graph}.\\\\
+As one can see, generally the mse goes down as the polynomial degree increases. But for a small amount of data points like $n = 40$ and $n = 50$, when the polynomial degree goes to high the mse starts to increase again.\\
+This happens because of overfitting. When the polynomial degree increases the model tries to fit the data too perfectly and will fit the underlying random noise as well and the model will then perform poorly of unseen data. For a high number of data points this is barely noticeable but for a lower amount of data points the effect will become more pronounced.\\\\
 When plotting the parameters $\theta$ as a function of polynomial degree, it can be observed that for low-degree polynomials the coefficients remain relatively stable, whereas for higher-degree polynomials they increase rapidly in magnitude and exhibit pronounced oscillations.
-This behavior reflects overfitting: at high degrees, the model captures both the true signal and the noise, causing the coefficients to become unstable.
-Using more data points reduces this effect and stabilizes the parameter estimates
+This behavior reflects overfitting: at high degrees, the model captures both the true signal and the noise, causing the coefficients to become unstable. Using more data points reduces this effect and stabilizes the parameter estimates.
     
 \input{Graphs/OLS_MSE.tex}
 
 \subsection{Ridge regression}
 \label{Ridge regression}
-Now, Ridge regression is applied to the same dataset, exploring the impact of different regularization parameters $\lambda$.
-First, the effect of the regularization parameter $\lambda $ on the MSE as a function of polynomial degree was analyzed for a fixed number of data points n=100: the results are shown in Figure \ref{fig:RIDGE_MSE_Lambda}.
-Small values of $\lambda$ (e.g., 0.001, 0.01) behave similarly to OLS, with the MSE decreasing as polynomial degree increases.
-However, as $\lambda$ increases (e.g., 1, 10, 100), the MSE curve flattens and even increases for high polynomial degrees, indicating that strong regularization prevents overfitting but may lead to underfitting if too large.
+Now, Ridge regression is applied to the same dataset, exploring the impact of different regularization parameters $\lambda$. First, the effect of the regularization parameter $\lambda $ on the MSE as a function of polynomial degree was analyzed for a fixed number of data points n=100: the results are shown in Figure \ref{fig:RIDGE_MSE_Lambda}.
+Small values of $\lambda$ (e.g., 0.001, 0.01) behave similarly to OLS, with the MSE decreasing as polynomial degree increases. However, as $\lambda$ increases (e.g., 1, 10, 100), the MSE curve flattens and even increases for high polynomial degrees, indicating that strong regularization prevents overfitting but may lead to underfitting if too large.
 Among the tested values, $\lambda$ =0.01 produces the lowest MSE for most polynomial degrees, suggesting an optimal trade-off between bias and variance.
 
 \input{Graphs/RIDGE_MSE_Lambda.tex}
@@ -678,24 +671,25 @@ The result is a more robust model that generalizes better to unseen data.
 The analytical expression for paramters $\theta$ is now compared to the results obtained using gradient descent methods.\\\\
 First, the standard gradient descent method is applied to both OLS and Ridge regression, exploring the impact of different learning rates $\eta$. 
 The results for OLS and Ridge with varying learning rates are shown in the figures below and it is evident that the gradient descent is very sensitive to the choice of the learning rate.\\
-For example, with a learning rate equale to 0.01, as shown in the Figure \ref{fig:GD_OLS_LR}, the method converges to the analytical solution for polynomial degrees up to 15, with the MSE closely matching the analytical results.
+For example, when applying gradient descent to OLS with a learning rate equal to 0.01, as shown in the Figure \ref{fig:GD_OLS_LR}, the method converges to the analytical solution for polynomial degrees up to 15, with the MSE closely matching the analytical results.
 For smaller learning rates, the algorithm does not reach the analytical solution within the set number of iterations, resulting in a higher MSE. 
-For learning rate bigger than 0.01, the algorithm diverges, failing to converge to the analytical solution and causing the MSE to increase dramatically.
+For learning rates larger than 0.01, the algorithm diverges, failing to converge to the analytical solution and causing the MSE to increase dramatically.
 \input{Graphs/GD_OLS_LR.tex}
 Similarly, for Ridge regression with $\lambda = 0.01$, as shown in the Figure \ref{fig:GD_RIDGE_LR}, a learning rate of 0.01 allows convergence to the analytical solution, while smaller rates lead to slower convergence and larger MSE.
 \input{Graphs/GD_RIDGE_LR.tex}
  
 In both cases, the analytical solution is more accurate than gradient descent, except for a learning rate of 0.01, where the two methods yield nearly identical results.\\\\
-Next, advanced gradient descent methods are applied to both OLS and Ridge regression.
+Next, advanced gradient descent methods are applied to both OLS and Ridge regression.\\
 For OLS, as shown in the Figure \ref{fig:AGD_OLS}, Momentum, Adagrad, RMSprop, and Adam all successfully converge to the analytical solution with MSE values closely matching the analytical results across polynomial degrees.
- RMSprop and Adam show better performance at higher polynomial degrees, because of their adaptive learning rate mechanisms.
+RMSprop and Adam show better performance at higher polynomial degrees, because of their adaptive learning rate mechanisms.
 
 \input{Graphs/AGD_OLS.tex}
 
 For Ridge regression with $\lambda = 0.01$, as shown in the Figure \ref{fig:AGD_RIDGE}, RMSProp and Adam show a better convergence at higher degrees, but still the analytical solution is the best one. 
-\textbf{why analytical is better than advanced methods?}
+The analytical solution is superior because it provides the exact global minimum, whereas iterative methods like RMSProp and Adam are only approximations that may not reach the true optimum.
 
 \input{Graphs/AGD_RIDGE.tex}
+
 \subsection{Lasso regression}
 \label{Lasso regression}
 Lasso regression does not have an analytical solution, so only gradient descent methods are applied.\\\\
