@@ -59,8 +59,11 @@ It focuses on fitting polynomials to a specific one-dimensional function, the Ru
 \[
 \frac{1}{1+25x^2}, \quad x\in[-1, 1]
 \]
-The Runge function serves as a classical example that illustrates the challenges of high-degree polynomial interpolation, such as oscillations near the boundaries, known as Runge's phenomenon\cite{runge1901}. This makes it an ideal test case to compare the performances of the different methods.
-First, an OLS regression analysis is performed, exploring the dependence on the number of data points and the degree of polynomial. The analysis is then extended to Ridge and Lasso regressions, which add a regularization parameter ${\lambda}$. Gradient descent methods are implemented.
+The Runge function serves as a classical example that illustrates the challenges of high-degree polynomial interpolation, such as oscillations near the boundaries, known as Runge's phenomenon\cite{runge1901}.
+This makes it an ideal test case to compare the performances of the different methods.
+First, an OLS regression analysis is performed, exploring the dependence on the number of data points and the degree of polynomial.
+The analysis is then extended to Ridge and Lasso regressions, which add a regularization parameter ${\lambda}$.
+Gradient descent methods are implemented.
 The analysis starts with the standard gradient descent method, but then, to improve efficiency and convergence, several variants of the gradient descent have been developed, such as momentum, stochastic gradient descent and adaptive methods, including Adagrad, RMSprop, ADAM.
 The performance of OLS, Ridge and Lasso is then compared with the gradient descent-based optimization methods.
 In order to evaluate model performance and investigate bias-variance trade-off, resampling techniques such as bootstrap and cross-validation are applied, highlighting how different choices of model complexity and regularization affect the trade-off between bias and variance.
@@ -76,7 +79,8 @@ The structure of this project is as follows:
 
 \section{Methods}
 \label{sec:Methods}
- Let $\mathbf{y} \in \mathbb{R}^n$ denote the vector of target values and $\mathbf{X} \in \mathbb{R}^{n \times p}$ the design matrix containing $p$ predictors for $n$ observations. The following linear model is assumed:
+ Let $\mathbf{y} \in \mathbb{R}^n$ denote the vector of target values and $\mathbf{X} \in \mathbb{R}^{n \times p}$ the design matrix containing $p$ predictors for $n$ observations.
+ The following linear model is assumed:
 $$
 \mathbf{y} = \tilde{\mathbf{y}} + \boldsymbol{\epsilon}, \quad \text{with} \quad \tilde{\mathbf{y}} = \mathbf{X}\boldsymbol{\theta},
 $$
@@ -105,7 +109,8 @@ Finally, applying training-set statistics to scale the test set ensures unbiased
 
 
 \subsection{Ordinary Least Squares}
-Ordinary Least Squares (OLS) is the classical method for linear regression and it estimates $\boldsymbol{\theta}$ by minimizing the mean squared error\cite{hjorthjensen_week35}. This is the cost function that is going to be optimize:
+Ordinary Least Squares (OLS) is the classical method for linear regression and it estimates $\boldsymbol{\theta}$ by minimizing the mean squared error\cite{hjorthjensen_week35}.
+This is the cost function that is going to be optimize:
 
 $$
 C(\boldsymbol{\theta})=\frac{1}{n}\left\{\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\right)^T\left(\boldsymbol{y}-\boldsymbol{X}\boldsymbol{\theta}\right)\right\}$$
@@ -124,8 +129,11 @@ $$
 OLS provides a simple solution, suitable when the features are few and not highly correlated.
 
 \subsubsection{Implementation}
-The inputs of the OLS function are a feature matrix $\mathbf{X} \in \mathbb{R}^{n \times p}$ and a vector of targets $\mathbf{y} \in \mathbb{R}^n$. The output is the vector of the parameters $\boldsymbol{\theta} \in \mathbb{R}^{p}$, whose fomula is given above.\\
-The function is implemented in Python, using the NumPy library for efficient numerical computations. The function \texttt{np.linalg.pinv} is used to compute the pseudoinverse of the matrix $\mathbf{X}^\top \mathbf{X}$, which is particularly useful when $\mathbf{X}^\top \mathbf{X}$ is not invertible. This ensures numerical stability.
+The inputs of the OLS function are a feature matrix $\mathbf{X} \in \mathbb{R}^{n \times p}$ and a vector of targets $\mathbf{y} \in \mathbb{R}^n$.
+The output is the vector of the parameters $\boldsymbol{\theta} \in \mathbb{R}^{p}$, whose fomula is given above.\\
+The function is implemented in Python, using the NumPy library for efficient numerical computations.
+The function \texttt{np.linalg.pinv} is used to compute the pseudoinverse of the matrix $\mathbf{X}^\top \mathbf{X}$, which is particularly useful when $\mathbf{X}^\top \mathbf{X}$ is not invertible.
+This ensures numerical stability.
 
 \subsection{Ridge regression}
 A regularization parameter $\lambda$ can be introduced by defining a new cost function to be optimized\cite{hjorthjensen_week35}, that is:
@@ -134,13 +142,15 @@ $$ C(\boldsymbol{\theta})
 $$
 where the second term represents an $L_2$ penalty on the size of the coefficients.
 This leads to the Ridge regression minimization problem where it is required that $ |\boldsymbol{\theta}\|_2^2 \leq t$, where $t$ is a finite positive number. 
-One of the main motivations behind Ridge is its ability to resolve the problem of non-invertibility of $\mathbf{X}^\top \mathbf{X}$, which often arises when features are highly correlated. Ridge regression resolves this problem by adding the parameter $\boldsymbol{\lambda}$ to the diagonal of $\mathbf{X}^\top \mathbf{X}$ before inverting it.
+One of the main motivations behind Ridge is its ability to resolve the problem of non-invertibility of $\mathbf{X}^\top \mathbf{X}$, which often arises when features are highly correlated.
+Ridge regression resolves this problem by adding the parameter $\boldsymbol{\lambda}$ to the diagonal of $\mathbf{X}^\top \mathbf{X}$ before inverting it.
 Taking the derivatives with respect to $\boldsymbol{\theta}$ the optimal parameters are obtained:
 $$ \boldsymbol{\hat\theta_{Ridge}}=(\mathbf{X}^\top \mathbf{X} + \lambda\mathbf{I})^{-1} \mathbf{X}^\top \mathbf{y}$$
 with $\mathbf{I}$ being a $p\times p$ identity matrix.
 
 \subsubsection{Implementation}
-The inputs of the Ridge function are a feature matrix $\mathbf{X} \in \mathbb{R}^{n \times p}$, a vector of targets $\mathbf{y} \in \mathbb{R}^n$, the regularization parameter $\lambda$ and the intercept. The output is the vector of the parameters $\boldsymbol{\theta} \in \mathbb{R}^{p}$, whose fomula is given above.\\
+The inputs of the Ridge function are a feature matrix $\mathbf{X} \in \mathbb{R}^{n \times p}$, a vector of targets $\mathbf{y} \in \mathbb{R}^n$, the regularization parameter $\lambda$ and the intercept.
+The output is the vector of the parameters $\boldsymbol{\theta} \in \mathbb{R}^{p}$, whose fomula is given above.\\
 The function uses the same function \texttt{np.linalg.pinv} to compute the pseudoinverse of the matrix $\mathbf{X}^\top \mathbf{X} + \boldsymbol{\lambda}\mathbf{I}$, ensuring numerical stability.
 
 \subsection{Lasso regression}
@@ -159,10 +169,31 @@ The optimization problem can however be solved by using iterative gradient desce
 The key feature of Lasso lies in its ability to shrink some estimated coefficients $\hat{\theta}_j$ exactly to zero. 
 When this happens, the corresponding predictor is completely removed from the model.  
 In contrast, Ridge regression never eliminates variables: it only shrinks the coefficients $\hat{\theta}_j$ towards zero but keeps all predictors in the model.
-Typically, Lasso Regression is preferred when the goal is to simplify the model and improve interpretability, especially when there are a lot of features. On the other hand, Ridge regression is better for handling multicollinearity among features. 
+Typically, Lasso Regression is preferred when the goal is to simplify the model and improve interpretability, especially when there are a lot of features.
+On the other hand, Ridge regression is better for handling multicollinearity among features. 
 
 \subsubsection{Implementation}
-? 
+Lasso regression was implemented using subgradient descent.
+The routine is very similar to the general gradient descent, but the $L_1$ regularization term requires the use of subgradient descent.
+Starting from an initial guess $\boldsymbol{\theta}_0$, the parameters are then updated acording to:
+\begin{align}
+    \boldsymbol{\theta}^{(n+1)} = \boldsymbol{\theta}^{(n)} - \eta \nabla_{\boldsymbol{\theta}} C_\text{Lasso}(\boldsymbol{\theta}^{(n)})
+\end{align}
+where $\eta > 0$ is the learning rate, and the subgradient of the Lasso cost function is
+\begin{align}
+    \nabla_{\boldsymbol{\theta}} C_\text{Lasso}(\boldsymbol{\theta}) = -\frac{2}{n} X^\top (y - X\boldsymbol{\theta}) + \lambda \, \mathrm{sign}(\boldsymbol{\theta}).
+\end{align}
+After each update, the subgradient is recomputed until convergence.
+\begin{algorithm}[H]
+\caption{Subgradient Descent for Lasso}
+\begin{algorithmic}[1]
+\State Initialize $\boldsymbol{\theta}^{(0)}$
+\For{$n = 0, 1, 2, \dots$ until convergence}
+    \State Compute subgradient: $\nabla_{\boldsymbol{\theta}} C_\text{Lasso}(\boldsymbol{\theta}^{(n)}) = -\frac{2}{n} X^\top (y - X\boldsymbol{\theta}^{(n)}) + \lambda \, \mathrm{sign}(\boldsymbol{\theta}^{(n)})$
+    \State Update parameters:$\boldsymbol{\theta}^{(n+1)} = \boldsymbol{\theta}^{(n)} - \eta \, \nabla_{\boldsymbol{\theta}} C_\text{Lasso}(\boldsymbol{\theta}^{(n)})$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Gradient descent}
 
@@ -185,7 +216,8 @@ Neglecting the second-order term (or assuming it is costly to compute), a first-
 \]
 where $\eta > 0$ is a learning rate controlling the step size.  
 
-This iterative procedure moves the parameters towards the minimum of $C(\boldsymbol{\theta})$. For convex functions such as the mean squared error in linear regression, convergence is guaranteed if $\eta$ is chosen appropriately.
+This iterative procedure moves the parameters towards the minimum of $C(\boldsymbol{\theta})$.
+For convex functions such as the mean squared error in linear regression, convergence is guaranteed if $\eta$ is chosen appropriately.
 
 \subsubsection{Implementation}
 The different gradient descent methods were implemented inside the general routine \verb|Gradient_descent_advanced|, in which a specific method can be selected using, for example, \verb|method='rmsprop'| for Rmsprop and so on. \\
@@ -218,11 +250,13 @@ $$
 $$  
 where \(i_n\) is a randomly selected data point and \(\eta\) is the learning rate. \\
 
-While Stochastic Gradient Descent is faster and more memory-efficient than full-batch gradient descent, it introduces noise in the parameter updates, which can make convergence less stable and less precise. However, this stochasticity can be beneficial, as it can help escape poor local minima and explore the optimization landscape more effectively, making it well suited for large datasets. \cite{hjorthjensen_week37}
+While Stochastic Gradient Descent is faster and more memory-efficient than full-batch gradient descent, it introduces noise in the parameter updates, which can make convergence less stable and less precise.
+However, this stochasticity can be beneficial, as it can help escape poor local minima and explore the optimization landscape more effectively, making it well suited for large datasets. \cite{hjorthjensen_week37}
 
 \subsubsection{Implementation}
 
-In the implementation of Stochastic Gradient Descent (SGD), the parameter vector $\boldsymbol{\theta}$ is initialized to zero and updated iteratively using gradients computed on randomly selected data points or mini-batches, rather than the entire dataset. This reduces the computational cost per update and introduces stochasticity into the optimization trajectory, which can help escape shallow local minima. 
+In the implementation of Stochastic Gradient Descent (SGD), the parameter vector $\boldsymbol{\theta}$ is initialized to zero and updated iteratively using gradients computed on randomly selected data points or mini-batches, rather than the entire dataset.
+This reduces the computational cost per update and introduces stochasticity into the optimization trajectory, which can help escape shallow local minima. 
 The batch size is a tunable parameter: when set to 1, the algorithm uses a single sample at each iteration; larger batch sizes can be used to balance the trade-off between noise and computational efficiency.
 
 \begin{algorithm}[H]
@@ -246,9 +280,7 @@ The learning rate $\eta$ plays a crucial role in the convergence and a limitatio
 \end{itemize}
 Moreover, for a function with steep directions and flat directions, a single global $ \eta$ may be inappropriate:
 steep coordinates require a smaller step size to avoid oscillation and flat coordinates could use a larger step to speed up progress.
-
 In order to mitigate this problem, gradient descent with momentum is introduced: it refers to a method that smoothens the optimization trajectory by adding a term that helps the optimizer remember the past gradients\cite{hjorthjensen_week37}.
-
 Mathematically, let $\boldsymbol{m}_n$ denote the velocity (or accumulated gradient) at iteration $n$. The update rules for gradient descent with momentum are:
 \[
 \boldsymbol{m}_{n+1} = \beta \, \boldsymbol{m}_n + (1-\beta)\nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}_n),
@@ -256,13 +288,18 @@ Mathematically, let $\boldsymbol{m}_n$ denote the velocity (or accumulated gradi
 \[
 \boldsymbol{\theta}_{n+1} = \boldsymbol{\theta}_n - \eta \, \boldsymbol{m}_{n+1}.
 \]
-where $\beta \in [0,1)$ is the momentum coefficient, which controls how much of the past gradients are remembered in the current update. A value close to 1 means the optimizer will have more inertia while a value closer to 0 means less reliance on past gradients. This mechanism enables the algorithm to suppress oscillations along steep directions while simultaneously accelerating progress across flatter regions of the cost surface. The result is a convergence process that is both faster and more stable than standard gradient descent.\\
+where $\beta \in [0,1)$ is the momentum coefficient, which controls how much of the past gradients are remembered in the current update.
+A value close to 1 means the optimizer will have more inertia while a value closer to 0 means less reliance on past gradients.
+This mechanism enables the algorithm to suppress oscillations along steep directions while simultaneously accelerating progress across flatter regions of the cost surface.
+The result is a convergence process that is both faster and more stable than standard gradient descent.\\
 This leads to more advanced optimization methods which use an adaptive learning rate for each parameter that depends on the history of gradients.\cite{hjorthjensen_week37}\\
 
 \subsubsection{Implementation}
 
-In addition to the parameter vector $\boldsymbol{\theta}$, a velocity vector $\mathbf{m}$ of the same size is initialized to zero. At each iteration the velocity is updated as a moving average of past gradients, scaled by the momentum coefficient $\beta$, and the parameters are updated using this velocity.
-The default value $\beta=0.9$ was used in the experiments, providing a balance between stability and acceleration. Convergence is checked by comparing the change in parameters with a tolerance threshold.
+In addition to the parameter vector $\boldsymbol{\theta}$, a velocity vector $\mathbf{m}$ of the same size is initialized to zero.
+At each iteration the velocity is updated as a moving average of past gradients, scaled by the momentum coefficient $\beta$, and the parameters are updated using this velocity.
+The default value $\beta=0.9$ was used in the experiments, providing a balance between stability and acceleration.
+Convergence is checked by comparing the change in parameters with a tolerance threshold.
 \begin{algorithm}[H]
 \caption{Gradient Descent with Momentum}
 \begin{algorithmic}[1]
@@ -283,14 +320,15 @@ This is particularly useful for sparse data.
 \boldsymbol{\theta}_{n+1} = \boldsymbol{\theta}_n - \frac{\eta}{\sqrt{\boldsymbol{v}_n} + \epsilon} \, \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}_n).
 \]
 
-where \(v_n\) is the sum of squared gradients up to time \(n\) and \(\epsilon\) prevents division by zero.  \\
-
+where \(v_n\) is the sum of squared gradients up to time \(n\) and \(\epsilon\) prevents division by zero.\\
 The accumulation of squared gradients can lead to excessively small learning rates over time, slowing down convergence. \cite{goodfellow2016}
 
 \subsubsection{Implementation}
 
-An accumulator vector $\mathbf{G}$ of the same size as $\boldsymbol{\theta}$ is initialized to zero. At each iteration, the squared gradient is added to $\mathbf{G}$ and used to scale the learning rate for each parameter.
-To ensure numerical stability, a small constant $\epsilon=10^{-8}$ is added before taking the square root. This prevents division by zero and is standard in Adagrad implementations.
+An accumulator vector $\mathbf{G}$ of the same size as $\boldsymbol{\theta}$ is initialized to zero.
+At each iteration, the squared gradient is added to $\mathbf{G}$ and used to scale the learning rate for each parameter.
+To ensure numerical stability, a small constant $\epsilon=10^{-8}$ is added before taking the square root.
+This prevents division by zero and is standard in Adagrad implementations.
 \begin{algorithm}[H]
 \caption{Adagrad}
 \begin{algorithmic}[1]
@@ -321,8 +359,10 @@ On the other hand, RMSprop requires tuning of the decay rate \(\beta\) and the b
 
 \subsubsection{Implementation}
 
-Instead of storing the full sum of squared gradients, an exponentially decaying moving average is maintained in a vector $\mathbf{S}$ initialized to zero. At each iteration, $\mathbf{S}$ is updated using the decay rate $\rho$ (set to 0.9 in our experiments), and the gradient is rescaled accordingly.
-As with Adagrad, a small constant $\epsilon=10^{-8}$ is added for stability. This prevents excessively small denominators when gradients are close to zero.
+Instead of storing the full sum of squared gradients, an exponentially decaying moving average is maintained in a vector $\mathbf{S}$ initialized to zero.
+At each iteration, $\mathbf{S}$ is updated using the decay rate $\rho$ (set to 0.9 in our experiments), and the gradient is rescaled accordingly.
+As with Adagrad, a small constant $\epsilon=10^{-8}$ is added for stability.
+This prevents excessively small denominators when gradients are close to zero.
 \begin{algorithm}[H]
 \caption{RMSprop}
 \begin{algorithmic}[1]
@@ -337,7 +377,8 @@ As with Adagrad, a small constant $\epsilon=10^{-8}$ is added for stability. Thi
 
 \subsection{Adam}
 
-Adam (Adaptive Moment Estimation) combines momentum and RMSprop, maintaining both an exponentially decaying average of past gradients (first moment) and squared gradients (second moment), with bias correction\cite{hjorthjensen_week37}. It adapts the learning rate per parameter, providing stability, while incorporating momentum, accelerating the convergence.
+Adam (Adaptive Moment Estimation) combines momentum and RMSprop, maintaining both an exponentially decaying average of past gradients (first moment) and squared gradients (second moment), with bias correction\cite{hjorthjensen_week37}.
+It adapts the learning rate per parameter, providing stability, while incorporating momentum, accelerating the convergence.
 So, combining the moving averages of momentum
 \[
 m_n = \beta_1 m_{n-1} + (1-\beta_1) \nabla_\theta C(\theta_n)
@@ -356,13 +397,15 @@ the update rule in Adam becomes
 \theta_{n+1} = \theta_n - \frac{\eta}{\sqrt{\hat{v}_n}+\epsilon} \hat{m}_n,
 \]  
 where \(\epsilon\) prevents division by zero.
-
 Adam can sometimes converge to slightly worse minima than SGD in certain tasks, and hyperparameter tuning is still required. \cite{goodfellow2016}
 
 \subsubsection{Implementation}
 
-Two vectors of the same size as $\boldsymbol{\theta}$ are initialized: the first moment estimate $\mathbf{m}$ and the second moment estimate $\mathbf{v}$, both starting at zero. At each iteration, these estimates are updated with exponential moving averages of the gradient and squared gradient. Bias correction is applied using the current iteration counter $t$.
-Default hyperparameters $\beta_1=0.9$, $\beta_2=0.999$, and $\epsilon=10^{-8}$ were used, consistent with common practice. This implementation therefore combines momentum and RMSprop into a single adaptive optimizer.
+Two vectors of the same size as $\boldsymbol{\theta}$ are initialized: the first moment estimate $\mathbf{m}$ and the second moment estimate $\mathbf{v}$, both starting at zero.
+At each iteration, these estimates are updated with exponential moving averages of the gradient and squared gradient.
+Bias correction is applied using the current iteration counter $t$.
+Default hyperparameters $\beta_1=0.9$, $\beta_2=0.999$, and $\epsilon=10^{-8}$ were used, consistent with common practice.
+This implementation therefore combines momentum and RMSprop into a single adaptive optimizer.
 \begin{algorithm}[H]
 \caption{Adam}
 \begin{algorithmic}[1]
@@ -378,26 +421,20 @@ Default hyperparameters $\beta_1=0.9$, $\beta_2=0.999$, and $\epsilon=10^{-8}$ w
 \end{algorithm}
 
 \subsection{Gradient descents comparison}
-Stochastic Gradient Descent (SGD) is appreciated for its simplicity and memory efficiency, particularly when tackling large datasets. However, it sometimes oscillates and may converge slowly. 
-
-Momentum builds upon SGD by accelerating convergence in directions of consistent descent, although it can occasionally bypass the lowest point in regions where the cost function curves steeply. 
-
-Adagrad's strength lies in its adaptability to sparse data, but it tends to reduce the learning rate over time, which can stall progress. 
-
-RMSprop was introduced to counter Adagrad's diminishing learning rate, making it effective for online and non-stationary tasks where data characteristics frequently change. 
-
-Adam is more often the preferred method because it merges the advantages of momentum and adaptive learning rates, generally performing robustly in most deep learning scenarios, though it may require careful parameter tuning to reach optimal performance. \cite{goodfellow2016}
-
-
-
+Stochastic Gradient Descent (SGD) is appreciated for its simplicity and memory efficiency, particularly when tackling large datasets.
+However, it sometimes oscillates and may converge slowly.\\
+Momentum builds upon SGD by accelerating convergence in directions of consistent descent, although it can occasionally bypass the lowest point in regions where the cost function curves steeply.\\
+Adagrad's strength lies in its adaptability to sparse data, but it tends to reduce the learning rate over time, which can stall progress.\\
+RMSprop was introduced to counter Adagrad's diminishing learning rate, making it effective for online and non-stationary tasks where data characteristics frequently change.\\
+Adam is more often the preferred method because it merges the advantages of momentum and adaptive learning rates, generally performing robustly in most deep learning scenarios, though it may require careful parameter tuning to reach optimal performance\cite{goodfellow2016}.
 
 \subsection{Bias-variance trade-off and resampling techniques}
 
 The bias-variance trade-off is a fundamental concept in machine learning and statistics that describes the relationship between a model's complexity, the accuracy of its predictions, and how well it can make predictions on previously unseen data that were not used to train the model\cite{hjorthjensen_week38}. 
 Bias is the error due to approximating a complex real-world problem with a simplified model: 
 $$\mathrm{Bias}[\tilde y]= \mathbb{E}[(f-\mathbb{E}[\tilde y])^2]$$
-
-It's the squared difference between the true function f(x) and the average prediction $\mathbb{E}[\tilde y]$ of the model over different training sets. High bias leads to underfitting, where the model is too simple (often linear) and cannot capture the underlying patterns, resulting in large errors on both training and test data.
+It's the squared difference between the true function f(x) and the average prediction $\mathbb{E}[\tilde y]$ of the model over different training sets.
+High bias leads to underfitting, where the model is too simple (often linear) and cannot capture the underlying patterns, resulting in large errors on both training and test data.
 \\Variance measures the sensitivity of a model to small changes in the training data:
 $$
 \mathrm{Var}[\tilde y] = \mathbb{E}[\tilde y^2] - (\mathbb{E}[\tilde y])^2
@@ -412,9 +449,10 @@ $$
 
 The expected prediction error can be decomposed as
 $$\mathbb{E}[(y - \tilde y)^2\big] = \mathrm{Bias}[\tilde y] + \mathrm{Var}[\tilde y] + \sigma^2$$
-where $\sigma ^2$ is the variance of the errore $\epsilon$. 
-
-To derive this equation, it should be recalled that the variance of $\boldsymbol{y}$ and $\boldsymbol{\epsilon}$ are both equal to $\sigma^2$. The mean value of $\boldsymbol{\epsilon}$ is by definition equal to zero. Furthermore, the function $f$ is not a stochastics variable, idem for $\boldsymbol{\tilde{y}}$.
+where $\sigma ^2$ is the variance of the errore $\epsilon$.\\
+To derive this equation, it should be recalled that the variance of $\boldsymbol{y}$ and $\boldsymbol{\epsilon}$ are both equal to $\sigma^2$.
+The mean value of $\boldsymbol{\epsilon}$ is by definition equal to zero.
+Furthermore, the function $f$ is not a stochastics variable, idem for $\boldsymbol{\tilde{y}}$.
 Using a more compact notation in terms of the expectation value
 $$
 \mathbb{E}\left[(\boldsymbol{y}-\boldsymbol{\tilde{y}})^2\right]=\mathbb{E}\left[(\boldsymbol{f}+\boldsymbol{\epsilon}-\boldsymbol{\tilde{y}})^2\right],
@@ -465,17 +503,23 @@ $$R^2 = 1 - \frac{\sum_{i=1}^{n} \left( y_i - \tilde{y}_i \right)^2}{\sum_{i=1}^
 where $n$ is the number of data points, $y_i$ are the true values, $\tilde{y}_i$ are the predicted values, and $\bar{y}$ denotes the mean of the true values.
 \subsection*{How we produced all reported results}
 \label{sec:results_setup}
-Unless otherwise stated, every result displayed in this section is the mean over $N_{\text{runs}}=30$ independent repetitions. Each run uses a new noisy dataset and a new train/test split, but within a run all models and methods see the same data and splits to enable fair, paired comparisons.
+Unless otherwise stated, every result displayed in this section is the mean over $N_{\text{runs}}=30$ independent repetitions.
+Each run uses a new noisy dataset and a new train/test split, but within a run all models and methods see the same data and splits to enable fair, paired comparisons.
 
 \paragraph*{Data generation and scaling.}
-For a given $n$, we create a uniform mesh of Runge function $f(x)=\tfrac{1}{1+25x^2}$ that maps the interval $(-1,1)$. To the mesh we added Gaussian noise \[ y = f(x) + \varepsilon, \quad \varepsilon \sim \mathcal{N}(0, 0.3^2) \]. We split the data into train/test with a $67\%/33\%$ split and standardize features using training statistics only (the intercept, when present, is not scaled). For polynomial models, features are expanded up to degree $d$ and then scaled column-wise using the training means/stds and re-used on the test set.
+For a given $n$, we create a uniform mesh of Runge function $f(x)=\tfrac{1}{1+25x^2}$ that maps the interval $(-1,1)$.
+To the mesh we added Gaussian noise \[ y = f(x) + \varepsilon, \quad \varepsilon \sim \mathcal{N}(0, 0.3^2) \].
+We split the data into train/test with a $67\%/33\%$ split and standardize features using training statistics only (the intercept, when present, is not scaled).
+For polynomial models, features are expanded up to degree $d$ and then scaled column-wise using the training means/stds and re-used on the test set.
 
 \paragraph*{Reproducibility and fairness}
 Let $s_0$ be the global base seed. For run index $r=0,\dots,N_{\text{runs}}-1$ we set
 \[
 s_r = s_0 + r,
 \]
-as both the NumPy global seed before generating noise and the random\_state for the train/test split. This guarantees that, within the same run, all methods share the exact same dataset and splits. Additional randomness is handled as follows:
+as both the NumPy global seed before generating noise and the random\_state for the train/test split.
+This guarantees that, within the same run, all methods share the exact same dataset and splits.
+Additional randomness is handled as follows:
 \begin{itemize}
     \item \textbf{SGD \ref{Stochastic Gradient Descent}:} to make mini-batch selections identical across models within a run and degree, we reset the RNG to a deterministic ~\cite{numpy-seed}, per-degree seed before each optimizer call (thus the same mini-batch sequence is used by all methods being compared).
     \item \textbf{Bootstrap \ref{Bias-Variance trade off}:} for each run, bootstrap resamples of the training set are drawn with sklearn's resample using fixed per-bootstrap seeds ~\cite{scikit-learn-resample}; predictions are evaluated on the fixed test set of that run.
@@ -505,12 +549,9 @@ Each function within the project was systematically validated against scikit-lea
 ensuring full consistency with well-established numerical baselines. 
 The test suite employs the Pytest framework and compares analytical, gradient-based, and resampling functions through deterministic and quantitative checks. 
 All tests were designed to be reproducible, relying on a fixed random seed to guarantee identical data splits and noise realizations across runs. 
-The seed policy used is consistent with what is described in the previous paragraph \ref{sec:results_setup}.
-
-For the implemented preprocessing routines, the generated design matrices were compared element-wise with those produced by scikit-learn's classes, verifying identical scaling and intercept behavior (Results asserted with a numerical tolerance of \(\text{rtol}=10^{-12}\)).
-
-Metric functions such as the Mean Squared Error (MSE) and the coefficient of determination ($R^2$) were also cross-checked against scikit-learn's corresponding functions, ensuring numerical equivalence up to machine precision (\(\text{rtol}=10^{-12}\), \(\text{atol}=10^{-12}\)).
-
+The seed policy used is consistent with what is described in the previous paragraph \ref{sec:results_setup}.\\\\
+For the implemented preprocessing routines, the generated design matrices were compared element-wise with those produced by scikit-learn's classes, verifying identical scaling and intercept behavior (Results asserted with a numerical tolerance of \(\text{rtol}=10^{-12}\)).\\
+Metric functions such as the Mean Squared Error (MSE) and the coefficient of determination ($R^2$) were also cross-checked against scikit-learn's corresponding functions, ensuring numerical equivalence up to machine precision (\(\text{rtol}=10^{-12}\), \(\text{atol}=10^{-12}\)).\\
 Analytical regression solvers like OLS and Ridge Regression were validated by comparing their estimated coefficients and predictions to those obtained from scikit-learn under identical configurations. 
 For Ridge regression, both penalized and unpenalized intercept versions were tested to confirm full consistency with scikit-learn's regularization scheme. 
 The detailed numerical tolerances used in these validations are summarized in Table~\ref{tab:analytical_solvers}.
@@ -598,30 +639,36 @@ All assertions passed successfully, confirming that the entire computational pip
 
 \subsection{OLS}
 \label{OLS}
-The analysis starts with performing a standard ordinary least squares regression using polynomials in $x$ up to order 15. The dependence of the polynomial degree and number of data point has been explored by plotting the mse as a function of polynomial degree for different amount of data points. This can be seen in Figure \ref{fig:OLS_graph}.\\\\
-As one can see, generally the mse goes down as the polynomial degree increases. But for a small amount of data points like $n = 40$ and $n = 50$, when the polynomial degree goes to high the mse starts to increase again.\\
-This happens because of overfitting. When the polynomial degree increases the model tries to fit the data too perfectly and will fit the underlying random noise as well and the model will then perform poorly of unseen data. For a high number of data points this is barely noticeable but for a lower amount of data points the effect will become more pronounced.\\\\
-$R^2$ ?\\\\
+The analysis begins with standard OLS regression using polynomials up to degree 15.
+Figure \ref{fig:OLS_graph} shows how MSE varies with polynomial degree and dataset size.\\
+In general, MSE decreases as the polynomial degree increases.
+However, for small datasets ($n=40or50$), MSE rises at higher degrees due to overfitting.
+As the model becomes more complex, it fits not only the underlying trend but also the random noise, reducing performance on unseen data.
+This effect is less noticeable with larger datasets.\\\\
 When plotting the parameters $\theta$ as a function of polynomial degree, it can be observed that for low-degree polynomials the coefficients remain relatively stable, whereas for higher-degree polynomials they increase rapidly in magnitude and exhibit pronounced oscillations.
-This behavior reflects overfitting: at high degrees, the model captures both the true signal and the noise, causing the coefficients to become unstable. Using more data points reduces this effect and stabilizes the parameter estimates
+This behavior reflects overfitting: at high degrees, the model captures both the true signal and the noise, causing the coefficients to become unstable.
+Using more data points reduces this effect and stabilizes the parameter estimates
     
 \input{Graphs/OLS_MSE.tex}
 
 \subsection{Ridge regression}
 \label{Ridge regression}
-\textbf{We can also put the theta values graph in and show that the ridge method lowers the extreme high theta values for high degrees.}\\\\
-Now, Ridge regression is applied to the same dataset, exploring the impact of different regularization parameters $\lambda$. First, the effect of the regularization parameter $\lambda $ on the MSE as a function of polynomial degree was analyzed for a fixed number of data points n=100: the results are shown in Figure \ref{fig:RIDGE_MSE_Lambda}.
-Small values of $\lambda$ (e.g., 0.001, 0.01) behave similarly to OLS, with the MSE decreasing as polynomial degree increases. However, as $\lambda$ increases (e.g., 1, 10, 100), the MSE curve flattens and even increases for high polynomial degrees, indicating that strong regularization prevents overfitting but may lead to underfitting if too large.
+Now, Ridge regression is applied to the same dataset, exploring the impact of different regularization parameters $\lambda$.
+First, the effect of the regularization parameter $\lambda $ on the MSE as a function of polynomial degree was analyzed for a fixed number of data points n=100: the results are shown in Figure \ref{fig:RIDGE_MSE_Lambda}.
+Small values of $\lambda$ (e.g., 0.001, 0.01) behave similarly to OLS, with the MSE decreasing as polynomial degree increases.
+However, as $\lambda$ increases (e.g., 1, 10, 100), the MSE curve flattens and even increases for high polynomial degrees, indicating that strong regularization prevents overfitting but may lead to underfitting if too large.
 Among the tested values, $\lambda$ =0.01 produces the lowest MSE for most polynomial degrees, suggesting an optimal trade-off between bias and variance.
 
 \input{Graphs/RIDGE_MSE_Lambda.tex}
 
 Next, $\lambda = 0.01$ is selected to plot the MSE as a function of polynomial degree for different numbers of data points, allowing a direct comparison with the standard OLS regression, as shown in Figure \ref{fig:RIDGE_MSE_data}. 
-The comparison reveals that while both methods achieve low MSE at moderate polynomial degrees, OLS exhibits a sharp increase in MSE at high degrees due to overfitting. In contrast, Ridge regression maintains a lower and more stable MSE across all degrees, demonstrating its effectiveness in controlling model complexity through regularization. This highlights Ridge's advantage in scenarios where overfitting is a concern, particularly with high-degree polynomials.
+The comparison reveals that while both methods achieve low MSE at moderate polynomial degrees, OLS exhibits a sharp increase in MSE at high degrees due to overfitting.
+In contrast, Ridge regression maintains a lower and more stable MSE across all degrees, demonstrating its effectiveness in controlling model complexity through regularization. This highlights Ridge's advantage in scenarios where overfitting is a concern, particularly with high-degree polynomials.
 As one can see, the mse decreases as the polynomial degree increases, similar to OLS.
 \input{Graphs/RIDGE_MSE_data.tex}
 
-The parameters $\theta$ as a function of polynomial degree for Ridge regression are plotted. Compared to OLS, the coefficients remain more stable even at high polynomial degrees. 
+The parameters $\theta$ as a function of polynomial degree for Ridge regression are plotted.
+Compared to OLS, the coefficients remain more stable even at high polynomial degrees. 
 This stability indicates that Ridge's $L_2$ regularization effectively constrains the magnitude of the coefficients, preventing them from becoming excessively large and reducing overfitting.
 The result is a more robust model that generalizes better to unseen data.
 
@@ -670,22 +717,26 @@ Compared to OLS, which is unbiased but can have high variance, Lasso achieves a 
 \label{Stochastic Gradient Descent}
 Stochastic Gradient Descent (SGD) is now applied to OLS, Ridge, and Lasso regression.
 For OLS, as shown in Figure \ref{fig:AGD_OLS_SGD}, SGD converges to a solution with MSE values that are slightly higher than those obtained with standard gradient descent methods. 
-This difference arises because SGD computes the gradient using individual samples or small mini-batches instead of the entire dataset. While this makes each update faster and more memory-efficient, it also introduces noise into the updates, leading to a less stable convergence.
+This difference arises because SGD computes the gradient using individual samples or small mini-batches instead of the entire dataset.
+While this makes each update faster and more memory-efficient, it also introduces noise into the updates, leading to a less stable convergence.
 
 \input{Graphs/AGD_OLS SGD.tex}
 
-Ridge regression with SGD, as shown in Figure \ref{fig:AGD_RIDGE_SGD}, exhibits a similar pattern: the MSE is slightly higher compared to batch methods due to the stochastic nature of the updates. However, the $L_2$ penalty contributes to more stable coefficient shrinkage, so the convergence remains reliable and generalization can even improve compared to OLS.
+Ridge regression with SGD, as shown in Figure \ref{fig:AGD_RIDGE_SGD}, exhibits a similar pattern: the MSE is slightly higher compared to batch methods due to the stochastic nature of the updates.
+However, the $L_2$ penalty contributes to more stable coefficient shrinkage, so the convergence remains reliable and generalization can even improve compared to OLS.
 
 \input{Graphs/AGD_RIDGE SGD.tex}
 
-In the case of Lasso regression with SGD, shown in Figure \ref{fig:AGD_LASSO_SGD}, the optimization becomes more challenging because of the $L_1$ penalty, which creates flat regions and non-differentiable points at zero. Here, the stochasticity can both complicate and help: while it may cause small fluctuations and slightly higher MSE, it also allows the algorithm to escape plateaus and drive coefficients exactly to zero, reinforcing sparsity in the solution.
+In the case of Lasso regression with SGD, shown in Figure \ref{fig:AGD_LASSO_SGD}, the optimization becomes more challenging because of the $L_1$ penalty, which creates flat regions and non-differentiable points at zero.
+Here, the stochasticity can both complicate and help: while it may cause small fluctuations and slightly higher MSE, it also allows the algorithm to escape plateaus and drive coefficients exactly to zero, reinforcing sparsity in the solution.
 
 \input{Graphs/AGD_LASSO SGD.tex}
 
 \subsection{Bias-Variance trade off}
 \label{Bias-Variance trade off}
 To illustrate the bias–variance trade-off, the Runge function is fitted using an OLS model with varying polynomial degrees.
-The bias, variance, and mean squared error (MSE) are computed using bootstrap resampling with $50$ resamples. The results are shown in Figure \ref{fig:Bias_Var}.\\\\
+The bias, variance, and mean squared error (MSE) are computed using bootstrap resampling with $50$ resamples.
+The results are shown in Figure \ref{fig:Bias_Var}.\\\\
 For low polynomial degree the variance is nearly $0$, while the bias is slightly above $0$.
 As a result the MSE closely follows the bias, indicating that the model is simple but stable.
 As the degree of the polynomial increases at a certain point the variance jumps up dramatically, causing a corresponding rise in MSE.
