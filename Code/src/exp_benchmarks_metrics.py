@@ -35,7 +35,7 @@ from typing import List, Dict, Tuple
 import matplotlib.pyplot as plt
 from collections import defaultdict
 from sklearn.linear_model import LinearRegression, Ridge as SkRidge, Lasso as SkLasso
-
+from tqdm import tqdm
 
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -244,6 +244,20 @@ class BenchRow:
     mem_mb_est: float
     cond_XTX: float
     scaled_vs_unscaled_mse_delta: float  # stability proxy (test MSE scaled - unscaled)
+    # --- NEW: standard deviations across runs ---
+    fit_time_ms_std: float = float("nan")
+    predict_time_ms_std: float = float("nan")
+    total_time_ms_std: float = float("nan")
+    iters_std: float = float("nan")
+    mse_train_std: float = float("nan")
+    r2_train_std: float = float("nan")
+    mse_test_std: float = float("nan")
+    r2_test_std: float = float("nan")
+    flops_est_std: float = float("nan")
+    mem_mb_est_std: float = float("nan")
+    cond_XTX_std: float = float("nan")
+    scaled_vs_unscaled_mse_delta_std: float = float("nan")
+
 
 # --------------------------
 # Core benchmarking
@@ -487,6 +501,11 @@ def _sorted_xy_for_metric(grid: Dict[int, BenchRow], metric: str) -> Tuple[List[
     ys = [getattr(grid[d], metric) for d in degs]
     return degs, ys
 
+def _mean_std(a: List[float]) -> Tuple[float, float]:
+    arr = np.array(a, dtype=float)
+    if arr.size == 0:
+        return float("nan"), float("nan")
+    return float(np.nanmean(arr)), float(np.nanstd(arr, ddof=1))  # sample std
 
 
 def make_plots(rows: List[BenchRow], bv_results: List[Dict[str, float]], stamp: str, logger: Logger | None = None):
@@ -772,6 +791,8 @@ def main():
     parser.add_argument("--n-points", type=int, default=100, help="Total points on Runge function in [-1,1].")
     parser.add_argument("--max-degree", type=int, default=15, help="Max polynomial degree.")
     parser.add_argument("--noise", action="store_true", help="Add Gaussian noise to Runge(y).")
+    parser.add_argument("--n-runs", type=int, default=5, help="Replicate each (degree,method) N times and aggregate.")
+
     parser.add_argument(
     "--methods",
     nargs="+",
@@ -819,20 +840,9 @@ def main():
 
     rows: List[BenchRow] = []
 
-    # We need raw split vectors for stability delta
-    # We'll redo a consistent split once and reuse raw x_tr/x_te for the delta function
-    x_tr_raw, x_te_raw, y_tr_raw, y_te_raw = train_test_split(x, y, test_size=args.test_size, random_state=seed)
+    for deg in tqdm(degrees, desc="Degree loop", leave=True):
+        for method in tqdm(args.methods, desc="Method loop", leave=False):
 
-    for deg in degrees:
-        # Build scaled design matrices (per-degree stats)
-        Xtr, Xte, y_tr, y_te = build_poly_train_test(x, y, degree=deg, test_size=args.test_size, rs=seed)
-
-        # Stability proxy: scaled-vs-unscaled test MSE delta using same split
-        delta = stability_delta_unscaled(
-            Xtr, Xte, y_tr, y_te, x_tr_raw, x_te_raw, degree=deg
-        )
-
-        for method in args.methods:
             gd_opts = dict(
                 lr=args.lr,
                 n_iter=args.n_iter,
@@ -843,29 +853,121 @@ def main():
                 batch_size=args.batch_size,
             )
 
-            try:
-                row, _ = run_one_method(
-                    method=method,
-                    degree=deg,
-                    Xtr=Xtr, Xte=Xte, y_tr=y_tr, y_te=y_te,
-                    lam=args.lam,
-                    gd_opts=gd_opts,
+            # --- NEW: replicate N times with tqdm and aggregate mean/std ---
+            run_fit_ms, run_pred_ms, run_total_ms = [], [], []
+            run_iters, run_conv = [], []
+            run_mse_tr, run_mse_te = [], []
+            run_r2_tr, run_r2_te = [], []
+            run_flops, run_mem = [], []
+            run_cond, run_delta = [], []
+            n_train_last, n_test_last, p_last = None, None, None
+
+            for r in range(args.n_runs):
+                # cambia lo split a ogni run
+                rs_run = seed + 1000*deg + 17*r
+                Xtr, Xte, y_tr, y_te = build_poly_train_test(
+                    x, y, degree=deg, test_size=args.test_size, rs=rs_run
                 )
-                # patch in stability delta
-                row.scaled_vs_unscaled_mse_delta = delta
-                rows.append(row)
-            except Exception as e:
-                logger.write(f"[WARN] Failed (degree={deg}, method={method}): {e}\n")
-                # Append a placeholder row so the CSV has the full grid
-                n_train, p = Xtr.shape
+                # split grezzo per la delta di stabilità coerente con lo stesso rs
+                x_tr_raw, x_te_raw, y_tr_raw, y_te_raw = train_test_split(
+                    x, y, test_size=args.test_size, random_state=rs_run
+                )
+                try:
+                    row_i, _ = run_one_method(
+                        method=method,
+                        degree=deg,
+                        Xtr=Xtr, Xte=Xte, y_tr=y_tr, y_te=y_te,
+                        lam=args.lam,
+                        gd_opts=gd_opts,
+                    )
+                    # stabilità per-run
+                    delta_i = stability_delta_unscaled(
+                        Xtr, Xte, y_tr, y_te, x_tr_raw, x_te_raw, degree=deg
+                    )
+                    # accumula
+                    run_fit_ms.append(row_i.fit_time_ms)
+                    run_pred_ms.append(row_i.predict_time_ms)
+                    run_total_ms.append(row_i.total_time_ms)
+                    run_iters.append(row_i.iters)
+                    run_conv.append(1 if row_i.converged else 0)
+                    run_mse_tr.append(row_i.mse_train)
+                    run_mse_te.append(row_i.mse_test)
+                    run_r2_tr.append(row_i.r2_train)
+                    run_r2_te.append(row_i.r2_test)
+                    run_flops.append(row_i.flops_est)
+                    run_mem.append(row_i.mem_mb_est)
+                    run_cond.append(row_i.cond_XTX)
+                    run_delta.append(delta_i)
+                    n_train_last, n_test_last, p_last = row_i.n_train, row_i.n_test, row_i.p
+                except Exception as e:
+                    logger.write(f"[WARN] Failed (degree={deg}, method={method}, run={r}): {e}\n")
+                    continue
+
+            # se nessuna run è andata a buon fine, scrivi placeholder
+            if len(run_fit_ms) == 0:
+                Xtr0, Xte0, _, _ = build_poly_train_test(
+                    x, y, degree=deg, test_size=args.test_size, rs=seed+1000*deg
+                )
+                n_train0, p0 = Xtr0.shape
                 rows.append(BenchRow(
-                    degree=deg, method=method, n_points=len(x), n_train=n_train, n_test=len(x)-n_train, p=p,
+                    degree=deg, method=method, n_points=len(x), n_train=n_train0, n_test=len(x)-n_train0, p=p0,
                     fit_time_ms=float("nan"), predict_time_ms=float("nan"), total_time_ms=float("nan"),
                     iters=0, converged=False,
                     mse_train=float("nan"), r2_train=float("nan"), mse_test=float("nan"), r2_test=float("nan"),
                     flops_est=float("nan"), mem_mb_est=float("nan"), cond_XTX=float("inf"),
                     scaled_vs_unscaled_mse_delta=float("inf"),
                 ))
+                continue
+
+            # calcola mean/std
+            fit_ms_mu, fit_ms_sd = _mean_std(run_fit_ms)
+            pred_ms_mu, pred_ms_sd = _mean_std(run_pred_ms)
+            tot_ms_mu, tot_ms_sd  = _mean_std(run_total_ms)
+            iters_mu, iters_sd    = _mean_std(run_iters)
+            mse_tr_mu, mse_tr_sd  = _mean_std(run_mse_tr)
+            mse_te_mu, mse_te_sd  = _mean_std(run_mse_te)
+            r2_tr_mu, r2_tr_sd    = _mean_std(run_r2_tr)
+            r2_te_mu, r2_te_sd    = _mean_std(run_r2_te)
+            flops_mu, flops_sd    = _mean_std(run_flops)
+            mem_mu, mem_sd        = _mean_std(run_mem)
+            cond_mu, cond_sd      = _mean_std(run_cond)
+            delt_mu, delt_sd      = _mean_std(run_delta)
+            conv_rate             = float(np.nanmean(run_conv))
+            conv_bool             = bool(conv_rate >= 1.0)  # True solo se tutte convergono
+
+            rows.append(BenchRow(
+                degree=deg,
+                method=method,
+                n_points=len(x),
+                n_train=int(n_train_last),
+                n_test=int(n_test_last),
+                p=int(p_last),
+                fit_time_ms=fit_ms_mu,
+                predict_time_ms=pred_ms_mu,
+                total_time_ms=tot_ms_mu,
+                iters=int(round(iters_mu)),
+                converged=conv_bool,
+                mse_train=mse_tr_mu,
+                r2_train=r2_tr_mu,
+                mse_test=mse_te_mu,
+                r2_test=r2_te_mu,
+                flops_est=flops_mu,
+                mem_mb_est=mem_mu,
+                cond_XTX=cond_mu,
+                scaled_vs_unscaled_mse_delta=delt_mu,
+                fit_time_ms_std=fit_ms_sd,
+                predict_time_ms_std=pred_ms_sd,
+                total_time_ms_std=tot_ms_sd,
+                iters_std=iters_sd,
+                mse_train_std=mse_tr_sd,
+                r2_train_std=r2_tr_sd,
+                mse_test_std=mse_te_sd,
+                r2_test_std=r2_te_sd,
+                flops_est_std=flops_sd,
+                mem_mb_est_std=mem_sd,
+                cond_XTX_std=cond_sd,
+                scaled_vs_unscaled_mse_delta_std=delt_sd,
+            ))
 
     # Save main CSV
     csv_path = TABLES_DIR / f"benchmarks.csv"

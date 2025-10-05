@@ -33,9 +33,10 @@ USE_SGD?=false          # set to true to use mini-batches
 BATCH_SIZE?=32
 BOOTSTRAP?=30
 TEST_SIZE?=0.33
+N_RUNS?=20
 
 # ---------- Phony ----------
-.PHONY: help setup dirs all a b c d e g h figures tables clean bench benchmark benchmarkrun
+.PHONY: help setup dirs all a b c d e g h figures tables clean bench benchmark benchmarkrun tests
 
 help:
 	@echo "Targets:"
@@ -121,7 +122,8 @@ tables:
 bench: dirs
 	@STAMP=`date +%Y%m%d-%H%M%S`; \
 	FLAGS="--n-points $(BENCH_NPOINTS) --max-degree $(BENCH_MAX_DEGREE) \
-	       --lam $(LAM) --lr $(LR) --n-iter $(N_ITER) --tol $(TOL) \
+	       --n-runs $(N_RUNS) \
+		   --lam $(LAM) --lr $(LR) --n-iter $(N_ITER) --tol $(TOL) \
 	       --beta $(BETA) --epsilon $(EPSILON) --batch-size $(BATCH_SIZE) \
 	       --bootstrap $(BOOTSTRAP) --test-size $(TEST_SIZE)"; \
 	if [ "$(USE_SGD)" = "true" ]; then FLAGS="$$FLAGS --use-sgd"; fi; \
