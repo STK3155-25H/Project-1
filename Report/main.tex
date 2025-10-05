@@ -202,8 +202,6 @@ After each update, the algorithm recomputes the cost function and its gradient u
 \end{algorithmic}
 \end{algorithm}
 
-(AAA: I don't know if we want something like this)
-
 \subsection{Stochastic Gradient Descent (SGD)}
 Gradient descent can be computationally expensive when applied to large datasets.
 Stochastic Gradient Descent (SGD) addresses this by updating the model parameters using a single (or small batch of) data point(s) per iteration, rather than the full dataset\cite{hjorthjensen_week37}.
@@ -212,20 +210,22 @@ The update rule is as follows:
 $$
 \boldsymbol{\theta}_{n+1} = \boldsymbol{\theta}_n - {\eta \boldsymbol{\nabla}} l_{i_n} (\boldsymbol{\theta_t}),
 $$  
-where \(i_t\) is a randomly selected data point and \(\eta\) is the learning rate. (AAA: cite lecture)\\
+where \(i_n\) is a randomly selected data point and \(\eta\) is the learning rate. (AAA: cite lecture)\\
 
 While Stochastic Gradient Descent is faster and more memory-efficient than full-batch gradient descent, it introduces noise in the parameter updates, which can make convergence less stable and less precise. However, this stochasticity can be beneficial, as it can help escape poor local minima and explore the optimization landscape more effectively, making it well suited for large datasets.
 
 \subsubsection{Implementation}
 
-In the implementation of Stochastic Gradient Descent (SGD), the parameter vector $\boldsymbol{\theta}$ is initialized to zero and updated iteratively using gradients computed on randomly selected data points or mini-batches, rather than the entire dataset. This reduces the computational cost per update and introduces stochasticity into the optimization trajectory, which can help escape shallow local minima. The batch size is a tunable parameter: when set to 1, the algorithm uses a single sample at each iteration; larger batch sizes trade off between noise reduction and computational efficiency.  
+In the implementation of Stochastic Gradient Descent (SGD), the parameter vector $\boldsymbol{\theta}$ is initialized to zero and updated iteratively using gradients computed on randomly selected data points or mini-batches, rather than the entire dataset. This reduces the computational cost per update and introduces stochasticity into the optimization trajectory, which can help escape shallow local minima. 
+The batch size is a tunable parameter: when set to 1, the algorithm uses a single sample at each iteration; larger batch sizes can be used to balance the trade-off between noise and computational efficiency.
+
 \begin{algorithm}[H]
 \caption{Stochastic Gradient Descent}
 \begin{algorithmic}[1]
 \State Initialize $\boldsymbol{\theta}^{(0)}$
 \For{$n = 0, 1, 2, \dots$ until convergence}
-    \State Randomly select a data point or mini-batch $i_t$
-    \State Compute stochastic gradient: $\mathbf{g} \gets \nabla_{\boldsymbol{\theta}} \ell_{i_t}(\boldsymbol{\theta}^{(n)})$
+    \State Randomly select a data point or mini-batch $i_n$
+    \State Compute stochastic gradient: $\mathbf{g} \gets \nabla_{\boldsymbol{\theta}} \ell_{i_n}(\boldsymbol{\theta}^{(n)})$
     \State Update parameters: $\boldsymbol{\theta}^{(n+1)} \gets \boldsymbol{\theta}^{(n)} - \eta \, \mathbf{g}$
 \EndFor
 \end{algorithmic}
@@ -299,7 +299,7 @@ To ensure numerical stability, a small constant $\epsilon=10^{-8}$ is added befo
 
 \subsection{RMSprop}
 
-RMSprop tackles Adagrad's excessive shrinkage of the learning rate by using an exponentially decaying average of past squared gradients instead of a simple sum\cite{hjorthjensen_week37}.
+RMSprop addresses Adagrad's excessive shrinkage of the learning rate by using an exponentially decaying average of past squared gradients instead of a simple sum\cite{hjorthjensen_week37}.
 This prevents the learning rate from shrinking too much and slowing down.  
 If the running average is
 \[
@@ -426,7 +426,6 @@ $$
 
 that is the rewriting in terms of the bias, the variance of the model $\boldsymbol{\tilde{y}}$ and the variance of $\boldsymbol{\epsilon}$. \cite{misc} 
 In order to derive this equation, the assumption that is made is that the unknown function $\boldsymbol{f}$ can be replaced by the target data $\boldsymbol{y}$.\\
-*I'm not able to cite because the .bib is deleting what I'm writing* \\\\ 
 This decomposition underlies the bias-variance trade-off: a high bias and low variance situation corresponds to a model that is too simple and underfits the data, while a low bias and high variance situation corresponds to a model that is too complex and overfits the data.
 The goal is to find a balance, achieving a model that is complex enough to capture the underlying patterns but simple enough to generalize well to new data.\\\\
 
