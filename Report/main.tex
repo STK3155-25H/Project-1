@@ -683,9 +683,10 @@ In the case of Lasso regression with SGD, shown in Figure \ref{fig:AGD_LASSO_SGD
 
 \subsection{Bias-Variance trade off}
 \label{Bias-Variance trade off}
-To illustrate the bias-variance trade-off, the Runge function is fitted using an OLS model with varying polynomial degrees. 
-The bias, variance, and mean squared error (MSE) are computed using bootstrap resampling with 50 resamples. The results are shown in Figure \ref{fig:Bias_Var}.
-For low polynomial degree the variance, bias and mse remain close to 0, indicating that the model is simple but stable.
+To illustrate the bias–variance trade-off, the Runge function is fitted using an OLS model with varying polynomial degrees.
+The bias, variance, and mean squared error (MSE) are computed using bootstrap resampling with $50$ resamples. The results are shown in Figure \ref{fig:Bias_Var}.\\\\
+For low polynomial degree the variance is nearly $0$, while the bias is slightly above $0$.
+As a result the MSE closely follows the bias, indicating that the model is simple but stable.
 As the degree of the polynomial increases at a certain point the variance jumps up dramatically, causing a corresponding rise in MSE.
 This reflects overfitting, where the model starts capturing noise in the training data rather than just the underlying signal.\\\\
 The optimal model complexity lies between these extremes, balancing bias and variance to minimize prediction error.
@@ -695,24 +696,21 @@ The bootstrap analysis highlights how the number of data points affects this bal
 \subsection{Cross Validation}
 \label{Cross Validation}
 Cross-validation is now applied to evaluate the performance of OLS, Ridge, and Lasso regression models.
-The MSE is computed using 5-fold cross-validation for polynomial degrees ranging from 1 to 15, as shown in Figure \ref{fig:Cross_Validation}.
+The MSE is computed using 5-fold cross-validation for polynomial degrees ranging from 1 to 15, as shown in Figure \ref{fig:Cross_Val}.
 For OLS, the MSE decreases initially with increasing polynomial degree, but then rises sharply at higher degrees due to overfitting, especially with fewer data points.
 Ridge regression, with a regularization parameter $\lambda = 0.01$, shows a more stable MSE across polynomial degrees, effectively controlling overfitting.
-Lasso regression, also with $\lambda = 0.01$, exhibits a similar trend, but with slightly higher MSE than Ridge due to the stronger bias introduced by the $L_1$ penalty.       
-
+Lasso regression, also with $\lambda = 0.01$, exhibits a similar trend, but with slightly lower MSE than Ridge due to the stronger bias introduced by the $L_1$ penalty.\\\\     
 These results highlight the bias-variance trade-off: while OLS achieves very low bias at high degrees, its variance becomes large.
 Ridge and Lasso introduce a small bias but yield more stable models that generalize better.
 \input{Graphs/Cross_Validation.tex}
 
-\section{Discussion and Conclusion}
+\section{Conclusion}
 \label{sec:Discussion_and_Conclusion}
 In this project we analyzed regression methods for fitting the Runge function, focusing on OLS, Ridge, and Lasso regression, and compared them using mean squared error (MSE) as the main performance measure.\\\\
-
-OLS regression reproduced the function well at low polynomial degrees, but quickly overfitted when the degree increased, as reflected in strongly rising MSE.
-Ridge regression introduced $L_2$ regularization, which stabilized the coefficients and reduced variance, achieving more reliable predictions across polynomial degrees.
+OLS regression reproduced the function well at low polynomial degrees, but quickly overfitted when the degree increased, as reflected in strongly rising MSE.\\
+Ridge regression introduced $L_2$ regularization, which stabilized the coefficients and reduced variance, achieving more reliable predictions across polynomial degrees.\\
 Lasso regression, based on an $L_1$ penalty, further encouraged sparsity by setting coefficients exactly to zero.
-This simplified the model but generally produced slightly higher MSE compared to Ridge due to the stronger bias introduced.\\\\
-
+This simplified the model and generally produced slightly lower MSE compared to Ridge due to the stronger bias introduced.\\\\
 A central part of the project was the implementation and study of gradient descent methods.
 Standard gradient descent for OLS and Ridge regression showed a strong dependence on the learning rate: too small rates resulted in slow convergence and higher MSE, while too large rates caused divergence.
 With a carefully chosen learning rate, the results closely matched the analytical solutions.
@@ -721,8 +719,15 @@ RMSprop and Adam in particular adapted learning rates during training, achieving
 For Lasso regression, which lacks an analytical solution, gradient-based optimization was essential.
 Here, adaptive optimizers again provided faster and more stable convergence compared to plain gradient descent.
 Stochastic gradient descent further reduced computation time by using individual samples, at the cost of noisier updates, but still produced results consistent with batch methods.\\\\
-
-\textbf{Now some parts about the bootsrtap, croos validation and bias variance trade off}
+Bootstrap resampling provided a detailed view of the bias–variance trade-off across polynomial degrees.
+For low-degree models, the variance was minimal and the MSE closely followed the bias, indicating stable underfitting.
+As model complexity increased, variance rose sharply, causing MSE to grow due to overfitting.
+The bootstrap analysis also highlighted the effect of dataset size: larger datasets reduced variance and stabilized MSE, allowing higher-degree models to generalize better.\\\\
+Cross-validation confirmed these observations by evaluating OLS, Ridge, and Lasso models across polynomial degrees.
+OLS exhibited low bias but high variance at high degrees, resulting in overfitting.
+Ridge and Lasso introduced regularization, slightly increasing bias but significantly reducing variance, yielding more stable predictions and better generalization.
+Lasso additionally promoted sparsity, slightly improving MSE compared to Ridge in some cases.\\\\
+Together, the bootstrap and cross-validation analyses illustrate the fundamental **bias–variance trade-off**: the optimal model complexity balances low bias and moderate variance to minimize prediction error, and regularization methods like Ridge and Lasso are effective tools for achieving this balance, particularly when the number of data points is limited.
 
 
 \bibliographystyle{apsrev4-2}
