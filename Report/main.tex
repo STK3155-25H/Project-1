@@ -26,6 +26,7 @@
 \pgfplotsset{compat=1.18}
 
 \begin{document}
+\raggedbottom
 
 \title{Analyzing Different Regression and Resampling Methods}
 
@@ -167,10 +168,12 @@ Although OLS and Ridge regression have analytical solutions, such solutions are 
 
 Consider the cost function $C(\boldsymbol{\theta})$ that has to be minimized with respect to the parameters $\boldsymbol{\theta}$\cite{hjorthjensen_week36}.  
 A second-order Taylor expansion around a point $\boldsymbol{\theta}_n$ is performed:
-$$
-C(\boldsymbol{\theta}) \approx C(\boldsymbol{\theta}_n) + (\boldsymbol{\theta}-\boldsymbol{\theta}_n)^\top \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}_n) 
-+ \frac{1}{2} (\boldsymbol{\theta}-\boldsymbol{\theta}_n)^\top \mathbf{H}(\boldsymbol{\theta}_n) (\boldsymbol{\theta}-\boldsymbol{\theta}_n),
-$$
+\begin{align}
+C(\boldsymbol{\theta}) \approx{} & C(\boldsymbol{\theta}_n) 
++ (\boldsymbol{\theta}-\boldsymbol{\theta}_n)^\top \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}_n) \notag\\
+& + \frac{1}{2} (\boldsymbol{\theta}-\boldsymbol{\theta}_n)^\top 
+\mathbf{H}(\boldsymbol{\theta}_n) (\boldsymbol{\theta}-\boldsymbol{\theta}_n)
+\end{align}
 
 where $\mathbf{H}(\boldsymbol{\theta}_n)$ is the Hessian matrix of second derivatives at $\boldsymbol{\theta}_n$.
 
@@ -424,7 +427,7 @@ $$
 \mathbb{E}\left[(\boldsymbol{y}-\boldsymbol{\tilde{y}})^2\right]=\mathbb{E}\left[(\boldsymbol{y}-\mathbb{E}\left[\boldsymbol{\tilde{y}}\right])^2\right]+\mathrm{Var}\left[\boldsymbol{\tilde{y}}\right]+\sigma^2,
 $$
 
-that is the rewriting in terms of the bias, the variance of the model $\boldsymbol{\tilde{y}}$ and the variance of $\boldsymbol{\epsilon}$. \cite{misc} 
+that is the rewriting in terms of the bias, the variance of the model $\boldsymbol{\tilde{y}}$ and the variance of $\boldsymbol{\epsilon}$. 
 In order to derive this equation, the assumption that is made is that the unknown function $\boldsymbol{f}$ can be replaced by the target data $\boldsymbol{y}$.\\
 *I'm not able to cite because the .bib is deleting what I'm writing* \\\\ 
 This decomposition underlies the bias-variance trade-off: a high bias and low variance situation corresponds to a model that is too simple and underfits the data, while a low bias and high variance situation corresponds to a model that is too complex and overfits the data.
