@@ -7,7 +7,7 @@
     xlabel={Polynomial degree},
     ylabel={MSE},
     title={RIDGE Regression For Different Amount Of Data Points},
-    legend pos=north east,
+    legend pos=north west,
     grid=both,
     y tick label style={
         /pgf/number format/fixed,
@@ -30,6 +30,6 @@
     \addlegendentry{$n=1000$}
 \end{axis}
 \end{tikzpicture}
-\caption{Test mean squared error (MSE) as a function of polynomial degree for different numbers of data points $n$. The regularization parameter is fixed at $\lambda = 0.01$.}
+\caption{Test MSE vs. polynomial degree for varying dataset sizes $n$ with regularization parameter $\lambda = 0.01$.}
 \label{fig:RIDGE_MSE_data}
 \end{figure}
