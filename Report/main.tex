@@ -188,7 +188,8 @@ where $\eta > 0$ is a learning rate controlling the step size.
 This iterative procedure moves the parameters towards the minimum of $C(\boldsymbol{\theta})$. For convex functions such as the mean squared error in linear regression, convergence is guaranteed if $\eta$ is chosen appropriately.
 
 \subsubsection{Implementation}
-The iteration start from an initial guess $\boldsymbol{\theta}^{(0)}$, the parameters are updated iteratively according to the rule:
+The different gradient descent methods were implemented inside the general routine \verb|Gradient_descent_advanced|, in which a specific method can be selected using, for example, \verb|method='rmsprop'| for Rmsprop and so on. \\
+In the vanilla gradient descent, the iteration start from an initial guess $\boldsymbol{\theta}^{(0)}$, the parameters are updated iteratively according to the rule:
 \[
 \boldsymbol{\theta}^{(n+1)} = \boldsymbol{\theta}^{(n)} - \eta \, \nabla_{\boldsymbol{\theta}} C(\boldsymbol{\theta}^{(n)}),
 \]
@@ -260,7 +261,7 @@ This leads to more advanced optimization methods which use an adaptive learning 
 
 \subsubsection{Implementation}
 
-Momentum was implemented inside the general routine \verb|Gradient_descent_advanced| by setting \verb|method='momentum'|. In addition to the parameter vector $\boldsymbol{\theta}$, a velocity vector $\mathbf{m}$ of the same size is initialized to zero. At each iteration the velocity is updated as a moving average of past gradients, scaled by the momentum coefficient $\beta$, and the parameters are updated using this velocity.
+In addition to the parameter vector $\boldsymbol{\theta}$, a velocity vector $\mathbf{m}$ of the same size is initialized to zero. At each iteration the velocity is updated as a moving average of past gradients, scaled by the momentum coefficient $\beta$, and the parameters are updated using this velocity.
 The default value $\beta=0.9$ was used in the experiments, providing a balance between stability and acceleration. Convergence is checked by comparing the change in parameters with a tolerance threshold.
 \begin{algorithm}[H]
 \caption{Gradient Descent with Momentum}
@@ -288,7 +289,7 @@ The accumulation of squared gradients can lead to excessively small learning rat
 
 \subsubsection{Implementation}
 
-Adagrad was included as an option in \verb|Gradient_descent_advanced| by setting \verb|method='adagrad'|. An accumulator vector $\mathbf{G}$ of the same size as $\boldsymbol{\theta}$ is initialized to zero. At each iteration, the squared gradient is added to $\mathbf{G}$ and used to scale the learning rate for each parameter.
+An accumulator vector $\mathbf{G}$ of the same size as $\boldsymbol{\theta}$ is initialized to zero. At each iteration, the squared gradient is added to $\mathbf{G}$ and used to scale the learning rate for each parameter.
 To ensure numerical stability, a small constant $\epsilon=10^{-8}$ is added before taking the square root. This prevents division by zero and is standard in Adagrad implementations.
 \begin{algorithm}[H]
 \caption{Adagrad}
@@ -320,7 +321,7 @@ On the other hand, RMSprop requires tuning of the decay rate \(\beta\) and the b
 
 \subsubsection{Implementation}
 
-RMSprop was implemented by selecting \verb|method='rmsprop'| inside \verb|Gradient_descent_advanced|. Instead of storing the full sum of squared gradients, an exponentially decaying moving average is maintained in a vector $\mathbf{S}$ initialized to zero. At each iteration, $\mathbf{S}$ is updated using the decay rate $\rho$ (set to 0.9 in our experiments), and the gradient is rescaled accordingly.
+Instead of storing the full sum of squared gradients, an exponentially decaying moving average is maintained in a vector $\mathbf{S}$ initialized to zero. At each iteration, $\mathbf{S}$ is updated using the decay rate $\rho$ (set to 0.9 in our experiments), and the gradient is rescaled accordingly.
 As with Adagrad, a small constant $\epsilon=10^{-8}$ is added for stability. This prevents excessively small denominators when gradients are close to zero.
 \begin{algorithm}[H]
 \caption{RMSprop}
@@ -360,7 +361,7 @@ Adam can sometimes converge to slightly worse minima than SGD in certain tasks, 
 
 \subsubsection{Implementation}
 
-Adam was implemented inside \verb|Gradient_descent_advanced| with \verb|method='adam'|. Two vectors of the same size as $\boldsymbol{\theta}$ are initialized: the first moment estimate $\mathbf{m}$ and the second moment estimate $\mathbf{v}$, both starting at zero. At each iteration, these estimates are updated with exponential moving averages of the gradient and squared gradient. Bias correction is applied using the current iteration counter $t$.
+Two vectors of the same size as $\boldsymbol{\theta}$ are initialized: the first moment estimate $\mathbf{m}$ and the second moment estimate $\mathbf{v}$, both starting at zero. At each iteration, these estimates are updated with exponential moving averages of the gradient and squared gradient. Bias correction is applied using the current iteration counter $t$.
 Default hyperparameters $\beta_1=0.9$, $\beta_2=0.999$, and $\epsilon=10^{-8}$ were used, consistent with common practice. This implementation therefore combines momentum and RMSprop into a single adaptive optimizer.
 \begin{algorithm}[H]
 \caption{Adam}
