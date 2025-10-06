@@ -175,10 +175,10 @@ All scripts write to `outputs/`:
 - `make setup` — install Python dependencies  
 - `make a|b|c|d|e|f|g|h` — run a single experiment part  
 - `make all` — run **all** parts a…h  
-- `make figures` — list generated figures  
 - `make tables` — list generated tables  
+- `make tests` — runs all the tests
+- `make bench` — runs all the benchmarks and paces the results in `outputs/benchmarks` directory
 - `make clean` — remove the `outputs/` directory
-
 ---
 
 ## Configuring the SEED
