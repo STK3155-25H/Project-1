@@ -18,8 +18,8 @@ def seeded_src():
     Restituisce direttamente i simboli che ci servono dal pacchetto src.
     """
     os.environ["SEED"] = "314"
-    # Import lazy per essere sicuri che prenda il seed dall'ambiente
-    import src  # noqa: F401
+    # Lazy import to make sure that the right seed is selected
+    import src  
     importlib.reload(src)
     from src import (
         runge_function, R2_score, MSE,
@@ -57,7 +57,6 @@ def test_polynomial_features_matches_sklearn(seeded_src, degree, intercept):
 
 def test_polynomial_features_scaled_matches_standard_scaler(seeded_src):
     pfs = seeded_src["polynomial_features_scaled"]
-    # train/test split deterministico per confrontare scaling colonne (tranne l'intercetta)
     x = np.linspace(-2, 2, 50)
     X_train, X_test = x[:35], x[35:]
     deg = 4
@@ -65,7 +64,7 @@ def test_polynomial_features_scaled_matches_standard_scaler(seeded_src):
     Xtr_my, means, stds = pfs(X_train, deg, intercept=True, return_stats=True)
     Xte_my = pfs(X_test, deg, intercept=True, col_means=means, col_stds=stds)
 
-    # Costruisco le stesse feature grezze e applico StandardScaler SOLO alle colonne non-intercetta
+    # Applying StandardScaler only to non intercept colums
     pf_skl = PolynomialFeatures(degree=deg, include_bias=True)
     Xtr_raw = pf_skl.fit_transform(X_train.reshape(-1, 1))
     Xte_raw = pf_skl.transform(X_test.reshape(-1, 1))
@@ -81,7 +80,7 @@ def test_polynomial_features_scaled_matches_standard_scaler(seeded_src):
 
 
 # ----------------------------
-# Metriche
+# Metrics
 # ----------------------------
 def test_mse_and_r2_match_sklearn(seeded_src):
     MSE = seeded_src["MSE"]
@@ -103,26 +102,23 @@ def test_ols_parameters_match_sklearn_linear_regression(seeded_src, degree):
     pf_scaled = seeded_src["polynomial_features_scaled"]
     OLS = seeded_src["OLS_parameters"]
 
-    # dati "Runge" senza rumore per confronto pulito
+    # dati "Runge" without nois for clean comparison
     x = np.linspace(-1, 1, 80)
     y = seeded_src["runge_function"](x, noise=False)
 
-    # split e scaling come nel tuo progetto
     X_train, X_test, y_train, y_test = seeded_src["split_scale"](x, y)
 
-    # feature polinomiali + scaling colonne (intercetta inclusa)
     Xtr, mu, sig = pf_scaled(X_train.ravel(), degree, return_stats=True)
     Xte = pf_scaled(X_test.ravel(), degree, col_means=mu, col_stds=sig)
 
     theta = OLS(Xtr, y_train)
     y_hat = Xte @ theta
 
-    # sklearn: stesso design matrix con bias già dentro -> fit_intercept=False
+    # sklearn: same design matrix with bias is included -> fit_intercept=False
     lr = LinearRegression(fit_intercept=False)
     lr.fit(Xtr, y_train)
     y_hat_skl = lr.predict(Xte)
 
-    # Confronto coefficienti e predizioni
     np.testing.assert_allclose(theta, lr.coef_, rtol=1e-8, atol=1e-8)
     np.testing.assert_allclose(y_hat, y_hat_skl, rtol=1e-10, atol=1e-10)
 
@@ -156,7 +152,7 @@ def test_ridge_parameters_match_sklearn_no_intercept_penalty(seeded_src, degree,
 
 
 # ----------------------------
-# GD vs soluzione analitica (OLS)
+# GD vs OLS
 # ----------------------------
 @pytest.mark.parametrize("degree,lr", [(3, 0.05), (4, 0.02)])
 def test_gradient_descent_converges_to_ols_ols_case(seeded_src, degree, lr):
@@ -176,15 +172,13 @@ def test_gradient_descent_converges_to_ols_ols_case(seeded_src, degree, lr):
         Xtr, y_train, Type=0, lam=0.0, lr=lr,
         n_iter=50000, tol=1e-10, method="vanilla", theta_history=False
     )
-    # Devono coincidere (entro tolleranza numerica)
     np.testing.assert_allclose(theta_gd, theta_star, rtol=1e-5, atol=1e-6)
 
 
 # ----------------------------
-# Bias-Variance decomposition coerenza interna
+# Bias-Variance decomposition
 # ----------------------------
 def test_mse_bias_variance_identity(seeded_src):
-    # Creiamo più predizioni bootstrappate attorno a un target fisso
     rng = np.random.default_rng(42)
     y_true = np.linspace(-1, 1, 40)
     preds = []
@@ -193,5 +187,5 @@ def test_mse_bias_variance_identity(seeded_src):
     preds = np.vstack(preds)
 
     mse, bias2, var = seeded_src["MSE_Bias_Variance"](y_true, preds)
-    # Identità: mse ≈ bias^2 + var (qui y_true è deterministico)
+    # Identity: mse ≈ bias^2 + var ( y_true is deterministic)
     assert np.isclose(mse, bias2 + var, rtol=1e-6, atol=1e-8)
