@@ -31,7 +31,7 @@ The goal is to produce reproducible figures and metrics tables (MSE, R²) for a 
 ## Repository structure
 ```bash
 ├── .gitignore
-├── Code
+├── Code 
 │   ├── exp_a_ols.py
 │   ├── exp_b_ridge.py
 │   ├── exp_c_grad_vs_closed.py
@@ -42,7 +42,11 @@ The goal is to produce reproducible figures and metrics tables (MSE, R²) for a 
 │   ├── exp_h_crossval.py
 │   └── src
 │       ├── __init__.py
-│       └── ml_core.py
+│       ├── exp_benchmarks_metrics.py
+│       ├── ml_core.py
+│       └── tests
+│           ├── __init__.py
+│           └── tests.py
 ├── Exercises_week_39.pdf
 ├── Makefile
 ├── README.md
@@ -171,10 +175,10 @@ All scripts write to `outputs/`:
 - `make setup` — install Python dependencies  
 - `make a|b|c|d|e|f|g|h` — run a single experiment part  
 - `make all` — run **all** parts a…h  
-- `make figures` — list generated figures  
 - `make tables` — list generated tables  
+- `make tests` — runs all the tests
+- `make bench` — runs all the benchmarks and paces the results in `outputs/benchmarks` directory
 - `make clean` — remove the `outputs/` directory
-
 ---
 
 ## Configuring the SEED
