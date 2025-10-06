@@ -7,7 +7,7 @@
         height=7cm,
         xlabel={Fit Time (ms)},
         ylabel={$R^2$},
-        title={Pareto Front: Accuracy vs Speed (per Degree)},
+        title={Accuracy vs Speed (per Degree)},
         legend pos = north east,
         legend style={font=\tiny},
         grid=both,
@@ -57,6 +57,6 @@
 
     \end{axis}
     \end{tikzpicture}
-    \caption{Pareto analysis of model accuracy ($R^2$) versus computational cost (fit time in milliseconds). Lines connect successive polynomial degrees per method.}
+    \caption{Pareto analysis of model accuracy ($R^2$) versus computational cost (fit time in milliseconds). Lines connect successive polynomial degrees per method. It is important to note that the datapoints that sit lower in the graph are the relative to the highest polynomial degree tested (\(d_{max} = 14\))).}
     \label{fig:pareto_r2_time}
     \end{figure}
