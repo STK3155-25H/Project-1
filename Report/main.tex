@@ -789,7 +789,7 @@ Ordinary Least Squares achieved a median fit time of approximately $0.1$~ms, whi
 In contrast, vanilla gradient descent required on average more than $100$~ms per fit, corresponding to a computational cost roughly $10^3$--$10^4$ times higher.
 This difference reflects the analytical $\mathcal{O}(p^3)$ complexity of matrix inversion compared to the iterative $\mathcal{O}(n p \times \text{iterations})$ \cite{golubvanloan2013,bottou2010largeScaleSGD} scaling of gradient descent.
 Despite this, as the results shows, iterative optimization remains preferable when the design matrix is large, sparse, or cannot be stored entirely in memory.
-Usecases in wich iterative gradient descent methods shine are in fact NNs, where a very large nubmber of parameters need to be optimized\cite{goodfellow2016}.
+Usecases in which iterative gradient descent methods shine are in fact NNs, where a very large nubmber of parameters need to be optimized\cite{goodfellow2016}.
 \input{Graphs/FIT_TIME}
 
 
