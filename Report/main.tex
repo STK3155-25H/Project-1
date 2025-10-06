@@ -756,12 +756,11 @@ Ridge and Lasso introduce a small bias but yield more stable models that general
 
 \subsection{Computational Benchmark and Performance Analysis}
 \label{sec:Computational_Benchmark}
-
-
 In addition to the statistical evaluation of model accuracy, a computational benchmark was performed to assess the efficiency of the implemented methods. 
 The benchmark compared the analytical solutions with gradient-based variants across multiple polynomial degrees. 
 The analysis focuses on execution time, iteration behaviour, floating-point operations and memory usage.
-The benchmarks results were obtained in compliance with the procedures decribed by paragraph \ref{sec:results_setup}. In particular the results were obtained across an average on \(N_{runs} = 30\) on polynomials of different degrees  and applying the forrlowing parameters:
+The benchmarks results were obtained in compliance with the procedures decribed by paragraph \ref{sec:results_setup}. 
+In particular the results were obtained across an average on \(N_{runs} = 30\) on polynomials of degrees up to 14 and applying the forrlowing parameters:
 
 \begin{table}[H]
 \centering
@@ -772,8 +771,8 @@ The benchmarks results were obtained in compliance with the procedures decribed 
 \textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
 \midrule
 Number of points & $N_{\text{points}}$ & 100 \\
-Maximum polynomial degree & $d_{\max}$ & 14 \\
-Number of runs (averaging) & $N_{\text{runs}}$ & 30 \\
+% Maximum polynomial degree & $d_{\max}$ & 14 \\
+% Number of runs (averaging) & $N_{\text{runs}}$ & 30 \\
 Regularization factor & $\lambda$ & 0.01 \\
 Learning rate & $\eta$ & 0.01 \\
 Iterations & $N_{\text{iter}}$ & 10,000 \\
@@ -782,7 +781,7 @@ Momentum coefficient & $\beta$ & 0.9 \\
 Epsilon (for Adam stability) & $\epsilon$ & $10^{-8}$ \\
 Mini-batch size & $B$ & 32 \\
 Bootstrap resamples & $N_{\text{boot}}$ & 30 \\
-Test split ratio & $r_{\text{test}}$ & 0.33 \\
+% Test split ratio & $r_{\text{test}}$ & 0.33 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -793,22 +792,22 @@ Figure~\ref{fig:Fit_Time} reports the median fit time as a function of polynomia
 Closed-form methods (OLS and Ridge) were found to be several orders of magnitude faster than iterative optimizers.
 Ordinary Least Squares achieved a median fit time of approximately $0.1$~ms, while Ridge regression required around $0.11$~ms, confirming their efficiency for small and medium-scale problems.
 In contrast, vanilla gradient descent required on average more than $100$~ms per fit, corresponding to a computational cost roughly $10^3$--$10^4$ times higher.
-This difference reflects the analytical $\mathcal{O}(p^3)$ complexity of matrix inversion compared to the iterative $\mathcal{O}(n p \times \text{iterations})$ scaling of gradient descent.
+This difference reflects the analytical $\mathcal{O}(p^3)$ complexity of matrix inversion compared to the iterative $\mathcal{O}(n p \times \text{iterations})$ \cite{golubvanloan2013,bottou2010largeScaleSGD} scaling of gradient descent.
 Despite this, as the results shows, iterative optimization remains preferable when the design matrix is large, sparse, or cannot be stored entirely in memory.
-Usecases in wich iterative gradient descent methods shine are in fact NNs, where a very large nubmber of parameters need to be optimized.
+Usecases in wich iterative gradient descent methods shine are in fact NNs, where a very large nubmber of parameters need to be optimized\cite{goodfellow2016}.
 \input{Graphs/FIT_TIME}
 
 
 \paragraph*{Computational cost and memory footprint.}
 The estimated number of floating–point operations (FLOPs) confirms the expected scaling trends (Figure~\ref{fig:Flops}). In closed–form solvers (OLS, Ridge) the dominant step is solving the normal equations, which scales as $\mathcal{O}(p^3)$ in the number of features $p$. Within the present range of degrees this remains markedly below the iterative methods: the FLOPs curve for OLS/Ridge stays in the $10^3$–$10^5$ band, while gradient methods rise to $10^7$–$10^8$.
-For gradient–based optimizers, the per–iteration cost is $\mathcal{O}(np)$, so the total work scales approximately linearly with the number of iterations $T$ and the data size $n$ ($\sim\mathcal{O}(n p T)$). Among them, Momentum and Adam exhibit the largest computational load because each step updates extra state vectors (velocity $m$ for Momentum; both $m$ and the second–moment $v$ for Adam), effectively adding one (Momentum) or two (Adam) additional vector operations and element–wise transforms per iteration.
+For gradient–based optimizers, the per–iteration cost is $\mathcal{O}(np)$, so the total work scales approximately linearly with the number of iterations $T$ and the data size $n$ ($\sim\mathcal{O}(n p T)$). Among them, Momentum and Adam exhibit the largest computational load because each step updates extra state vectors\cite{polyak1964heavyball,kingma2015adam} (velocity $m$ for Momentum; both $m$ and the second–moment $v$ for Adam), effectively adding one (Momentum) or two (Adam) additional vector operations and element–wise transforms per iteration.
 \input{Graphs/FLOPS}
 Memory usage (Figure~\ref{fig:Memory}) grows approximately linearly with polynomial degree, reflecting the linear growth of $p$ and the associated parameter/state vectors. In our setup it remains below $0.02$~MB across the displayed degrees for all methods. Closed–form solvers mainly store $\boldsymbol{\theta}$ and the small $p\times p$ normal matrix; adaptive optimizers add constant–factor overhead for their moment buffers (e.g., $m$, $v$), which explains the slight vertical offset between curves while preserving linear trends with degree.
 \input{Graphs/Memory}
 
 \paragraph*{Accuracy–Speed Pareto analysis.}
 Finally, Figure~\ref{fig:pareto_r2_time} summarizes the joint accuracy–efficiency trade–off by plotting test $R^2$ against wall–clock fit time. 
-Two distinct frontiers emerge.  
+Two distinct frontiers emerge\cite{bottou2010largeScaleSGD}.
 Closed–form solvers (OLS and Ridge) occupy the leftmost Pareto frontier, achieving $R^2\approx0.95$–$0.99$ at $\mathcal{O}(10^{-1})$\,ms.  
 Iterative optimizers form a secondary frontier at $\mathcal{O}(10^2)$\,ms: vanilla GD and momentum cluster around $R^2\approx0.5$–$0.85$, while Adam attains higher accuracy ($R^2\approx0.95$) but at greater cost. 
 When the design matrix fits in memory and $p$ is moderate, closed–form OLS/Ridge remain strictly Pareto–superior. 
