@@ -760,7 +760,7 @@ In addition to the statistical evaluation of model accuracy, a computational ben
 The benchmark compared the analytical solutions with gradient-based variants across multiple polynomial degrees. 
 The analysis focuses on execution time, iteration behaviour, floating-point operations and memory usage.
 The benchmarks results were obtained in compliance with the procedures decribed by paragraph \ref{sec:results_setup}. 
-In particular the results were obtained across an average on \(N_{runs} = 30\) on polynomials of degrees up to 14 and applying the forrlowing parameters:
+In particular the results were obtained across an average on \(N_{runs} = 30\) on polynomials of degrees up to 14 fitted to a dataset of \(n = 100\) points and applying the following parameters:
 
 \begin{table}[H]
 \centering
@@ -770,7 +770,7 @@ In particular the results were obtained across an average on \(N_{runs} = 30\) o
 \toprule
 \textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
 \midrule
-Number of points & $N_{\text{points}}$ & 100 \\
+% Number of points & $N_{\text{points}}$ & 100 \\
 % Maximum polynomial degree & $d_{\max}$ & 14 \\
 % Number of runs (averaging) & $N_{\text{runs}}$ & 30 \\
 Regularization factor & $\lambda$ & 0.01 \\
