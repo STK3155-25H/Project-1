@@ -45,8 +45,8 @@ The goal is to produce reproducible figures and metrics tables (MSE, R²) for a 
 │       ├── exp_benchmarks_metrics.py
 |       ├── ml_core.py
 |       └── tests
-|             ├── __init__.py
-|             └── tests.py
+|           ├── __init__.py
+|           └── tests.py
 ├── Exercises_week_39.pdf
 ├── Makefile
 ├── README.md
