@@ -800,24 +800,23 @@ Usecases in wich iterative gradient descent methods shine are in fact NNs, where
 
 
 \paragraph*{Computational cost and memory footprint.}
-The estimated number of floating-point operations (FLOPs) confirms the expected scaling trends (Figure~\ref{fig:Flops}).
-OLS and Ridge follow a cubic growth with respect to the number of features, while gradient methods scale approximately linearly with iterations and data size. 
-Adam and Momentum display the largest computational load due to their extra vector updates for accumulated gradients.
+The estimated number of floating–point operations (FLOPs) confirms the expected scaling trends (Figure~\ref{fig:Flops}). In closed–form solvers (OLS, Ridge) the dominant step is solving the normal equations, which scales as $\mathcal{O}(p^3)$ in the number of features $p$. Within the present range of degrees this remains markedly below the iterative methods: the FLOPs curve for OLS/Ridge stays in the $10^3$–$10^5$ band, while gradient methods rise to $10^7$–$10^8$.
+For gradient–based optimizers, the per–iteration cost is $\mathcal{O}(np)$, so the total work scales approximately linearly with the number of iterations $T$ and the data size $n$ ($\sim\mathcal{O}(n p T)$). Among them, Momentum and Adam exhibit the largest computational load because each step updates extra state vectors (velocity $m$ for Momentum; both $m$ and the second–moment $v$ for Adam), effectively adding one (Momentum) or two (Adam) additional vector operations and element–wise transforms per iteration.
 \input{Graphs/FLOPS}
-Memory usage (Figure~\ref{fig:Memory}) grows linearly with polynomial degree for all methods and remains modest (below $0.02$~MB), with analytical solvers slightly lighter than adaptive optimizers.
+Memory usage (Figure~\ref{fig:Memory}) grows approximately linearly with polynomial degree, reflecting the linear growth of $p$ and the associated parameter/state vectors. In our setup it remains below $0.02$~MB across the displayed degrees for all methods. Closed–form solvers mainly store $\boldsymbol{\theta}$ and the small $p\times p$ normal matrix; adaptive optimizers add constant–factor overhead for their moment buffers (e.g., $m$, $v$), which explains the slight vertical offset between curves while preserving linear trends with degree.
 \input{Graphs/Memory}
 
-
 \paragraph*{Accuracy–Speed Pareto analysis.}
-Finally, Figure~\ref{fig:fig:pareto_r2_time} summarizes the joint accuracy–efficiency trade–off by plotting test $R^2$ against wall–clock fit time (log scale on the $x$–axis). 
+Finally, Figure~\ref{fig:pareto_r2_time} summarizes the joint accuracy–efficiency trade–off by plotting test $R^2$ against wall–clock fit time. 
 Two distinct frontiers emerge.  
 Closed–form solvers (OLS and Ridge) occupy the leftmost Pareto frontier, achieving $R^2\approx0.95$–$0.99$ at $\mathcal{O}(10^{-1})$\,ms.  
 Iterative optimizers form a secondary frontier at $\mathcal{O}(10^2)$\,ms: vanilla GD and momentum cluster around $R^2\approx0.5$–$0.85$, while Adam attains higher accuracy ($R^2\approx0.95$) but at greater cost. 
 When the design matrix fits in memory and $p$ is moderate, closed–form OLS/Ridge remain strictly Pareto–superior. 
-Iterative methods become attractive only for large–scale or streaming data, or when analytical solutions are unavailable (e.g., LASSO).
+Iterative methods become attractive only for large–scale or streaming data, or when analytical solutions are unavailable.
 % \input{Graphs/PARETO}
 \input{Graphs/PARETO2}
 
+So it is clear from this results that for small and simple regression problems the same accuracy results can be achived both with closed-form and iterative GD methods, but with a higher computational efficiency, making the GD not ideal for these usecases.
 
 \section{Discussion and Conclusion}
 
@@ -839,10 +838,16 @@ Each approach presented trade-offs:
 OLS is simple but unstable for complex models;
 Ridge improves robustness but adds bias;
 Lasso enhances sparsity but may remove relevant predictors.\\\\
-The study demonstrated the value of regularization and adaptive optimization in regression analysis.
-Limitations include the focus on a single dataset and reliance on MSE as the main metric.
-Future work should extend these methods to real-world and higher-dimensional data, to further enhance model performance and interpretability.
 
+The computational benchmark expanded the analysis by quantifying the efficiency and scalability of each method.  
+Closed–form solvers (OLS and Ridge) demonstrated extremely low execution times (on the order of $10^{-1}$\,ms) and minimal memory footprints, remaining several orders of magnitude faster than iterative gradient–based methods for small to medium–scale problems.   
+Overall, the results show that analytical methods are preferable when the design matrix fits entirely in memory and the model size is moderate, while iterative optimizers become indispensable in large–scale or scenarios where analytical inversion is impractical.  
+Therefore, it is clear from these results that for small and simple regression problems, comparable accuracy can be achieved using both closed–form and iterative methods, but with far greater computational efficiency in the analytical case, making gradient descent suboptimal in such contexts.\\\\
+
+The study demonstrated the importance of regularization, adaptive optimization, and computational efficiency in modern regression analysis.  
+Each approach entails a trade–off among accuracy, interpretability, and scalability:  
+OLS remains the simplest yet least robust, Ridge offers the best generalization compromise, Lasso improves sparsity and feature selection, while gradient–based methods provide flexibility at a computational cost.  
+Future works could extend these analyses to high–dimensional, real–world datasets and investigate hybrid optimization strategies that balance analytical precision with scalable computation.
 
 \bibliographystyle{apsrev4-2}
 \bibliography{References} % Your .bib file
