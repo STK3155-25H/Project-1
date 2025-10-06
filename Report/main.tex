@@ -48,7 +48,9 @@ Regression in machine learning is a fundamental technique for predicting outcome
 A major challenge arises as model complexity increases:  low-degree models may underfit, while high-degree polynomial regression can become unstable and overfit the data. 
 In this project, we study the Runge function, a well-known function that highlights the difficulties of high-degree polynomial interpolation. We apply Ordinary Least Squares, Ridge, and Lasso regression, complemented by gradient descent and its variants, including momentum, Adagrad, RMSprop, and ADAM. Resampling techniques such as bootstrap and cross-validation are used to evaluate model generalization and analyze the bias-variance trade-off.
 The dataset was synthetically generated with controlled noise, and all implementations were validated and tested against analytical and scikit-learn references. A computational benchmark was also performed to assess efficiency in terms of execution time, iteration behaviour, and memory usage.
-The results show that OLS fits become highly unstable for high polynomial degrees, while Ridge and Lasso regularization significantly improve stability and predictive accuracy. Gradient descent methods reproduce the analytical results, though their performance depends strongly on learning-rate strategies. Overall, the study highlights the importance of regularization and resampling for controlling overfitting and improving the reliability of regression models.
+The results show that OLS fits become highly unstable for high polynomial degrees, while Ridge and Lasso regularization significantly improve stability and predictive accuracy. Gradient descent methods reproduce the analytical results, though their performance depends strongly on learning-rate strategies.
+Moreover, the benchmark results confirm that closed-form solvers outperform iterative optimizers by orders of magnitude in speed and memory usage for the chosen problem scale.
+Overall, the study highlights the importance of regularization and resampling for controlling overfitting and improving the reliability of regression models.
 \end{abstract}
 
 \maketitle
