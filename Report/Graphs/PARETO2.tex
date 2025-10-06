@@ -8,7 +8,8 @@
     xlabel={Fit Time (ms)},
     ylabel={$R^2$},
     title={Pareto Front: Accuracy vs Speed (per Degree)},
-    legend pos=south east,
+    legend pos = north,
+    legend style={font=\tiny},
     grid=both,
     ymode=log, 
     xmode=log, 
@@ -18,7 +19,7 @@
         /pgf/number format/fixed,
         /pgf/number format/precision=2
     },
-    legend cell align={left}
+    % legend cell align={left}
 ]
     % OLS
     \addplot [red, thick, mark=*, mark size=1.5pt] 

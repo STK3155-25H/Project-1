@@ -769,7 +769,7 @@ Ordinary Least Squares achieved a median fit time of approximately $0.1$~ms, whi
 In contrast, vanilla gradient descent required on average more than $100$~ms per fit, corresponding to a computational cost roughly $10^3$--$10^4$ times higher.
 This difference reflects the analytical $\mathcal{O}(p^3)$ complexity of matrix inversion compared to the iterative $\mathcal{O}(n p \times \text{iterations})$ scaling of gradient descent.
 Despite this, iterative optimization remains preferable when the design matrix is large, sparse, or cannot be stored entirely in memory.
-\include{Graphs/FIT_TIME}
+\input{Graphs/FIT_TIME}
 
 % \paragraph*{Gradient descent variants.}
 % Among all iterative methods, vanilla GD required the largest number of iterations (median $\sim10^4$) and showed the slowest convergence. 
@@ -837,8 +837,8 @@ The estimated number of floating-point operations (FLOPs) confirms the expected 
 OLS and Ridge follow a cubic growth with respect to the number of features, while gradient methods scale approximately linearly with iterations and data size. 
 Adam and Momentum display the largest computational load due to their extra vector updates for accumulated gradients.
 Memory usage (Figure~\ref{fig:Memory}) grows linearly with polynomial degree for all methods and remains modest (below $0.02$~MB), with analytical solvers slightly lighter than adaptive optimizers.
-\include{Graphs/FLOPS}
-\include{Graphs/Memory}
+\input{Graphs/FLOPS}
+\input{Graphs/Memory}
 
 
 \paragraph*{Accuracy–Speed Pareto analysis.}
@@ -848,8 +848,8 @@ Closed–form solvers (OLS and Ridge) occupy the leftmost Pareto frontier, achie
 Iterative optimizers form a secondary frontier at $\mathcal{O}(10^2)$\,ms: vanilla GD and momentum cluster around $R^2\approx0.5$–$0.85$, while Adam attains higher accuracy ($R^2\approx0.95$) but at greater cost. 
 When the design matrix fits in memory and $p$ is moderate, closed–form OLS/Ridge remain strictly Pareto–superior. 
 Iterative methods become attractive only for large–scale or streaming data, or when analytical solutions are unavailable (e.g., LASSO).
-% \include{Graphs/PARETO}
-\include{Graphs/PARETO2}
+% \input{Graphs/PARETO}
+\input{Graphs/PARETO2}
 
 
 \section{Discussion and Conclusion}

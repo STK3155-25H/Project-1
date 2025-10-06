@@ -21,7 +21,7 @@ BENCHMARKS_OUT_DIR = $(OUT)/benchmarks
 BENCHMARKS_OUT_TABLES_DIR = $(BENCHMARKS_OUT_DIR)/tables
 
 BENCH_NPOINTS?=100
-BENCH_MAX_DEGREE?=15
+BENCH_MAX_DEGREE?=14
 METHODS?=ols ridge gd-vanilla gd-momentum gd-adam
 LAM?=0.01
 LR?=0.01
@@ -33,7 +33,7 @@ USE_SGD?=false          # set to true to use mini-batches
 BATCH_SIZE?=32
 BOOTSTRAP?=30
 TEST_SIZE?=0.33
-N_RUNS?=20
+N_RUNS?=30
 
 # ---------- Phony ----------
 .PHONY: help setup dirs all a b c d e g h figures tables clean bench benchmark benchmarkrun tests
