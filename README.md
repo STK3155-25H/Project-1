@@ -1,5 +1,6 @@
 # Runge Regression — OLS / Ridge / LASSO (Closed‑Form, GD, SGD)
 [![Assertion Tests](https://github.com/STK3155-25H/Project-1/actions/workflows/assertion_tests.yml/badge.svg)](https://github.com/STK3155-25H/Project-1/actions/workflows/assertion_tests.yml)
+
 Midterm project for benchmarking linear regression methods on the **Runge function**:
 - OLS and Ridge (**closed form**)
 - **Gradient Descent** (vanilla, Momentum, AdaGrad, RMSProp, Adam)
