@@ -10,7 +10,7 @@ LOGS=$(OUT)/logs
 TESTS=$(OUT)/tests
 PYTEST?=pytest
 PYTEST_FLAGS?=-q
-SEED?=123
+SEED?=314
 BENCHMARKS = $(CODE)/src
 
 # Common knobs (override like: make a MAX_DEGREE=12)
