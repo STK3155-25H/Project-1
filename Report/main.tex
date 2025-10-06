@@ -699,15 +699,15 @@ Lasso regression does not have an analytical solution, so only gradient descent 
 First, the standard gradient descent method is applied to Lasso regression, exploring the impact of different learning rates $\eta$. 
 The results for Lasso with varying learning rates are shown in the Figure \ref{fig:GD_LASSO_LR}.
 With a learning rate equal to 0.01, the method converges for polynomial degrees up to 15, with the MSE being relatively low.
-For smaller learning rates, the algorithm converges very slowly, requiring a large number of iterations to approach the minimum.
-\input{Graphs/GD_LASSO_LR.tex}
-
+For smaller learning rates, the algorithm converges very slowly, requiring a large number of iterations to approach the minimum.\\\\
 When using more advanced gradient descent methods for Lasso regression, as shown in the Figure \ref{fig:AGD_LASSO}, the convergence improves significantly.
 Ridge and Lasso regression show similar MSE across polynomial degrees.
 However, the MSE values for Lasso are generally higher than those for Ridge regression, due to the nature of the $L_1$ penalty. 
 This encourages many coefficients to become exactly zero, which makes the model more interpretable but increases the bias of the coefficients.
 On the other hand, Ridge regression shrinks coefficients towards zero but does not set them exactly to zero, leading to lower bias and lower MSE.
 Compared to OLS, which is unbiased but can have high variance, Lasso achieves a lower MSE by reducing the variance, even with the bias it introduces
+
+\input{Graphs/GD_LASSO_LR.tex}
 \input{Graphs/AGD_LASSO.tex}
 
 \subsection{Stochastic Gradient Descent}
@@ -715,19 +715,14 @@ Compared to OLS, which is unbiased but can have high variance, Lasso achieves a 
 Stochastic Gradient Descent (SGD) is now applied to OLS, Ridge, and Lasso regression.
 For OLS, as shown in Figure \ref{fig:AGD_OLS_SGD}, SGD converges to a solution with MSE values that are slightly higher than those obtained with standard gradient descent methods. 
 This difference arises because SGD computes the gradient using individual samples or small mini-batches instead of the entire dataset.
-While this makes each update faster and more memory-efficient, it also introduces noise into the updates, leading to a less stable convergence.
+While this makes each update faster and more memory-efficient, it also introduces noise into the updates, leading to a less stable convergence.\\
+Ridge regression with SGD, as shown in Figure \ref{fig:AGD_RIDGE_SGD}, exhibits a similar pattern: the MSE is slightly higher compared to batch methods due to the stochastic nature of the updates.
+However, the $L_2$ penalty contributes to more stable coefficient shrinkage, so the convergence remains reliable and generalization can even improve compared to OLS.\\
+In the case of Lasso regression with SGD, shown in Figure \ref{fig:AGD_LASSO_SGD}, the optimization becomes more challenging because of the $L_1$ penalty, which creates flat regions and non-differentiable points at zero.
+Here, the stochasticity can both complicate and help: while it may cause small fluctuations and slightly higher MSE, it also allows the algorithm to escape plateaus and drive coefficients exactly to zero, reinforcing sparsity in the solution.\\\\
+Overall, the effect of applying SGD to OLS, Ridge, and Lasso is fundamentally the same: it serves as a stochastic optimization technique that iteratively minimizes each model’s objective function, with differences arising primarily from the penalty terms rather than from the optimization process itself.
 
 \input{Graphs/AGD_OLS SGD.tex}
-
-Ridge regression with SGD, as shown in Figure \ref{fig:AGD_RIDGE_SGD}, exhibits a similar pattern: the MSE is slightly higher compared to batch methods due to the stochastic nature of the updates.
-However, the $L_2$ penalty contributes to more stable coefficient shrinkage, so the convergence remains reliable and generalization can even improve compared to OLS.
-
-\input{Graphs/AGD_RIDGE SGD.tex}
-
-In the case of Lasso regression with SGD, shown in Figure \ref{fig:AGD_LASSO_SGD}, the optimization becomes more challenging because of the $L_1$ penalty, which creates flat regions and non-differentiable points at zero.
-Here, the stochasticity can both complicate and help: while it may cause small fluctuations and slightly higher MSE, it also allows the algorithm to escape plateaus and drive coefficients exactly to zero, reinforcing sparsity in the solution.
-
-\input{Graphs/AGD_LASSO SGD.tex}
 
 \subsection{Bias-Variance trade off}
 \label{Bias-Variance trade off}

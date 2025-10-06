@@ -7,11 +7,13 @@
     xlabel={Polynomial degree},
     ylabel={Flops},
     title={Flops Estimate vs Degree},
-    legend pos=south east,
-    legend style={font=\tiny},
     grid=both,
     ymode=log, 
     log basis y=10,
+    legend style={
+        at={(0.95,0.6)}, % inside the plot, middle right
+        anchor=east,     % anchor legend’s right edge
+    },
     y tick label style={
         /pgf/number format/fixed,
         /pgf/number format/precision=2
