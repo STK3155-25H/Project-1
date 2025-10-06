@@ -546,10 +546,10 @@ For part \ref{Bias-Variance trade off}, the MSE, $\mathrm{bias}^2$, and variance
 \subsection*{Validation and testing}
 \label{Validation_and_Testing}
 
-To ensure the correctness and robustness of all implemented methods, a comprehensive testing suite was developed. 
-Each function within the project was systematically validated against scikit-learn's out-of-the-box implementations, 
-ensuring full consistency with well-established numerical baselines. 
-The test suite employs the Pytest framework and compares analytical, gradient-based, and resampling functions through deterministic and quantitative checks. 
+To ensure the correctness and robustness of all implemented methods, a testing suite was developed. 
+Each function within the project was validated against scikit-learn's out-of-the-box implementations, 
+ensuring consistency with established numerical baselines. 
+The test suite employs the Pytest framework and compares analytical, gradient-based and resampling functions through deterministic and quantitative checks. 
 All tests were designed to be reproducible, relying on a fixed random seed to guarantee identical data splits and noise realizations across runs. 
 The seed policy used is consistent with what is described in the previous paragraph \ref{sec:results_setup}.
 
@@ -558,7 +558,7 @@ For the implemented preprocessing routines, the generated design matrices were c
 Metric functions such as the Mean Squared Error (MSE) and the coefficient of determination ($R^2$) were also cross-checked against scikit-learn's corresponding functions, ensuring numerical equivalence up to machine precision (\(\text{rtol}=10^{-12}\), \(\text{atol}=10^{-12}\)).
 
 Analytical regression solvers like OLS and Ridge Regression were validated by comparing their estimated coefficients and predictions to those obtained from scikit-learn under identical configurations. 
-For Ridge regression, both penalized and unpenalized intercept versions were tested to confirm full consistency with scikit-learn's regularization scheme. 
+For Ridge regression, both penalized and unpenalized intercept versions were tested to confirm consistency with scikit-learn's regularization scheme. 
 The detailed numerical tolerances used in these validations are summarized in Table~\ref{tab:analytical_solvers}.
 
 \begin{table}[H]
@@ -578,6 +578,7 @@ Ridge & \texttt{Ridge} ($\alpha=\lambda$) & $10^{-10}$ & $10^{-10}$ \\
 \end{table}
 
 The custom gradient descent optimizer was evaluated by verifying that its converged parameters coincide with the analytical OLS solution within a tolerance of $10^{-5}$, demonstrating the correctness of both gradient computations and convergence logic. 
+As shown in the following studies, the convergence speed of these methods are sensitive to the chosen hyperparameters and the type of regression problem, for that reason it is worth to mention that the methods were tested with polynomials of degrees \(d_1 = 3\) and \(d_2 = 4\), with the respective learning rates \(\eta_1 = 0.05\) and \(\eta_2 = 0.02\), while having a fixed number of iterations of \(n_{iter} = 5 \times 10^4\).
 A full summary of these quantitative checks is reported in Table~\ref{tab:gd_validation}.
 
 \begin{table}[H]
