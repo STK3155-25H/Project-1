@@ -756,12 +756,12 @@ Ridge and Lasso introduce a small bias but yield more stable models that general
 
 \subsection{Computational Benchmark and Performance Analysis}
 \label{sec:Computational_Benchmark}
-In addition to the statistical evaluation of model accuracy, a computational benchmark was performed to assess the efficiency of the implemented methods. 
-The benchmark compared the analytical solutions with gradient-based variants across multiple polynomial degrees. 
-The analysis focuses on execution time, iteration behaviour, floating-point operations and memory usage.
-The benchmarks results were obtained in compliance with the procedures decribed by paragraph \ref{sec:results_setup}. 
-In particular the results were obtained across an average on \(N_{runs} = 30\) on polynomials of degrees up to 14 fitted to a dataset of \(n = 100\) points and applying the following parameters:
-
+In addition to evaluating model accuracy, a computational benchmark was conducted to assess the efficiency of the implemented methods.
+The benchmark compared analytical solutions and gradient-based variants across multiple polynomial degrees.
+The analysis focuses on execution time, iteration behavior, floating-point operations, and memory usage.
+Results were obtained following the procedures in paragraph \ref{sec:results_setup}, averaging over 
+ \(N_{runs} = 30\) for polynomials up to degree \(14\) fitted to a dataset of \(n = 100\) points using the following parameters:
+ 
 \begin{table}[H]
 \centering
 \caption{Benchmark configuration parameters.}
