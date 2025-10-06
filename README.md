@@ -31,7 +31,7 @@ The goal is to produce reproducible figures and metrics tables (MSE, R²) for a 
 ## Repository structure
 ```bash
 ├── .gitignore
-├── Code
+├── Code 
 │   ├── exp_a_ols.py
 │   ├── exp_b_ridge.py
 │   ├── exp_c_grad_vs_closed.py
@@ -42,7 +42,11 @@ The goal is to produce reproducible figures and metrics tables (MSE, R²) for a 
 │   ├── exp_h_crossval.py
 │   └── src
 │       ├── __init__.py
-│       └── ml_core.py
+│       ├── exp_benchmarks_metrics.py
+|       ├── ml_core.py
+|       └── tests
+|             ├── __init__.py
+|             └── tests.py
 ├── Exercises_week_39.pdf
 ├── Makefile
 ├── README.md
