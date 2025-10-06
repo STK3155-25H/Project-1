@@ -803,9 +803,9 @@ Memory usage (Figure~\ref{fig:Memory}) grows approximately linearly with polynom
 \paragraph*{Accuracy–Speed Pareto analysis.}
 Finally, Figure~\ref{fig:pareto_r2_time} summarizes the joint accuracy–efficiency trade–off by plotting test $R^2$ against wall–clock fit time. 
 Two distinct frontiers emerge\cite{bottou2010largeScaleSGD}.
-Closed–form solvers (OLS and Ridge) occupy the leftmost Pareto frontier, achieving $R^2\approx0.95$–$0.99$ at $\mathcal{O}(10^{-1})$\,ms.  
+Closed–form solvers occupy the leftmost Pareto frontier, achieving $R^2\approx0.95$–$0.99$ at $\mathcal{O}(10^{-1})$\,ms.  
 Iterative optimizers form a secondary frontier at $\mathcal{O}(10^2)$\,ms: vanilla GD and momentum cluster around $R^2\approx0.5$–$0.85$, while Adam attains higher accuracy ($R^2\approx0.95$) but at greater cost. 
-When the design matrix fits in memory and $p$ is moderate, closed–form OLS/Ridge remain strictly Pareto–superior. 
+When the design matrix fits in memory and $p$ is moderate, closed–form OLS and Ridge remain strictly Pareto–superior. 
 Iterative methods become attractive only for large–scale or streaming data, or when analytical solutions are unavailable.
 % \input{Graphs/PARETO}
 \input{Graphs/PARETO2}
@@ -819,13 +819,13 @@ This project analyzed different regression methods such as Ordinary Least Square
 Ridge and Lasso along with the effects of implementing gradient descent optimizers,
 the use of bootstrap methods and the exploration of the bias-variance trade-off.\\\\
 OLS performed well for simple models but overfitted at higher polynomial degrees.
-Ridge reduced variance through L2 regularization, while Lasso’s L1 penalty promoted sparsity and produced simpler, more interpretable models.\\\\
+Ridge reduced variance through $L_2$ regularization, while Lasso’s $L_1$ penalty promoted sparsity and produced simpler, more interpretable models.\\\\
 A major focus was the implementation of gradient descent methods.
-Standard gradient descent proved to be realy sensitive to the learning rate, small rates let to slow convergence while large rates caused convergence.
-With some tuning the resulst came close the the analytical solutions.
-Advanced gradient descent methods such as Momentum, Adagrad, RMSprop, and Adam improved convergence speed and numerical stability, with Adam providing the most consistent and reliable results across different polynomial degrees.
+Standard gradient descent proved to be sensitive to the learning rate, small rates let to slow convergence while large rates caused convergence.
+With some tuning, the results came close the analytical solutions.
+Advanced gradient descent methods, such as Momentum, Adagrad, RMSprop, and Adam improved convergence speed and numerical stability, with Adam providing the most consistent and reliable results across different polynomial degrees. 
 The use of stochastic methods was also implemented, these showed a lower computing time but at the cost of accuracy.
-For LASSO regression the use of gradient descent was essential as it lacks a analytical solution.\\\\
+For Lasso regression the use of gradient descent was essential as it lacks a analytical solution.\\\\
 Bootstrap and cross-validation results confirmed the bias–variance trade-off, showing that regularization helps balance underfitting and overfitting.
 Among the methods, Ridge and Lasso achieved the best generalization performance.\\\\
 Each approach presented trade-offs:
