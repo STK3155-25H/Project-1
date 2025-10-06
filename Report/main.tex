@@ -756,101 +756,66 @@ Ridge and Lasso introduce a small bias but yield more stable models that general
 
 \subsection{Computational Benchmark and Performance Analysis}
 \label{sec:Computational_Benchmark}
+In addition to the statistical evaluation of model accuracy, a computational benchmark was performed to assess the efficiency of the implemented methods. 
+The benchmark compared the analytical solutions with gradient-based variants across multiple polynomial degrees. 
+The analysis focuses on execution time, iteration behaviour, floating-point operations and memory usage.
+The benchmarks results were obtained in compliance with the procedures decribed by paragraph \ref{sec:results_setup}. 
+In particular the results were obtained across an average on \(N_{runs} = 30\) on polynomials of degrees up to 14 and applying the forrlowing parameters:
 
+\begin{table}[H]
+\centering
+\caption{Benchmark configuration parameters.}
+\label{tab:benchmark_params}
+\begin{tabular}{lcl}
+\toprule
+\textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
+\midrule
+Number of points & $N_{\text{points}}$ & 100 \\
+% Maximum polynomial degree & $d_{\max}$ & 14 \\
+% Number of runs (averaging) & $N_{\text{runs}}$ & 30 \\
+Regularization factor & $\lambda$ & 0.01 \\
+Learning rate & $\eta$ & 0.01 \\
+Iterations & $N_{\text{iter}}$ & 10,000 \\
+Tolerance & $\text{tol}$ & $10^{-8}$ \\
+Momentum coefficient & $\beta$ & 0.9 \\
+Epsilon (for Adam stability) & $\epsilon$ & $10^{-8}$ \\
+Mini-batch size & $B$ & 32 \\
+Bootstrap resamples & $N_{\text{boot}}$ & 30 \\
+% Test split ratio & $r_{\text{test}}$ & 0.33 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-In addition to the statistical evaluation of model accuracy, a computational benchmark was performed to assess the efficiency and numerical stability of the implemented methods. 
-The benchmark compared the analytical solutions (OLS and Ridge) with gradient-based variants (GD-vanilla, GD-momentum, Adagrad, RMSprop, Adam) across multiple polynomial degrees. 
-The analysis focuses on execution time, iteration behaviour, conditioning, floating-point operations, memory usage, and numerical precision.
 
 \paragraph*{Execution time and efficiency.}
 Figure~\ref{fig:Fit_Time} reports the median fit time as a function of polynomial degree.
 Closed-form methods (OLS and Ridge) were found to be several orders of magnitude faster than iterative optimizers.
 Ordinary Least Squares achieved a median fit time of approximately $0.1$~ms, while Ridge regression required around $0.11$~ms, confirming their efficiency for small and medium-scale problems.
 In contrast, vanilla gradient descent required on average more than $100$~ms per fit, corresponding to a computational cost roughly $10^3$--$10^4$ times higher.
-This difference reflects the analytical $\mathcal{O}(p^3)$ complexity of matrix inversion compared to the iterative $\mathcal{O}(n p \times \text{iterations})$ scaling of gradient descent.
-Despite this, iterative optimization remains preferable when the design matrix is large, sparse, or cannot be stored entirely in memory.
+This difference reflects the analytical $\mathcal{O}(p^3)$ complexity of matrix inversion compared to the iterative $\mathcal{O}(n p \times \text{iterations})$ \cite{golubvanloan2013,bottou2010largeScaleSGD} scaling of gradient descent.
+Despite this, as the results shows, iterative optimization remains preferable when the design matrix is large, sparse, or cannot be stored entirely in memory.
+Usecases in wich iterative gradient descent methods shine are in fact NNs, where a very large nubmber of parameters need to be optimized\cite{goodfellow2016}.
 \input{Graphs/FIT_TIME}
 
-% \paragraph*{Gradient descent variants.}
-% Among all iterative methods, vanilla GD required the largest number of iterations (median $\sim10^4$) and showed the slowest convergence. 
-% Momentum and Adam substantially improved convergence speed and smoothness of the loss curve, maintaining stable $R^2$ scores close to the analytical reference.
-% RMSprop and Adagrad performed comparably, though their highly adaptive step sizes occasionally led to slower convergence.
-% Overall, Adam achieved the best balance between convergence speed and stability among the iterative methods. 
-% This behaviour is illustrated in Figure~\ref{fig:gd_iterations_vs_degree}, showing the number of iterations required to meet the stopping criterion across degrees.
-
-% % \begin{figure}[H]
-% %     \centering
-% %     \includegraphics[width=.95\columnwidth]{/mnt/data/gd_iterations_vs_degree_20251005-140158.png}
-% %     \caption{Iterations to convergence for gradient-based methods as a function of polynomial degree. Adam maintains a stable iteration count, while vanilla GD and momentum require substantially more steps.}
-% %     \label{fig:gd_iterations_vs_degree}
-% % \end{figure}
-
-% \paragraph*{Conditioning and numerical stability.}
-% The conditioning of the design matrix $\mathbf{X}^\top \mathbf{X}$ increases exponentially with polynomial degree, as shown in Figure~\ref{fig:condition_vs_degree}. 
-% At degree~15, the condition number reaches $\sim10^{10}$, consistent with the ill-conditioning typical of high-degree polynomial regression.
-% This directly explains the rise in variance observed in the bias–variance analysis (Figure~\ref{fig:bias_variance}) and the increased sensitivity of gradient descent at high degrees. 
-% Feature scaling proved crucial for mitigating these effects: the stability proxy in Figure~\ref{fig:stability_delta_vs_degree} shows that scaling reduced numerical discrepancies in test MSE to the order of $10^{-12}$ across all degrees, confirming negligible numerical drift.
-
-% % \begin{figure}[H]
-% %     \centering
-% %     \includegraphics[width=.95\columnwidth]{/mnt/data/condition_vs_degree_20251005-140158.png}
-% %     \caption{Condition number of $\mathbf{X}^\top\mathbf{X}$ (log scale) as a function of polynomial degree. Exponential growth confirms the ill-conditioning of high-order polynomial regressors.}
-% %     \label{fig:condition_vs_degree}
-% % \end{figure}
-
-% % \begin{figure}[H]
-% %     \centering
-% %     \includegraphics[width=.95\columnwidth]{/mnt/data/stability_delta_vs_degree_20251005-140158.png}
-% %     \caption{Numerical stability proxy: $\Delta$ Test MSE between scaled and unscaled inputs. Scaling ensures numerical consistency down to machine precision across all degrees.}
-% %     \label{fig:stability_delta_vs_degree}
-% % \end{figure}
-
-% \paragraph*{Bias–variance relation and overfitting.}
-% The bias–variance decomposition for OLS is reported in Figure~\ref{fig:bias_variance}.
-% At low polynomial degrees, the MSE is dominated by bias, indicating underfitting. 
-% As the degree increases, bias decreases while variance remains low up to degree~9.
-% Beyond this point, the variance term rises sharply, dominating the total error and leading to the observed MSE spikes at degrees~11 and~13.
-% This behaviour clearly illustrates the classical bias–variance trade–off: increasing model flexibility initially improves accuracy, but excessive complexity causes instability and overfitting.
-
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=.95\columnwidth]{/mnt/data/bias_variance_20251005-140158.png}
-%     \caption{Bias–variance decomposition for OLS. The rapid variance growth at high degrees reflects overfitting due to ill-conditioning of $\mathbf{X}^\top\mathbf{X}$.}
-%     \label{fig:bias_variance}
-% \end{figure}
-
-% \paragraph*{Accuracy trends across degrees.}
-% Figure~\ref{fig:r2_test_vs_degree} shows that all models improve $R^2$ with increasing degree until saturation around degree~10.
-% OLS reaches nearly perfect fits ($R^2 \approx 1.0$), while Ridge stabilizes slightly below due to its regularization term.
-% Among iterative methods, Adam achieves the highest accuracy, followed by momentum and vanilla GD.
-% This pattern confirms that adaptive optimizers mitigate gradient explosion and preserve generalization even when analytical conditioning deteriorates.
-
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=.95\columnwidth]{/mnt/data/r2_test_vs_degree_20251005-140158.png}
-%     \caption{Test $R^2$ as a function of polynomial degree. Analytical solvers outperform gradient-based methods, but Adam remains competitive among iterative optimizers.}
-%     \label{fig:r2_test_vs_degree}
-% \end{figure}
 
 \paragraph*{Computational cost and memory footprint.}
-The estimated number of floating-point operations (FLOPs) confirms the expected scaling trends (Figure~\ref{fig:Flops}).
-OLS and Ridge follow a cubic growth with respect to the number of features, while gradient methods scale approximately linearly with iterations and data size. 
-Adam and Momentum display the largest computational load due to their extra vector updates for accumulated gradients.
-Memory usage (Figure~\ref{fig:Memory}) grows linearly with polynomial degree for all methods and remains modest (below $0.02$~MB), with analytical solvers slightly lighter than adaptive optimizers.
+The estimated number of floating–point operations (FLOPs) confirms the expected scaling trends (Figure~\ref{fig:Flops}). In closed–form solvers (OLS, Ridge) the dominant step is solving the normal equations, which scales as $\mathcal{O}(p^3)$ in the number of features $p$. Within the present range of degrees this remains markedly below the iterative methods: the FLOPs curve for OLS/Ridge stays in the $10^3$–$10^5$ band, while gradient methods rise to $10^7$–$10^8$.
+For gradient–based optimizers, the per–iteration cost is $\mathcal{O}(np)$, so the total work scales approximately linearly with the number of iterations $T$ and the data size $n$ ($\sim\mathcal{O}(n p T)$). Among them, Momentum and Adam exhibit the largest computational load because each step updates extra state vectors\cite{polyak1964heavyball,kingma2015adam} (velocity $m$ for Momentum; both $m$ and the second–moment $v$ for Adam), effectively adding one (Momentum) or two (Adam) additional vector operations and element–wise transforms per iteration.
 \input{Graphs/FLOPS}
+Memory usage (Figure~\ref{fig:Memory}) grows approximately linearly with polynomial degree, reflecting the linear growth of $p$ and the associated parameter/state vectors. In our setup it remains below $0.02$~MB across the displayed degrees for all methods. Closed–form solvers mainly store $\boldsymbol{\theta}$ and the small $p\times p$ normal matrix; adaptive optimizers add constant–factor overhead for their moment buffers (e.g., $m$, $v$), which explains the slight vertical offset between curves while preserving linear trends with degree.
 \input{Graphs/Memory}
 
-
 \paragraph*{Accuracy–Speed Pareto analysis.}
-Finally, Figure~\ref{fig:fig:pareto_r2_time} summarizes the joint accuracy–efficiency trade–off by plotting test $R^2$ against wall–clock fit time (log scale on the $x$–axis). 
-Two distinct frontiers emerge.  
+Finally, Figure~\ref{fig:pareto_r2_time} summarizes the joint accuracy–efficiency trade–off by plotting test $R^2$ against wall–clock fit time. 
+Two distinct frontiers emerge\cite{bottou2010largeScaleSGD}.
 Closed–form solvers (OLS and Ridge) occupy the leftmost Pareto frontier, achieving $R^2\approx0.95$–$0.99$ at $\mathcal{O}(10^{-1})$\,ms.  
 Iterative optimizers form a secondary frontier at $\mathcal{O}(10^2)$\,ms: vanilla GD and momentum cluster around $R^2\approx0.5$–$0.85$, while Adam attains higher accuracy ($R^2\approx0.95$) but at greater cost. 
 When the design matrix fits in memory and $p$ is moderate, closed–form OLS/Ridge remain strictly Pareto–superior. 
-Iterative methods become attractive only for large–scale or streaming data, or when analytical solutions are unavailable (e.g., LASSO).
+Iterative methods become attractive only for large–scale or streaming data, or when analytical solutions are unavailable.
 % \input{Graphs/PARETO}
 \input{Graphs/PARETO2}
 
+So it is clear from this results that for small and simple regression problems the same accuracy results can be achived both with closed-form and iterative GD methods, but with a higher computational efficiency, making the GD not ideal for these usecases.
 
 \section{Discussion and Conclusion}
 
@@ -872,10 +837,16 @@ Each approach presented trade-offs:
 OLS is simple but unstable for complex models;
 Ridge improves robustness but adds bias;
 Lasso enhances sparsity but may remove relevant predictors.\\\\
-The study demonstrated the value of regularization and adaptive optimization in regression analysis.
-Limitations include the focus on a single dataset and reliance on MSE as the main metric.
-Future work should extend these methods to real-world and higher-dimensional data, to further enhance model performance and interpretability.
 
+The computational benchmark expanded the analysis by quantifying the efficiency and scalability of each method.  
+Closed–form solvers (OLS and Ridge) demonstrated extremely low execution times (on the order of $10^{-1}$\,ms) and minimal memory footprints, remaining several orders of magnitude faster than iterative gradient–based methods for small to medium–scale problems.   
+Overall, the results show that analytical methods are preferable when the design matrix fits entirely in memory and the model size is moderate, while iterative optimizers become indispensable in large–scale or scenarios where analytical inversion is impractical.  
+Therefore, it is clear from these results that for small and simple regression problems, comparable accuracy can be achieved using both closed–form and iterative methods, but with far greater computational efficiency in the analytical case, making gradient descent suboptimal in such contexts.\\\\
+
+The study demonstrated the importance of regularization, adaptive optimization, and computational efficiency in modern regression analysis.  
+Each approach entails a trade–off among accuracy, interpretability, and scalability:  
+OLS remains the simplest yet least robust, Ridge offers the best generalization compromise, Lasso improves sparsity and feature selection, while gradient–based methods provide flexibility at a computational cost.  
+Future works could extend these analyses to high–dimensional, real–world datasets and investigate hybrid optimization strategies that balance analytical precision with scalable computation.
 
 \bibliographystyle{apsrev4-2}
 \bibliography{References} % Your .bib file
