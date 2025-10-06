@@ -47,6 +47,7 @@
 Regression in machine learning is a fundamental technique for predicting outcomes based on input features. It finds relationships between variables so that predictions on unseen data can be made. 
 A major challenge arises as model complexity increases:  low-degree models may underfit, while high-degree polynomial regression can become unstable and overfit the data. 
 In this project, we study the Runge function, a well-known function that highlights the difficulties of high-degree polynomial interpolation. We apply Ordinary Least Squares, Ridge, and Lasso regression, complemented by gradient descent and its variants, including momentum, Adagrad, RMSprop, and ADAM. Resampling techniques such as bootstrap and cross-validation are used to evaluate model generalization and analyze the bias-variance trade-off.
+The dataset was synthetically generated with controlled noise, and all implementations were validated and tested against analytical and scikit-learn references. A computational benchmark was also performed to assess efficiency in terms of execution time, iteration behaviour, and memory usage.
 The results show that OLS fits become highly unstable for high polynomial degrees, while Ridge and Lasso regularization significantly improve stability and predictive accuracy. Gradient descent methods reproduce the analytical results, though their performance depends strongly on learning-rate strategies. Overall, the study highlights the importance of regularization and resampling for controlling overfitting and improving the reliability of regression models.
 \end{abstract}
 
@@ -74,8 +75,8 @@ These techniques provide insight into the stability of the models and the reliab
 Overall, this project aims to illustrate the strengths and the limitations of each method.\\
 The structure of this project is as follows: 
 \begin{itemize}
-    \item Section \ref{sec:Methods} "Methods", describes the preprocessing and scaling of the data, the regression techniques and the optimization algorithms, as well as the resampling methods. It also includes the testing of the implemented methods against scikit-learn and the AI tools used.
-    \item Section \ref{sec:Results_and_Discussion} "Results and Discussion", presents the numerical results, compares the performance of the different methods and discusses their implications in terms of bias-variance trade-off.
+    \item Section \ref{sec:Methods} "Methods", describes the preprocessing and scaling of the data, the regression techniques and the optimization algorithms, as well as the resampling methods. It also includes the AI tools used.
+    \item Section \ref{sec:Results_and_Discussion} "Results and Discussion", presents the numerical results, compares the computational performance of the different methods and discusses their implications in terms of bias-variance trade-off.
     \item section \ref{sec:Discussion_and_Conclusion} "Conclusion", summarizes the main results and the insights gained from the methods studied.
 \end{itemize}
 
@@ -810,7 +811,7 @@ Iterative methods become attractive only for large–scale or streaming data, or
 % \input{Graphs/PARETO}
 \input{Graphs/PARETO2}
 
-So it is clear from this results that for small and simple regression problems the same accuracy results can be achived both with closed-form and iterative GD methods, but with a higher computational efficiency, making the GD not ideal for these usecases.
+So it is clear from this results that for small and simple regression problems the same accuracy results can be achived both with closed-form and iterative GD methods, but with a higher computational efficiency, making the GD methods not ideal for these usecases.
 
 \section{Discussion and Conclusion}
 
