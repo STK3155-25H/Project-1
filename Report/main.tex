@@ -837,12 +837,10 @@ Each approach presented trade-offs:
 OLS is simple but unstable for complex models;
 Ridge improves robustness but adds bias;
 Lasso enhances sparsity but may remove relevant predictors.\\\\
-
 The computational benchmark expanded the analysis by quantifying the efficiency and scalability of each method.  
 Closed–form solvers (OLS and Ridge) demonstrated extremely low execution times (on the order of $10^{-1}$\,ms) and minimal memory footprints, remaining several orders of magnitude faster than iterative gradient–based methods for small to medium–scale problems.   
 Overall, the results show that analytical methods are preferable when the design matrix fits entirely in memory and the model size is moderate, while iterative optimizers become indispensable in large–scale or scenarios where analytical inversion is impractical.  
 Therefore, it is clear from these results that for small and simple regression problems, comparable accuracy can be achieved using both closed–form and iterative methods, but with far greater computational efficiency in the analytical case, making gradient descent suboptimal in such contexts.\\\\
-
 The study demonstrated the importance of regularization, adaptive optimization, and computational efficiency in modern regression analysis.  
 Each approach entails a trade–off among accuracy, interpretability, and scalability:  
 OLS remains the simplest yet least robust, Ridge offers the best generalization compromise, Lasso improves sparsity and feature selection, while gradient–based methods provide flexibility at a computational cost.  
